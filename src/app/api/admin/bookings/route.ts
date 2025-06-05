@@ -1,3 +1,4 @@
+import { parseServices, formatServicesForDatabase } from '@/lib/services-utils'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { parseIstanbulDate, toDatabaseTime, fromDatabaseTime, formatIstanbulDate } from '@/lib/timezone'
@@ -20,7 +21,7 @@ export async function GET(request: NextRequest) {
       date: booking.date,
       startTime: booking.startTime,
       endTime: booking.endTime,
-      services: JSON.parse(booking.services),
+      services: parseServices(booking.services),
       status: booking.status,
       totalPrice: booking.totalPrice,
       createdAt: booking.createdAt
