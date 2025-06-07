@@ -24,7 +24,9 @@ import {
   Check,
   Lock,
   Unlock,
-  Shield
+  Shield,
+  List,
+  Grid3X3
 } from 'lucide-react'
 import { fromDatabaseTime, formatIstanbulDate, formatArabicDate, parseIstanbulDate } from '@/lib/timezone'
 
@@ -73,6 +75,12 @@ interface BlockedTime {
   createdAt: string
 }
 
+type ViewType = 'month' | 'week' | 'day'
+
+interface EnhancedDateRange extends DateRange {
+  view: ViewType
+}
+
 export default function AdminBookingsPage() {
   const [bookings, setBookings] = useState<Booking[]>([])
   const [services, setServices] = useState<{ [key: string]: string }>({})
@@ -92,6 +100,11 @@ export default function AdminBookingsPage() {
       view: 'month'
     }
   })
+ 
+ 
+const [currentView, setCurrentView] = useState<ViewType>('month')
+const [enhancedCurrentDate, setEnhancedCurrentDate] = useState(new Date())
+
   const [selectedDayBookings, setSelectedDayBookings] = useState<Booking[]>([])
   const [showPhoneMenu, setShowPhoneMenu] = useState<string | null>(null)
 
@@ -131,7 +144,7 @@ export default function AdminBookingsPage() {
     'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'
   ]
 
-  const dayNames = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت']
+const dayNamesShort = ['أحد', 'اثنين', 'ثلاثاء', 'أربعاء', 'خميس', 'جمعة', 'سبت']
   const availableYears = [2020, 2021, 2022, 2023, 2024, 2025, 2026]
 
   const categoryColors = {
@@ -540,6 +553,103 @@ export default function AdminBookingsPage() {
 
     return days
   }
+ {/* عرض التقويم حسب النوع المختار */}
+{currentView === 'month' && (
+  // التقويم الشهري الموجود (احتفظ بالكود الأصلي كما هو)
+  <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
+    {/* الكود الأصلي للتقويم الشهري هنا */}
+  </div>
+)}
+
+{currentView === 'week' && renderWeekView()}
+
+{currentView === 'day' && renderDayView()}
+(
+  // سنضيف العرض اليومي في الخطوة التالية
+  <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
+    <p className="text-center text-gray-500">العرض اليومي قيد التطوير...</p>
+  </div>
+)}
+
+const formatDateString = useCallback((date: Date): string => {
+  const year = date.getFullYear()
+  const month = (date.getMonth() + 1).toString().padStart(2, '0')
+  const day = date.getDate().toString().padStart(2, '0')
+  return `${year}-${month}-${day}`
+}, [])
+
+const parseDateString = useCallback((dateString: string): Date => {
+  return new Date(dateString + 'T00:00:00')
+}, [])
+
+const calculateViewDateRange = useCallback((date: Date, view: ViewType): EnhancedDateRange => {
+  const year = date.getFullYear()
+  const month = date.getMonth()
+
+  switch (view) {
+    case 'day':
+      const dayStr = formatDateString(date)
+      return {
+        startDate: dayStr,
+        endDate: dayStr,
+        view: 'day'
+      }
+    
+    case 'week':
+      const startOfWeek = new Date(date)
+      startOfWeek.setDate(date.getDate() - date.getDay())
+      const endOfWeek = new Date(startOfWeek)
+      endOfWeek.setDate(startOfWeek.getDate() + 6)
+      
+      return {
+        startDate: formatDateString(startOfWeek),
+        endDate: formatDateString(endOfWeek),
+        view: 'week'
+      }
+    
+    case 'month':
+    default:
+      const startOfMonth = new Date(year, month, 1)
+      const endOfMonth = new Date(year, month + 1, 0)
+      
+      return {
+        startDate: formatDateString(startOfMonth),
+        endDate: formatDateString(endOfMonth),
+        view: 'month'
+      }
+  }
+}, [formatDateString])
+
+const getBookingsForTimeSlot = useCallback((dateString: string, timeString: string) => {
+  return bookings.filter(booking => {
+    const bookingDate = new Date(booking.date).toISOString().split('T')[0]
+    const bookingTime = new Date(booking.startTime).toLocaleTimeString('en-GB', {
+      hour12: false,
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+    return bookingDate === dateString && bookingTime === timeString
+  })
+}, [bookings])
+
+const formatViewTimeRange = useCallback(() => {
+  const start = parseDateString(currentDateRange.startDate)
+  const end = parseDateString(currentDateRange.endDate)
+  
+  if (currentView === 'day') {
+    return start.toLocaleDateString('ar-SA', { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    })
+  } else if (currentView === 'week') {
+    return `${start.getDate()} - ${end.getDate()} ${monthNames[start.getMonth()]} ${start.getFullYear()}`
+  } else {
+    return `${monthNames[start.getMonth()]} ${start.getFullYear()}`
+  }
+}, [currentDateRange, currentView, monthNames, parseDateString])
+
 
    const navigateMonth = (direction: 'prev' | 'next') => {
     setCurrentMonth(prev => {
@@ -609,6 +719,31 @@ export default function AdminBookingsPage() {
     const dayBookings = getBookingsForDate(date)
     setSelectedDayBookings(dayBookings)
   }
+const changeView = useCallback((newView: ViewType) => {
+  setCurrentView(newView)
+  const newRange = calculateViewDateRange(enhancedCurrentDate, newView)
+  setCurrentDateRange(newRange)
+}, [enhancedCurrentDate, calculateViewDateRange])
+
+const navigateViewDate = useCallback((direction: 'prev' | 'next') => {
+  const newDate = new Date(enhancedCurrentDate)
+  
+  switch (currentView) {
+    case 'day':
+      newDate.setDate(enhancedCurrentDate.getDate() + (direction === 'next' ? 1 : -1))
+      break
+    case 'week':
+      newDate.setDate(enhancedCurrentDate.getDate() + (direction === 'next' ? 7 : -7))
+      break
+    case 'month':
+      newDate.setMonth(enhancedCurrentDate.getMonth() + (direction === 'next' ? 1 : -1))
+      break
+  }
+  
+  setEnhancedCurrentDate(newDate)
+  const newRange = calculateViewDateRange(newDate, currentView)
+  setCurrentDateRange(newRange)
+}, [enhancedCurrentDate, currentView, calculateViewDateRange])
 
   const copyPhoneNumber = (phone: string) => {
     navigator.clipboard.writeText(phone)
@@ -770,7 +905,350 @@ export default function AdminBookingsPage() {
   const days = getDaysInMonth(currentMonth)
   const today = new Date()
   const todayString = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate().toString().padStart(2, '0')}`
+const renderWeekView = () => {
+  const startDate = parseDateString(currentDateRange.startDate)
+const renderWeekView = () => {
+  const startDate = parseDateString(currentDateRange.startDate)
+  const weekDays = []
+  
+  for (let i = 0; i < 7; i++) {
+    const day = new Date(startDate)
+    day.setDate(startDate.getDate() + i)
+    weekDays.push(day)
+  }
+const renderDayView = () => {
+  const displayDate = selectedDate || formatDateString(enhancedCurrentDate)
+  const dayBookings = getBookingsForDate(displayDate)
+  
+  // تجميع الحجوزات حسب الوقت
+  const timeSlotBookings = {}
+  adminTimeSlots.forEach(time => {
+    timeSlotBookings[time] = getBookingsForTimeSlot(displayDate, time)
+  })
 
+  return (
+    <div className="bg-white rounded-xl shadow-lg p-4">
+      {/* هيدر اليوم */}
+      <div className="mb-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-200">
+        <h3 className="text-xl font-bold text-gray-800 mb-2 flex items-center">
+          <Calendar className="w-6 h-6 ml-2 text-blue-600" />
+          {parseDateString(displayDate).toLocaleDateString('ar-SA', { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+          })}
+        </h3>
+        
+        <div className="flex items-center justify-between text-sm">
+          <div className="flex items-center space-x-4 rtl:space-x-reverse">
+            <div className="flex items-center space-x-2 rtl:space-x-reverse">
+              <User className="w-4 h-4 text-green-600" />
+              <span className="text-green-700 font-medium">
+                {dayBookings.length} {dayBookings.length === 1 ? 'موعد' : 'مواعيد'}
+              </span>
+            </div>
+            
+            <div className="flex items-center space-x-2 rtl:space-x-reverse">
+              <Clock className="w-4 h-4 text-purple-600" />
+              <span className="text-purple-700 font-medium">
+                {adminTimeSlots.length - dayBookings.length} وقت متاح
+              </span>
+            </div>
+          </div>
+          
+          <button
+            onClick={openNewBooking}
+            className="flex items-center space-x-2 rtl:space-x-reverse bg-green-600 text-white px-3 py-1 rounded-lg hover:bg-green-700 transition-colors text-sm"
+          >
+            <Plus className="w-4 h-4" />
+            <span>حجز جديد</span>
+          </button>
+        </div>
+      </div>
+
+      {/* جدول الأوقات التفصيلي */}
+      <div className="space-y-2">
+        {adminTimeSlots.map((time) => {
+          const timeBookings = timeSlotBookings[time] || []
+          const isEmpty = timeBookings.length === 0
+          
+          return (
+            <div
+              key={time}
+              className={`
+                relative flex items-start p-4 border rounded-xl transition-all duration-200
+                ${isEmpty 
+                  ? 'border-gray-200 hover:border-gray-300 bg-white hover:bg-gray-50' 
+                  : 'border-blue-200 bg-gradient-to-r from-blue-50 to-purple-50'
+                }
+              `}
+            >
+              {/* عمود الوقت */}
+              <div className="w-20 flex-shrink-0">
+                <div className="text-lg font-bold text-gray-700 mb-1">
+                  {time}
+                </div>
+                <div className={`text-xs px-2 py-1 rounded-full text-center ${
+                  isEmpty 
+                    ? 'bg-green-100 text-green-700' 
+                    : 'bg-blue-100 text-blue-700'
+                }`}>
+                  {isEmpty ? 'متاح' : 'محجوز'}
+                </div>
+              </div>
+
+              {/* محتوى الحجوزات */}
+              <div className="flex-1 ml-4">
+                {isEmpty ? (
+                  <div 
+                    className="text-center py-8 text-gray-400 cursor-pointer hover:text-gray-600 transition-colors"
+                    onClick={() => {
+                      setNewBookingData(prev => ({
+                        ...prev,
+                        selectedDate: displayDate,
+                        selectedTime: time
+                      }))
+                      openNewBooking()
+                    }}
+                  >
+                    <Plus className="w-8 h-8 mx-auto mb-2" />
+                    <p>انقر لإضافة حجز في هذا الوقت</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {timeBookings.map((booking) => (
+                      <div
+                        key={booking.id}
+                        className="bg-white border border-blue-200 rounded-lg p-4 cursor-pointer hover:shadow-md transition-all duration-200 hover:border-blue-300"
+                        onClick={() => openEditBooking(booking)}
+                      >
+                        {/* معلومات العميلة */}
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center space-x-3 rtl:space-x-reverse">
+                            <div className="w-10 h-10 bg-gradient-to-r from-pink-400 to-purple-500 rounded-full flex items-center justify-center text-white font-bold">
+                              {booking.customerName.charAt(0)}
+                            </div>
+                            <div>
+                              <div className="font-bold text-gray-800 text-lg">
+                                {booking.customerName}
+                              </div>
+                              <div className="flex items-center text-sm text-gray-600">
+                                <Phone className="w-3 h-3 ml-1 text-gray-400" />
+                                {booking.customerPhone}
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                openEditBooking(booking)
+                              }}
+                              className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
+                              title="تعديل الحجز"
+                            >
+                              <Edit className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                openDeleteBooking(booking)
+                              }}
+                              className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors"
+                              title="حذف الحجز"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                        
+                        {/* الخدمات */}
+                        <div className="mb-3">
+                          <div className="flex items-center mb-2">
+                            <Sparkles className="w-4 h-4 ml-2 text-purple-500" />
+                            <span className="font-medium text-gray-700">
+                              الخدمات ({booking.services.length})
+                            </span>
+                          </div>
+                          
+                          <div className="flex flex-wrap gap-2">
+                            {booking.services.map((serviceId, index) => (
+                              <span
+                                key={`${serviceId}-${index}`}
+                                className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getServiceColor(serviceId)}`}
+                              >
+                                {services[serviceId] || `خدمة ${serviceId}`}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                        
+                        {/* معلومات إضافية */}
+                        <div className="flex items-center justify-between text-xs text-gray-500 border-t pt-2">
+                          <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                            <span>الحالة:</span>
+                            <span className={`px-2 py-1 rounded-full ${
+                              booking.status === 'confirmed' ? 'bg-green-100 text-green-700' :
+                              booking.status === 'completed' ? 'bg-blue-100 text-blue-700' :
+                              'bg-red-100 text-red-700'
+                            }`}>
+                              {booking.status === 'confirmed' ? 'مؤكد' :
+                               booking.status === 'completed' ? 'مكتمل' : 'ملغي'}
+                            </span>
+                          </div>
+                          
+                          <div className="flex items-center space-x-4 rtl:space-x-reverse">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                makeCall(booking.customerPhone)
+                              }}
+                              className="flex items-center space-x-1 rtl:space-x-reverse text-green-600 hover:text-green-800"
+                            >
+                              <Phone className="w-3 h-3" />
+                              <span>اتصال</span>
+                            </button>
+                            
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                openWhatsApp(booking.customerPhone, booking.customerName)
+                              }}
+                              className="flex items-center space-x-1 rtl:space-x-reverse text-green-600 hover:text-green-800"
+                            >
+                              <MessageCircle className="w-3 h-3" />
+                              <span>واتساب</span>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+      
+      {/* إحصائيات اليوم */}
+      <div className="mt-6 p-4 bg-gray-50 rounded-xl">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+          <div>
+            <div className="text-2xl font-bold text-blue-600">{dayBookings.length}</div>
+            <div className="text-xs text-gray-600">مواعيد</div>
+          </div>
+          <div>
+            <div className="text-2xl font-bold text-green-600">
+              {adminTimeSlots.length - dayBookings.length}
+            </div>
+            <div className="text-xs text-gray-600">أوقات متاحة</div>
+          </div>
+          <div>
+            <div className="text-2xl font-bold text-purple-600">
+              {dayBookings.reduce((total, booking) => total + booking.services.length, 0)}
+            </div>
+            <div className="text-xs text-gray-600">خدمات</div>
+          </div>
+          <div>
+            <div className="text-2xl font-bold text-orange-600">
+              {((dayBookings.length / adminTimeSlots.length) * 100).toFixed(0)}%
+            </div>
+            <div className="text-xs text-gray-600">الإشغال</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+  return (
+    <div className="bg-white rounded-xl shadow-lg p-4">
+      <div className="overflow-x-auto">
+        <div className="grid grid-cols-8 gap-1 text-xs min-w-[600px]">
+          {/* عمود الأوقات */}
+          <div className="font-semibold text-gray-600 sticky left-0 bg-white z-10"></div>
+          
+          {weekDays.map((day, index) => {
+            const isToday = formatDateString(day) === formatDateString(new Date())
+            return (
+              <div key={index} className="text-center font-semibold text-gray-600 py-2 min-w-[80px]">
+                <div className={`${isToday ? 'text-blue-600' : ''}`}>
+                  {dayNamesShort[day.getDay()]}
+                </div>
+                <div className={`text-lg font-bold ${isToday ? 'text-blue-600' : ''}`}>
+                  {day.getDate()}
+                </div>
+              </div>
+            )
+          })}
+          
+          {/* الأوقات والحجوزات */}
+          {adminTimeSlots.map((time) => (
+            <React.Fragment key={time}>
+              <div className="text-right font-medium text-gray-500 py-1 text-xs sticky left-0 bg-white z-10 border-r border-gray-200 pr-2">
+                {time}
+              </div>
+              {weekDays.map((day, dayIndex) => {
+                const dayString = formatDateString(day)
+                const timeBookings = getBookingsForTimeSlot(dayString, time)
+                const isToday = formatDateString(day) === formatDateString(new Date())
+                
+                return (
+                  <div
+                    key={`${dayString}-${time}`}
+                    className={`border border-gray-100 p-1 min-h-[40px] cursor-pointer hover:bg-blue-50 transition-colors min-w-[80px] ${
+                      isToday ? 'bg-blue-50' : ''
+                    }`}
+                    onClick={() => {
+                      setSelectedDate(dayString)
+                      setEnhancedCurrentDate(day)
+                      changeView('day')
+                    }}
+                  >
+                    {timeBookings.map((booking, bookingIndex) => (
+                      <div
+                        key={`${booking.id}-${bookingIndex}`}
+                        className="bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xs p-1 rounded mb-1 truncate cursor-pointer hover:shadow-md transition-shadow"
+                        title={`${booking.customerName} - ${services[booking.services[0]] || 'خدمة'}`}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          openEditBooking(booking)
+                        }}
+                      >
+                        <div className="font-medium truncate">
+                          {booking.customerName.split(' ')[0]}
+                        </div>
+                        <div className="text-xs opacity-90 truncate">
+                          {services[booking.services[0]]?.substring(0, 8) || 'خدمة'}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )
+              })}
+            </React.Fragment>
+          ))}
+        </div>
+      </div>
+      
+      {/* معلومات إضافية للأسبوع */}
+      <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+        <div className="flex items-center justify-between text-sm text-gray-600">
+          <div className="flex items-center space-x-2 rtl:space-x-reverse">
+            <Calendar className="w-4 h-4" />
+            <span>إجمالي الحجوزات هذا الأسبوع: {bookings.length}</span>
+          </div>
+          <div className="text-xs text-gray-500">
+            💡 انقر على اليوم للتفاصيل الكاملة
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 flex items-center justify-center">
@@ -871,36 +1349,93 @@ export default function AdminBookingsPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
-          <div className="flex items-center justify-between mb-6">
-            <button
-              onClick={() => navigateMonth('prev')}
-              className="p-2 rounded-lg bg-purple-100 text-purple-600 hover:bg-purple-200 transition-colors"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
+<div className="bg-white rounded-xl shadow-lg p-4 mb-6">
+  {/* أزرار التنقل والعنوان */}
+  <div className="flex items-center justify-between mb-4">
+    <button
+      onClick={() => currentView === 'month' ? navigateMonth('prev') : navigateViewDate('prev')}
+      className="p-2 rounded-lg bg-purple-100 text-purple-600 hover:bg-purple-200 transition-colors"
+    >
+      <ChevronRight className="w-5 h-5" />
+    </button>
 
-            <div className="flex items-center space-x-4 rtl:space-x-reverse">
-              <select
-                value={currentMonth.getFullYear()}
-                onChange={(e) => changeYear(parseInt(e.target.value))}
-                className="px-3 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-purple-500 focus:border-transparent font-bold text-gray-800"
-              >
-                {availableYears.map(yearOption => (
-                  <option key={yearOption} value={yearOption}>{yearOption}</option>
-                ))}
-              </select>
+    <h2 className="text-lg font-bold text-gray-800 text-center px-4">
+      {currentView === 'month' ? 
+        // العرض الشهري التقليدي
+        <div className="flex items-center space-x-4 rtl:space-x-reverse">
+          <select
+            value={currentMonth.getFullYear()}
+            onChange={(e) => changeYear(parseInt(e.target.value))}
+            className="px-3 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-purple-500 focus:border-transparent font-bold text-gray-800"
+          >
+            {availableYears.map(yearOption => (
+              <option key={yearOption} value={yearOption}>{yearOption}</option>
+            ))}
+          </select>
 
-              <select
-                value={currentMonth.getMonth()}
-                onChange={(e) => changeMonth(parseInt(e.target.value))}
-                className="px-3 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-purple-500 focus:border-transparent font-bold text-gray-800"
-              >
-                {monthNames.map((monthName, index) => (
-                  <option key={index} value={index}>{monthName}</option>
-                ))}
-              </select>
-            </div>
+          <select
+            value={currentMonth.getMonth()}
+            onChange={(e) => changeMonth(parseInt(e.target.value))}
+            className="px-3 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-purple-500 focus:border-transparent font-bold text-gray-800"
+          >
+            {monthNames.map((monthName, index) => (
+              <option key={index} value={index}>{monthName}</option>
+            ))}
+          </select>
+        </div>
+        :
+        // العروض الجديدة
+        formatViewTimeRange()
+      }
+    </h2>
+
+    <button
+      onClick={() => currentView === 'month' ? navigateMonth('next') : navigateViewDate('next')}
+      className="p-2 rounded-lg bg-purple-100 text-purple-600 hover:bg-purple-200 transition-colors"
+    >
+      <ChevronLeft className="w-5 h-5" />
+    </button>
+  </div>
+
+  {/* أزرار التبديل الجديدة */}
+  <div className="flex items-center justify-center gap-2">
+    <button
+      onClick={() => changeView('month')}
+      className={`flex items-center space-x-2 rtl:space-x-reverse px-4 py-2 rounded-lg transition-colors text-sm ${
+        currentView === 'month'
+          ? 'bg-blue-600 text-white'
+          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+      }`}
+    >
+      <Grid3X3 className="w-4 h-4" />
+      <span>شهري</span>
+    </button>
+
+    <button
+      onClick={() => changeView('week')}
+      className={`flex items-center space-x-2 rtl:space-x-reverse px-4 py-2 rounded-lg transition-colors text-sm ${
+        currentView === 'week'
+          ? 'bg-blue-600 text-white'
+          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+      }`}
+    >
+      <Calendar className="w-4 h-4" />
+      <span>أسبوعي</span>
+    </button>
+
+    <button
+      onClick={() => changeView('day')}
+      className={`flex items-center space-x-2 rtl:space-x-reverse px-4 py-2 rounded-lg transition-colors text-sm ${
+        currentView === 'day'
+          ? 'bg-blue-600 text-white'
+          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+      }`}
+    >
+      <List className="w-4 h-4" />
+      <span>يومي</span>
+    </button>
+  </div>
+</div>
 
             <button
               onClick={() => navigateMonth('next')}
@@ -1024,301 +1559,7 @@ export default function AdminBookingsPage() {
             })}
           </div>
         </div>
-        {selectedDate && (
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-gray-800">
-                حجوزات {formatArabicDateDisplay(selectedDate)} ({selectedDayBookings.length} {selectedDayBookings.length === 1 ? 'موعد' : 'مواعيد'})
-              </h3>
-
-              <div className="flex items-center space-x-3 rtl:space-x-reverse">
-                {!isSelectingTimesForBlock ? (
-                  <button
-                    onClick={() => {
-                      setIsSelectingTimesForBlock(true)
-                      setSelectedTimesToBlock([])
-                    }}
-                    className="flex items-center space-x-2 rtl:space-x-reverse bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition-colors"
-                  >
-                    <Clock className="w-4 h-4" />
-                    <span>⏰ تحديد ساعات للإقفال/الفتح</span>
-                  </button>
-                ) : (
-                  <div className="flex items-center space-x-2 rtl:space-x-reverse">
-                    <button
-                      onClick={processSelectedTimes}
-                      disabled={selectedTimesToBlock.length === 0}
-                      className={`flex items-center space-x-2 rtl:space-x-reverse text-white px-3 py-2 rounded-lg transition-colors disabled:opacity-50 ${
-                        selectedTimesAction.type === 'unlock' ? 'bg-green-600 hover:bg-green-700' :
-                        selectedTimesAction.type === 'lock' ? 'bg-red-600 hover:bg-red-700' :
-                        'bg-blue-600 hover:bg-blue-700'
-                      }`}
-                    >
-                      <selectedTimesAction.icon className="w-4 h-4" />
-                      <span>{selectedTimesAction.text}</span>
-                    </button>
-                    <button
-                      onClick={() => {
-                        setIsSelectingTimesForBlock(false)
-                        setSelectedTimesToBlock([])
-                      }}
-                      className="flex items-center space-x-2 rtl:space-x-reverse bg-gray-600 text-white px-3 py-2 rounded-lg hover:bg-gray-700 transition-colors"
-                    >
-                      <X className="w-4 h-4" />
-                      <span>إلغاء</span>
-                    </button>
-                  </div>
-                )}
-
-                <button
-                  onClick={openNewBooking}
-                  className="flex items-center space-x-2 rtl:space-x-reverse bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>حجز جديد</span>
-                </button>
-              </div>
-            </div>
-
-            {isDayBlocked(selectedDate) ? (
-              <div className="text-center py-8">
-                <Lock className="w-16 h-16 mx-auto mb-4 text-red-500" />
-                <p className="text-lg text-red-600 font-medium">هذا اليوم مقفل كاملاً</p>
-                {selectedDayBookings.length > 0 && (
-                  <p className="text-sm text-gray-600 mt-2">
-                    يحتوي على {selectedDayBookings.length} حجز سابق
-                  </p>
-                )}
-                <button
-                  onClick={() => unblockDay(selectedDate)}
-                  className="mt-4 flex items-center space-x-2 rtl:space-x-reverse bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors mx-auto"
-                >
-                  <Unlock className="w-4 h-4" />
-                  <span>فتح اليوم</span>
-                </button>
-              </div>
-            ) : selectedDayBookings.length === 0 && !isSelectingTimesForBlock && adminTimeSlots.filter(time => isTimeBlocked(selectedDate, time)).length === 0 ? (
-              <div className="text-center py-12 text-gray-500">
-                <Calendar className="w-16 h-16 mx-auto mb-4 text-gray-300" />
-                <p className="text-lg">لا توجد حجوزات أو أوقات مقفلة في هذا اليوم</p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {isSelectingTimesForBlock && (
-                  <div className="bg-orange-50 border border-orange-200 rounded-xl p-4 mb-6">
-                    <h4 className="font-medium text-orange-800 mb-3">اختر الأوقات للإقفال أو الفتح:</h4>
-                    <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2">
-                      {adminTimeSlots.map((time) => {
-                        const isBooked = selectedDayBookings.some(booking => {
-                          const startDateTime = fromDatabaseTime(booking.startTime)
-                          const bookingTime = formatIstanbulDate(startDateTime, 'time')
-                          return bookingTime === time
-                        })
-                        const isBlocked = isTimeBlocked(selectedDate, time)
-                        const isSelectedForBlock = selectedTimesToBlock.includes(time)
-                        const canSelect = !isBooked
-
-                        return (
-                          <div
-                            key={time}
-                            onClick={() => canSelect && toggleTimeSelection(time)}
-                            className={`
-                              p-2 rounded-lg text-sm font-medium text-center transition-all cursor-pointer
-                              ${!canSelect
-                                ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                                : isSelectedForBlock
-                                  ? 'bg-orange-500 text-white'
-                                  : isBlocked
-                                    ? 'bg-red-100 border border-red-300 text-red-700 hover:border-orange-400'
-                                    : 'bg-white border border-gray-300 hover:border-orange-400'
-                              }
-                            `}
-                          >
-                            {time}
-                            {isBooked && <div className="text-xs">محجوز</div>}
-                            {isBlocked && !isBooked && <div className="text-xs">🔒</div>}
-                          </div>
-                        )
-                      })}
-                    </div>
-                  </div>
-                )}
-
-                {!isSelectingTimesForBlock && (
-                  <div className="bg-gray-50 border rounded-xl p-4 mb-6">
-                    <h4 className="font-medium text-gray-800 mb-3">جميع الأوقات لهذا اليوم:</h4>
-                    <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2">
-                      {adminTimeSlots.map((time) => {
-                        const booking = selectedDayBookings.find(booking => {
-                          const startDateTime = fromDatabaseTime(booking.startTime)
-                          const bookingTime = formatIstanbulDate(startDateTime, 'time')
-                          return bookingTime === time
-                        })
-                        const isBlocked = isTimeBlocked(selectedDate, time)
-
-                        return (
-                          <div
-                            key={time}
-                            className={`
-                              p-2 rounded-lg text-sm font-medium text-center
-                              ${booking
-                                ? 'bg-blue-100 border border-blue-300 text-blue-700'
-                                : isBlocked
-                                  ? 'bg-red-100 border border-red-300 text-red-700'
-                                  : 'bg-green-100 border border-green-300 text-green-700'
-                              }
-                            `}
-                          >
-                            {time}
-                            <div className="text-xs mt-1">
-                              {booking ? 'محجوز' : isBlocked ? 'مقفل' : 'متاح'}
-                            </div>
-                          </div>
-                        )
-                      })}
-                    </div>
-                  </div>
-                )}
-
-                {selectedDayBookings.map((booking) => {
-                  const startDateTime = fromDatabaseTime(booking.startTime)
-                  const timeString = formatIstanbulDate(startDateTime, 'time')
-
-                  return (
-                    <div
-                      key={booking.id}
-                      className={`border rounded-xl p-4 transition-all duration-200 hover:shadow-md ${
-                        booking.status === 'confirmed'
-                          ? 'border-green-200 bg-green-50'
-                          : booking.status === 'completed'
-                            ? 'border-blue-200 bg-blue-50'
-                            : 'border-red-200 bg-red-50'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-4 rtl:space-x-reverse mb-2">
-                            <div className="flex items-center space-x-2 rtl:space-x-reverse">
-                              <User className="w-4 h-4 text-gray-500" />
-                              <span className="font-semibold text-gray-800">{booking.customerName}</span>
-                            </div>
-
-                            <div className="relative">
-                              <button
-                                onClick={() => setShowPhoneMenu(showPhoneMenu === booking.customerPhone ? null : booking.customerPhone)}
-                                className="flex items-center space-x-2 rtl:space-x-reverse text-purple-600 hover:text-purple-800"
-                              >
-                                <Phone className="w-4 h-4" />
-                                <span>{booking.customerPhone}</span>
-                              </button>
-
-                              {showPhoneMenu === booking.customerPhone && (
-                                <div className="absolute left-0 mt-2 w-48 bg-white rounded-lg shadow-lg border z-10">
-                                  <button
-                                    onClick={() => makeCall(booking.customerPhone)}
-                                    className="w-full text-right px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2 rtl:space-x-reverse"
-                                  >
-                                    <Phone className="w-4 h-4 text-green-600" />
-                                    <span>اتصال</span>
-                                  </button>
-                                  <button
-                                    onClick={() => openWhatsApp(booking.customerPhone, booking.customerName)}
-                                    className="w-full text-right px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2 rtl:space-x-reverse"
-                                  >
-                                    <MessageCircle className="w-4 h-4 text-green-600" />
-                                    <span>واتساب</span>
-                                  </button>
-                                  <button
-                                    onClick={() => copyPhoneNumber(booking.customerPhone)}
-                                    className="w-full text-right px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2 rtl:space-x-reverse"
-                                  >
-                                    <Copy className="w-4 h-4 text-blue-600" />
-                                    <span>نسخ الرقم</span>
-                                  </button>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-
-                          <div className="flex items-center space-x-4 rtl:space-x-reverse text-sm text-gray-600">
-                            <div className="flex items-center space-x-1 rtl:space-x-reverse">
-                              <Clock className="w-4 h-4" />
-                              <span>{timeString}</span>
-                              {isTimeBlocked(selectedDate, timeString) && (
-                                <button
-                                  onClick={() => unblockTime(selectedDate, timeString)}
-                                  className="ml-2 text-red-500 hover:text-red-700"
-                                  title="إلغاء إقفال هذا الوقت"
-                                >
-                                  <Lock className="w-3 h-3" />
-                                </button>
-                              )}
-                            </div>
-
-                            <div className="flex items-center space-x-1 rtl:space-x-reverse">
-                              <Sparkles className="w-4 h-4" />
-                              <div className="flex flex-wrap gap-1">
-                                {booking.services.map((serviceId, serviceIndex) => (
-                                  <span
-                                    key={`service-${booking.id}-${serviceIndex}`}
-                                    className={`text-xs px-2 py-1 rounded-full ${getServiceColor(serviceId)}`}
-                                  >
-                                    {services[serviceId] || `خدمة ${serviceId}`}
-                                  </span>
-                                ))}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center space-x-2 rtl:space-x-reverse">
-                          <button
-                            onClick={() => openEditBooking(booking)}
-                            className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
-                            title="تعديل الحجز"
-                          >
-                            <Edit className="w-4 h-4" />
-                          </button>
-
-                          <button
-                            onClick={() => openDeleteBooking(booking)}
-                            className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors"
-                            title="حذف الحجز"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  )
-                })}
-
-                {!isSelectingTimesForBlock && adminTimeSlots.filter(time => isTimeBlocked(selectedDate, time)).length > 0 && (
-                  <div className="mt-4">
-                    <h4 className="font-medium text-gray-700 mb-3">الأوقات المقفلة:</h4>
-                    {adminTimeSlots.filter(time => isTimeBlocked(selectedDate, time)).map(time => (
-                      <div key={time} className="border border-red-200 bg-red-50 rounded-lg p-3 mb-2">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-2 rtl:space-x-reverse">
-                            <Lock className="w-4 h-4 text-red-600" />
-                            <span className="font-medium text-red-700">{time} - مقفل</span>
-                          </div>
-                          <button
-                            onClick={() => unblockTime(selectedDate, time)}
-                            className="flex items-center space-x-1 rtl:space-x-reverse text-green-600 hover:text-green-800 text-sm"
-                          >
-                            <Unlock className="w-4 h-4" />
-                            <span>فتح</span>
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        )}
+        
       </div>
 
       {/* نافذة إنشاء حجز جديد */}

@@ -1,0 +1,84 @@
+# .github/workflows/pull-request.yml
+name: 🔍 Pull Request Validation
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+    types: [opened, synchronize, reopened]
+
+jobs:
+  # ===== فحص سريع للـ PR =====
+  pr-check:
+    name: 🎯 Quick PR Validation
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout PR Branch
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        
+    - name: 🚀 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: 📦 Install Dependencies
+      run: npm ci
+      
+    - name: 📏 Check File Sizes
+      run: |
+        echo "📊 Checking large files..."
+        find . -name "*.tsx" -o -name "*.ts" | xargs wc -l | sort -nr | head -10
+        
+        # تحذير إذا كان ملف page.tsx كبير جداً
+        if [ -f "src/app/admin/bookings/page.tsx" ]; then
+          PAGE_LINES=$(wc -l < src/app/admin/bookings/page.tsx)
+          if [ $PAGE_LINES -gt 2000 ]; then
+            echo "⚠️ Warning: page.tsx is too large ($PAGE_LINES lines)"
+            echo "💡 Consider splitting into smaller components"
+          fi
+        fi
+        
+    - name: 🔍 TypeScript Validation
+      run: npx tsc --noEmit
+      
+    - name: 🏗️ Build Test
+      run: npm run build
+      
+    - name: 📝 PR Summary
+      run: |
+        echo "✅ PR Validation Summary:"
+        echo "📝 Files changed: $(git diff --name-only origin/main...HEAD | wc -l)"
+        echo "➕ Lines added: $(git diff --stat origin/main...HEAD | tail -1)"
+
+  # ===== فحص الكود الجديد =====
+  code-review:
+    name: 🔍 Automated Code Review
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout Code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        
+    - name: 🔍 Check for Console Logs
+      run: |
+        echo "🔍 Checking for console.log statements..."
+        if git diff origin/main...HEAD | grep -E '^\+.*console\.(log|warn|error)'; then
+          echo "⚠️ Found console statements in new code"
+          echo "💡 Consider removing them before merge"
+        else
+          echo "✅ No console statements found"
+        fi
+        
+    - name: 📱 Mobile-First Check
+      run: |
+        echo "📱 Checking for mobile-first design..."
+        if git diff origin/main...HEAD | grep -E 'sm:|md:|lg:'; then
+          echo "✅ Responsive design classes found"
+        else
+          echo "💡 Consider adding responsive design"
+        fi

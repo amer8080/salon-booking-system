@@ -5,65 +5,14 @@ import { parseIstanbulDate, toDatabaseTime, fromDatabaseTime, formatIstanbulDate
 
 export async function GET(request: NextRequest) {
   try {
-    // استخراج معاملات التاريخ من URL
-    const { searchParams } = new URL(request.url)
-    const startDate = searchParams.get('startDate')
-    const endDate = searchParams.get('endDate')
-    const view = searchParams.get('view') || 'week' // week, month, day
-
-    console.log(`📅 طلب حجوزات - العرض: ${view}, من: ${startDate}, إلى: ${endDate}`)
-
-    // إعداد تصفية التواريخ
-    let dateFilter = {}
-    
-    if (startDate && endDate) {
-      // تحويل التواريخ لقاعدة البيانات
-      const start = parseIstanbulDate(startDate)
-      const end = parseIstanbulDate(endDate)
-      // إضافة 24 ساعة لنهاية اليوم
-      end.setHours(23, 59, 59, 999)
-      
-      dateFilter = {
-        startTime: {
-          gte: toDatabaseTime(start),
-          lte: toDatabaseTime(end)
-        }
-      }
-      
-      console.log(`🔍 تصفية التواريخ: ${start.toISOString()} إلى ${end.toISOString()}`)
-    } else {
-      // إذا لم يتم تحديد تواريخ، استخدم الأسبوع الحالي
-      const now = new Date()
-      const startOfWeek = new Date(now)
-      startOfWeek.setDate(now.getDate() - now.getDay()) // بداية الأسبوع (الأحد)
-      startOfWeek.setHours(0, 0, 0, 0)
-      
-      const endOfWeek = new Date(startOfWeek)
-      endOfWeek.setDate(startOfWeek.getDate() + 6) // نهاية الأسبوع (السبت)
-      endOfWeek.setHours(23, 59, 59, 999)
-      
-      dateFilter = {
-        startTime: {
-          gte: toDatabaseTime(startOfWeek),
-          lte: toDatabaseTime(endOfWeek)
-        }
-      }
-      
-      console.log(`📅 استخدام الأسبوع الحالي: ${startOfWeek.toISOString()} إلى ${endOfWeek.toISOString()}`)
-    }
-
-    // جلب الحجوزات مع التصفية
     const bookings = await prisma.reservation.findMany({
-      where: dateFilter,
       include: {
         customer: true
       },
       orderBy: {
-        startTime: 'asc'
+        date: 'desc'
       }
     })
-
-    console.log(`✅ تم جلب ${bookings.length} حجز للفترة المحددة (بدلاً من جميع الحجوزات)`)
 
     const formattedBookings = bookings.map(booking => ({
       id: booking.id,
@@ -80,13 +29,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      bookings: formattedBookings,
-      count: formattedBookings.length,
-      dateRange: { startDate, endDate, view },
-      performance: {
-        message: `تم تحميل ${formattedBookings.length} حجز بدلاً من جميع الحجوزات - تحسين كبير في الأداء!`,
-        optimized: true
-      }
+      bookings: formattedBookings
     })
 
   } catch (error) {
@@ -143,7 +86,7 @@ export async function POST(request: NextRequest) {
         date: toDatabaseTime(appointmentDate),
         startTime: toDatabaseTime(startTime),
         endTime: toDatabaseTime(endTime),
-        services: formatServicesForDatabase(selectedServices),
+        services: JSON.stringify(selectedServices),
         status: 'confirmed',
         totalPrice: 0,
         createdBy: createdBy,
