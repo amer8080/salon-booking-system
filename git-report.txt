@@ -1,0 +1,20 @@
+=== Branches (local + remote) ===
+  fix/typescript-errors
+* main
+  remotes/origin/HEAD -> origin/main
+  remotes/origin/fix/successful-build
+  remotes/origin/main
+
+=== Diffs vs origin/main ===
+---- origin/fix/successful-build ----
+ .github/workflows/ci-cd.yml        | 129 +++++++++++++++++++++++++++++++++++++
+ .github/workflows/pull-request.yml |  84 ++++++++++++++++++++++++
+ 2 files changed, 213 insertions(+)
+
+---- origin/main ----
+
+=== Unique commits per branch ===
+---- Commits in origin/fix/successful-build not in origin/main ----
+
+---- Commits in origin/main not in origin/main ----
+

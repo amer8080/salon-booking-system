@@ -1,0 +1,216 @@
+=== تحليل شامل محدث لنظام حجوزات الصالون ===
+التاريخ: Fri Jun 20 01:13:33 PM +03 2025
+
+=== إحصائيات الملفات المنفصلة ===
+ملفات TypeScript (.ts):
+  4695 total
+   506 src/app/book/hooks/useCalendar.ts
+   481 src/app/book/hooks/useTimeSlots.ts
+   469 src/app/book/utils/booking-helpers.ts
+   456 src/app/book/hooks/usePhoneVerification.ts
+   455 src/app/book/hooks/useServices.ts
+   402 src/app/book/utils/error-handling.ts
+   374 src/app/book/utils/form-validation.ts
+   349 src/app/book/hooks/useBookingSubmit.ts
+   309 src/app/book/utils/calendar-generator.ts
+   300 src/app/book/hooks/useBookingSteps.ts
+   225 src/app/book/types/api-responses.types.ts
+   176 src/app/book/types/calendar.types.ts
+   128 src/app/book/types/booking-form.types.ts
+    39 src/app/book/components/index.ts
+    26 src/app/book/index.ts
+     0 src/app/book/components/modals/index.ts
+
+ملفات React Components (.tsx):
+  3588 total
+   503 src/app/book/components/ServicesList.tsx
+   462 src/app/book/components/BookingSelectionStep.tsx
+   460 src/app/book/components/TimeSlotsPicker.tsx
+   402 src/app/book/components/BookingConfirmationStep.tsx
+   401 src/app/book/components/ToastNotifications.tsx
+   396 src/app/book/components/BookingCalendar.tsx
+   388 src/app/book/components/PhoneVerificationStep.tsx
+   315 src/app/book/page.tsx
+   261 src/app/book/components/BookingStepIndicator.tsx
+     0 src/app/book/components/modals/BookingSuccessModal.tsx
+     0 src/app/book/components/modals/BookingErrorModal.tsx
+
+page.tsx تحليل:
+315 src/app/book/page.tsx
+
+=== Components الكبيرة (.tsx أكثر من 200 سطر) ===
+  3588 total
+   503 src/app/book/components/ServicesList.tsx
+   462 src/app/book/components/BookingSelectionStep.tsx
+   460 src/app/book/components/TimeSlotsPicker.tsx
+   402 src/app/book/components/BookingConfirmationStep.tsx
+   401 src/app/book/components/ToastNotifications.tsx
+   396 src/app/book/components/BookingCalendar.tsx
+   388 src/app/book/components/PhoneVerificationStep.tsx
+   315 src/app/book/page.tsx
+   261 src/app/book/components/BookingStepIndicator.tsx
+
+=== Hooks/Utils الكبيرة (.ts أكثر من 200 سطر) ===
+  4695 total
+   506 src/app/book/hooks/useCalendar.ts
+   481 src/app/book/hooks/useTimeSlots.ts
+   469 src/app/book/utils/booking-helpers.ts
+   456 src/app/book/hooks/usePhoneVerification.ts
+   455 src/app/book/hooks/useServices.ts
+   402 src/app/book/utils/error-handling.ts
+   374 src/app/book/utils/form-validation.ts
+   349 src/app/book/hooks/useBookingSubmit.ts
+   309 src/app/book/utils/calendar-generator.ts
+   300 src/app/book/hooks/useBookingSteps.ts
+   225 src/app/book/types/api-responses.types.ts
+
+=== تحليل ESLint ===
+فحص ملف eslint config:
+✅ .eslintrc.json موجود:
+{"extends": ["next/core-web-vitals"]}
+
+فحص package.json للـ ESLint:
+  "devDependencies": {
+    "@types/node": "^24",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "autoprefixer": "^10.4.21",
+    "eslint": "^9.29.0",
+    "eslint-config-next": "15.3.3",
+    "glob": "^11.0.3",
+    "postcss": "^8.5.5",
+    "rimraf": "^6.0.1",
+    "tailwindcss": "^3.4.17",
+    "tsx": "^4.20.3",
+
+محاولة تشغيل ESLint:
+
+Oops! Something went wrong! :(
+
+ESLint: 9.29.0
+
+ESLint couldn't find an eslint.config.(js|mjs|cjs) file.
+
+From ESLint v9.0.0, the default configuration file is now eslint.config.js.
+If you are using a .eslintrc.* file, please follow the migration guide
+to update your configuration file to the new format:
+
+https://eslint.org/docs/latest/use/configure/migration-guide
+
+If you still have problems after following the migration guide, please stop by
+https://eslint.org/chat/help to chat with the team.
+
+
+=== فحص Next.js Config ===
+محتوى next.config.js:
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  experimental: {
+    typedRoutes: false,
+  },
+}
+
+module.exports = nextConfig
+
+=== تحليل البناء التفصيلي ===
+نتيجة البناء:
+✅ البناء نجح:
+   ▲ Next.js 15.3.3
+Route (app)                                 Size  First Load JS
++ First Load JS shared by all             101 kB
+  ├ chunks/4bd1b696-a4b4829a0a1c5613.js  53.2 kB
+  ├ chunks/684-1a9ec89a570ace83.js       45.9 kB
+
+=== فحص مفصل للمشاكل ===
+console.log في كل ملف:
+      1 src/app/book/components/BookingConfirmationStep.tsx
+      6 src/app/book/components/BookingSelectionStep.tsx
+      1 src/app/book/components/ServicesList.tsx
+      1 src/app/book/components/TimeSlotsPicker.tsx
+      4 src/app/book/hooks/useBookingSteps.ts
+      2 src/app/book/hooks/useCalendar.ts
+      3 src/app/book/hooks/usePhoneVerification.ts
+      1 src/app/book/hooks/useServices.ts
+      1 src/app/book/hooks/useTimeSlots.ts
+      2 src/app/book/page.tsx
+      3 src/app/book/utils/booking-helpers.ts
+      5 src/app/book/utils/error-handling.ts
+
+استخدام any type في كل ملف:
+      1 src/app/book/components/BookingConfirmationStep.tsx
+      2 src/app/book/components/BookingSelectionStep.tsx
+      1 src/app/book/components/TimeSlotsPicker.tsx
+      7 src/app/book/hooks/useBookingSubmit.ts
+      2 src/app/book/hooks/usePhoneVerification.ts
+      1 src/app/book/hooks/useServices.ts
+      2 src/app/book/hooks/useTimeSlots.ts
+      1 src/app/book/page.tsx
+      2 src/app/book/types/api-responses.types.ts
+      1 src/app/book/types/booking-form.types.ts
+      1 src/app/book/types/calendar.types.ts
+      2 src/app/book/utils/booking-helpers.ts
+     13 src/app/book/utils/error-handling.ts
+
+useEffect بدون dependencies:
+0
+useState المعقدة (objects):
+7
+=== تحليل الـ Imports ===
+External dependencies المستخدمة:
+     16 react
+      9 lucide-react
+      8 @/lib/timezone
+      1 next/link
+
+Internal imports الأكثر استخداماً:
+     12 ../types/booking-form.types
+      9 ./ToastNotifications
+      7 ../utils/booking-helpers
+      5 ../types/calendar.types
+      5 ../types/api-responses.types
+      4 ../utils/error-handling
+      3 ../utils/form-validation
+      2 ./utils/form-validation
+      2 ./utils/booking-helpers
+      2 ./types/booking-form.types
+=== تحليل TypeScript ===
+محاولة فحص TypeScript errors:
+.next/types/app/api/admin/settings/app/route.ts(12,13): error TS2344: Type 'OmitWithTag<typeof import("/var/www/salon-booking-system/src/app/api/admin/settings/app/route"), "config" | "POST" | "DELETE" | "PUT" | "PATCH" | "generateStaticParams" | "revalidate" | ... 8 more ... | "OPTIONS", "">' does not satisfy the constraint '{ [x: string]: never; }'.
+  Property 'getFirstDayOfWeek' is incompatible with index signature.
+    Type '() => Promise<number>' is not assignable to type 'never'.
+src/app/admin/bookings/components/Views/DayView.tsx(66,27): error TS2339: Property 'logError' does not exist on type '{ autoFixBooking: (booking: any) => any; }'.
+src/app/admin/bookings/components/Views/DayView.tsx(298,41): error TS2339: Property 'serviceNames' does not exist on type 'Booking'.
+src/app/admin/bookings/components/Views/DayView.tsx(298,70): error TS2339: Property 'serviceNames' does not exist on type 'Booking'.
+src/app/admin/bookings/components/Views/DayView.tsx(299,42): error TS2339: Property 'serviceNames' does not exist on type 'Booking'.
+src/app/admin/bookings/components/Views/DayView.tsx(300,43): error TS2339: Property 'serviceNames' does not exist on type 'Booking'.
+src/app/admin/bookings/components/Views/DayView.tsx(300,87): error TS2339: Property 'serviceNames' does not exist on type 'Booking'.
+src/app/admin/bookings/hooks/useBookings.ts(86,21): error TS2345: Argument of type '{ [key: string]: string; }' is not assignable to parameter of type 'SetStateAction<{ [key: string]: Service; }>'.
+  Type '{ [key: string]: string; }' is not assignable to type '{ [key: string]: Service; }'.
+    'string' index signatures are incompatible.
+      Type 'string' is not assignable to type 'Service'.
+src/app/admin/bookings/page.tsx(266,13): error TS7034: Variable 'weekDates' implicitly has type 'any[]' in some locations where its type cannot be determined.
+src/app/admin/bookings/page.tsx(276,18): error TS7005: Variable 'weekDates' implicitly has an 'any[]' type.
+src/app/admin/bookings/page.tsx(282,63): error TS7005: Variable 'weekDates' implicitly has an 'any[]' type.
+src/app/admin/bookings/page.tsx(649,9): error TS2322: Type '{ [key: string]: Service; }' is not assignable to type '{ [key: string]: string; }'.
+  'string' index signatures are incompatible.
+    Type 'Service' is not assignable to type 'string'.
+src/app/admin/bookings/page.tsx(661,9): error TS2322: Type '{ [key: string]: Service; }' is not assignable to type '{ [key: string]: string; }'.
+=== مقاييس الأداء ===
+حجم node_modules:
+898M	node_modules
+حجم .next (إن وجد):
+304M	.next
+آخر 5 ملفات تم تعديلها:
+-rw-r--r-- 1 root root 13679 Jun 20 12:21 src/app/book/utils/booking-helpers.ts
+-rw-r--r-- 1 root root 10810 Jun 20 12:00 src/app/book/hooks/useBookingSubmit.ts
+-rw-r--r-- 1 root root  8975 Jun 19 16:30 src/app/book/hooks/useBookingSteps.ts
+-rw-r--r-- 1 root root  1712 Jun 19 15:43 src/app/book/components/index.ts
+-rw-r--r-- 1 root root 11701 Jun 19 13:07 src/app/book/utils/error-handling.ts
+
+=== انتهى التحليل الشامل ===

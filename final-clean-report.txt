@@ -1,0 +1,331 @@
+
+/var/www/salon-booking-system/src/app/admin/bookings/components/Bookings/BookingCard.tsx
+  19:3  warning  'AlertCircle' is defined but never used           @typescript-eslint/no-unused-vars
+  62:3  warning  'services' is defined but never used              @typescript-eslint/no-unused-vars
+  86:9  warning  'displayDate' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/var/www/salon-booking-system/src/app/admin/bookings/components/Modals/DeleteBookingModal.tsx
+  80:14  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+
+/var/www/salon-booking-system/src/app/admin/bookings/components/Modals/EditBookingModal.tsx
+  153:14  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+
+/var/www/salon-booking-system/src/app/admin/bookings/components/Modals/NewBookingModal.tsx
+   41:3   warning  'services' is defined but never used  @typescript-eslint/no-unused-vars
+  172:14  warning  'error' is defined but never used     @typescript-eslint/no-unused-vars
+
+/var/www/salon-booking-system/src/app/admin/bookings/components/UI/CombinedHeader.tsx
+  123:36  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/var/www/salon-booking-system/src/app/admin/bookings/components/UI/PhoneMenu.tsx
+  31:14  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+
+/var/www/salon-booking-system/src/app/admin/bookings/components/Views/DayView.tsx
+  24:17  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  58:3   warning  'onDateChange' is defined but never used  @typescript-eslint/no-unused-vars
+  69:52  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/var/www/salon-booking-system/src/app/admin/bookings/components/Views/MonthView.tsx
+  31:9  warning  'today' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/var/www/salon-booking-system/src/app/admin/bookings/components/Views/WeekView.tsx
+   17:17  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   51:3   warning  'onDateChange' is defined but never used  @typescript-eslint/no-unused-vars
+   60:52  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  111:9   warning  Unexpected console statement              no-console
+
+/var/www/salon-booking-system/src/app/admin/bookings/hooks/useBookings.ts
+   55:7   warning  Unexpected console statement              no-console
+   86:36  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   93:7   warning  Unexpected console statement              no-console
+  117:7   warning  Unexpected console statement              no-console
+
+/var/www/salon-booking-system/src/app/admin/bookings/hooks/useDayView.ts
+   4:10  warning  'useState' is defined but never used      @typescript-eslint/no-unused-vars
+   7:17  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   9:21  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  10:32  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  53:14  warning  'error' is defined but never used         @typescript-eslint/no-unused-vars
+  71:14  warning  'error' is defined but never used         @typescript-eslint/no-unused-vars
+
+/var/www/salon-booking-system/src/app/admin/bookings/page.tsx
+  369:7   warning  Unexpected console statement       no-console
+  399:7   warning  Unexpected console statement       no-console
+  422:7   warning  Unexpected console statement       no-console
+  548:36  warning  '_date' is defined but never used  @typescript-eslint/no-unused-vars
+  548:43  warning  '_time' is defined but never used  @typescript-eslint/no-unused-vars
+  572:36  warning  '_date' is defined but never used  @typescript-eslint/no-unused-vars
+  572:43  warning  '_time' is defined but never used  @typescript-eslint/no-unused-vars
+
+/var/www/salon-booking-system/src/app/admin/bookings/types/booking.types.ts
+  104:9  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/var/www/salon-booking-system/src/app/admin/customers/components/modals/CustomerEditModal.tsx
+  18:3  warning  'customer' is defined but never used  @typescript-eslint/no-unused-vars
+
+/var/www/salon-booking-system/src/app/admin/customers/hooks/useCustomerModals.ts
+   90:14  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+  124:14  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+  152:14  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+
+/var/www/salon-booking-system/src/app/admin/customers/hooks/useCustomers.ts
+  93:7  warning  Unexpected console statement  no-console
+
+/var/www/salon-booking-system/src/app/admin/login/page.tsx
+  40:7  warning  Unexpected console statement  no-console
+
+/var/www/salon-booking-system/src/app/admin/page.tsx
+  11:3  warning  'BarChart3' is defined but never used    @typescript-eslint/no-unused-vars
+  13:3  warning  'CheckCircle' is defined but never used  @typescript-eslint/no-unused-vars
+  14:3  warning  'XCircle' is defined but never used      @typescript-eslint/no-unused-vars
+  60:7  warning  Unexpected console statement             no-console
+
+/var/www/salon-booking-system/src/app/admin/services/new/page.tsx
+   8:3  warning  'X' is defined but never used  @typescript-eslint/no-unused-vars
+  88:7  warning  Unexpected console statement   no-console
+
+/var/www/salon-booking-system/src/app/admin/services/page.tsx
+   86:7  warning  Unexpected console statement  no-console
+  115:7  warning  Unexpected console statement  no-console
+  135:7  warning  Unexpected console statement  no-console
+  161:7  warning  Unexpected console statement  no-console
+
+/var/www/salon-booking-system/src/app/admin/settings/page.tsx
+   97:7   warning  Unexpected console statement              no-console
+  128:7   warning  Unexpected console statement              no-console
+  136:68  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/var/www/salon-booking-system/src/app/api/admin/blocked-times/[id]/route.ts
+   41:5   warning  Unexpected console statement              no-console
+   42:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  100:5   warning  Unexpected console statement              no-console
+
+/var/www/salon-booking-system/src/app/api/admin/blocked-times/route.ts
+   5:27  warning  'request' is defined but never used  @typescript-eslint/no-unused-vars
+  32:5   warning  Unexpected console statement         no-console
+  94:5   warning  Unexpected console statement         no-console
+
+/var/www/salon-booking-system/src/app/api/admin/bookings/[id]/route.ts
+   23:33  warning  Unexpected any. Specify a different type                  @typescript-eslint/no-explicit-any
+   38:23  warning  Unexpected any. Specify a different type                  @typescript-eslint/no-explicit-any
+   64:13  warning  'existingReservation' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  148:19  warning  Unexpected any. Specify a different type                  @typescript-eslint/no-explicit-any
+  185:14  warning  'error' is defined but never used                         @typescript-eslint/no-unused-vars
+
+/var/www/salon-booking-system/src/app/api/admin/bookings/route.ts
+    4:45  warning  'fromDatabaseTime' is defined but never used    @typescript-eslint/no-unused-vars
+    4:63  warning  'formatIstanbulDate' is defined but never used  @typescript-eslint/no-unused-vars
+   14:5   warning  Unexpected console statement                    no-console
+   33:7   warning  Unexpected console statement                    no-console
+   52:7   warning  Unexpected console statement                    no-console
+   66:5   warning  Unexpected console statement                    no-console
+   93:5   warning  Unexpected console statement                    no-console
+  191:5   warning  Unexpected console statement                    no-console
+
+/var/www/salon-booking-system/src/app/api/admin/customers/route.ts
+   24:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   52:26  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  200:5   warning  Unexpected console statement              no-console
+  257:5   warning  Unexpected console statement              no-console
+
+/var/www/salon-booking-system/src/app/api/admin/dashboard/route.ts
+   4:27  warning  'request' is defined but never used  @typescript-eslint/no-unused-vars
+   6:5   warning  Unexpected console statement         no-console
+  56:5   warning  Unexpected console statement         no-console
+  80:5   warning  Unexpected console statement         no-console
+
+/var/www/salon-booking-system/src/app/api/admin/login/route.ts
+  31:7  warning  Unexpected console statement  no-console
+  45:7  warning  Unexpected console statement  no-console
+  54:5  warning  Unexpected console statement  no-console
+
+/var/www/salon-booking-system/src/app/api/admin/services/[id]/route.ts
+    8:5   warning  Unexpected console statement              no-console
+   48:5   warning  Unexpected console statement              no-console
+   57:5   warning  Unexpected console statement              no-console
+   74:5   warning  Unexpected console statement              no-console
+   97:5   warning  Unexpected console statement              no-console
+  106:5   warning  Unexpected console statement              no-console
+  123:5   warning  Unexpected console statement              no-console
+  153:5   warning  Unexpected console statement              no-console
+  161:5   warning  Unexpected console statement              no-console
+  164:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  186:5   warning  Unexpected console statement              no-console
+  201:5   warning  Unexpected console statement              no-console
+  209:5   warning  Unexpected console statement              no-console
+
+/var/www/salon-booking-system/src/app/api/admin/services/route.ts
+    7:5   warning  Unexpected console statement         no-console
+   86:5   warning  Unexpected console statement         no-console
+   95:5   warning  Unexpected console statement         no-console
+  109:27  warning  'request' is defined but never used  @typescript-eslint/no-unused-vars
+  111:5   warning  Unexpected console statement         no-console
+  120:5   warning  Unexpected console statement         no-console
+  130:5   warning  Unexpected console statement         no-console
+
+/var/www/salon-booking-system/src/app/api/admin/settings/app/route.ts
+   54:5  warning  Unexpected console statement  no-console
+  140:5  warning  Unexpected console statement  no-console
+  168:5  warning  Unexpected console statement  no-console
+  193:5  warning  Unexpected console statement  no-console
+
+/var/www/salon-booking-system/src/app/api/admin/settings/colors/route.ts
+   43:5  warning  Unexpected console statement  no-console
+  115:5  warning  Unexpected console statement  no-console
+  143:5  warning  Unexpected console statement  no-console
+
+/var/www/salon-booking-system/src/app/api/bookings/available-times/route.ts
+  184:5  warning  Unexpected console statement  no-console
+
+/var/www/salon-booking-system/src/app/api/bookings/route.ts
+  110:5  warning  Unexpected console statement  no-console
+
+/var/www/salon-booking-system/src/app/api/mysql-timezone/route.ts
+  19:5  warning  Unexpected console statement  no-console
+
+/var/www/salon-booking-system/src/app/api/services/route.ts
+  47:5  warning  Unexpected console statement  no-console
+
+/var/www/salon-booking-system/src/app/book/components/BookingCalendar.tsx
+  4:27  warning  'useRef' is defined but never used  @typescript-eslint/no-unused-vars
+
+/var/www/salon-booking-system/src/app/book/components/BookingConfirmationStep.tsx
+    8:10  warning  'formatArabicDate' is defined but never used   @typescript-eslint/no-unused-vars
+    8:28  warning  'parseIstanbulDate' is defined but never used  @typescript-eslint/no-unused-vars
+   42:7   warning  Unexpected console statement                   no-console
+  339:16  warning  Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
+
+/var/www/salon-booking-system/src/app/book/components/BookingSelectionStep.tsx
+   31:3   warning  'errors' is defined but never used                  @typescript-eslint/no-unused-vars
+   35:10  warning  'activeTab' is assigned a value but never used      @typescript-eslint/no-unused-vars
+   36:10  warning  'completedTabs' is assigned a value but never used  @typescript-eslint/no-unused-vars
+   54:31  warning  Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
+   55:28  warning  Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
+   59:9   warning  Unexpected console statement                        no-console
+   81:7   warning  Unexpected console statement                        no-console
+   88:11  warning  Unexpected console statement                        no-console
+   92:11  warning  Unexpected console statement                        no-console
+   96:9   warning  Unexpected console statement                        no-console
+  101:7   warning  Unexpected console statement                        no-console
+  154:15  warning  'todayString' is assigned a value but never used    @typescript-eslint/no-unused-vars
+
+/var/www/salon-booking-system/src/app/book/components/BookingStepIndicator.tsx
+  41:29  warning  'index' is defined but never used  @typescript-eslint/no-unused-vars
+
+/var/www/salon-booking-system/src/app/book/components/ServicesList.tsx
+   35:5   warning  'servicesGrouped' is assigned a value but never used       @typescript-eslint/no-unused-vars
+   36:5   warning  'selectedServicesData' is assigned a value but never used  @typescript-eslint/no-unused-vars
+   41:5   warning  'isValidSelection' is assigned a value but never used      @typescript-eslint/no-unused-vars
+   45:7   warning  Unexpected console statement                               no-console
+  428:18  warning  'servicesGrouped' is assigned a value but never used       @typescript-eslint/no-unused-vars
+
+/var/www/salon-booking-system/src/app/book/components/TimeSlotsPicker.tsx
+   25:5   warning  'bookedSlots' is assigned a value but never used   @typescript-eslint/no-unused-vars
+   26:5   warning  'blockedSlots' is assigned a value but never used  @typescript-eslint/no-unused-vars
+   43:7   warning  Unexpected console statement                       no-console
+  220:63  warning  Unexpected any. Specify a different type           @typescript-eslint/no-explicit-any
+
+/var/www/salon-booking-system/src/app/book/components/ToastNotifications.tsx
+  7:56  warning  'Wifi' is defined but never used           @typescript-eslint/no-unused-vars
+  7:71  warning  'MessageCircle' is defined but never used  @typescript-eslint/no-unused-vars
+
+/var/www/salon-booking-system/src/app/book/hooks/useBookingSteps.ts
+    7:45  warning  'isStepDataValid' is defined but never used            @typescript-eslint/no-unused-vars
+   55:11  warning  'targetStepConfig' is assigned a value but never used  @typescript-eslint/no-unused-vars
+   76:7   warning  Unexpected console statement                           no-console
+   85:9   warning  Unexpected console statement                           no-console
+  267:7   warning  Unexpected console statement                           no-console
+  284:7   warning  Unexpected console statement                           no-console
+
+/var/www/salon-booking-system/src/app/book/hooks/useBookingSubmit.ts
+   12:26  warning  Unexpected any. Specify a different type                   @typescript-eslint/no-explicit-any
+   84:40  warning  Unexpected any. Specify a different type                   @typescript-eslint/no-explicit-any
+   85:39  warning  Unexpected any. Specify a different type                   @typescript-eslint/no-explicit-any
+   86:39  warning  Unexpected any. Specify a different type                   @typescript-eslint/no-explicit-any
+  146:13  warning  'selectedServicesData' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  187:21  warning  Unexpected any. Specify a different type                   @typescript-eslint/no-explicit-any
+  220:14  warning  'error' is defined but never used                          @typescript-eslint/no-unused-vars
+  280:33  warning  Unexpected any. Specify a different type                   @typescript-eslint/no-explicit-any
+  322:40  warning  Unexpected any. Specify a different type                   @typescript-eslint/no-explicit-any
+
+/var/www/salon-booking-system/src/app/book/hooks/useCalendar.ts
+  287:39  warning  'e' is defined but never used  @typescript-eslint/no-unused-vars
+  487:7   warning  Unexpected console statement   no-console
+  499:7   warning  Unexpected console statement   no-console
+
+/var/www/salon-booking-system/src/app/book/hooks/usePhoneVerification.ts
+   13:28  warning  'createErrorToast' is defined but never used  @typescript-eslint/no-unused-vars
+   16:42  warning  Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+   17:21  warning  Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+  199:9   warning  Unexpected console statement                  no-console
+  232:7   warning  Unexpected console statement                  no-console
+  297:7   warning  Unexpected console statement                  no-console
+
+/var/www/salon-booking-system/src/app/book/hooks/useServices.ts
+  12:21  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  99:7   warning  Unexpected console statement              no-console
+
+/var/www/salon-booking-system/src/app/book/hooks/useTimeSlots.ts
+    7:28  warning  'createErrorToast' is defined but never used  @typescript-eslint/no-unused-vars
+   16:21  warning  Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+  221:21  warning  Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+  227:7   warning  Unexpected console statement                  no-console
+  480:15  warning  '_' is defined but never used                 @typescript-eslint/no-unused-vars
+
+/var/www/salon-booking-system/src/app/book/page.tsx
+   49:7   warning  Unexpected console statement              no-console
+   78:7   warning  Unexpected console statement              no-console
+  168:65  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/var/www/salon-booking-system/src/app/book/types/api-responses.types.ts
+   10:13  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  150:34  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  218:9   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/var/www/salon-booking-system/src/app/book/types/booking-form.types.ts
+  77:9  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/var/www/salon-booking-system/src/app/book/types/calendar.types.ts
+  167:13  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/var/www/salon-booking-system/src/app/book/utils/booking-helpers.ts
+  314:5   warning  Unexpected console statement              no-console
+  338:5   warning  Unexpected console statement              no-console
+  351:5   warning  Unexpected console statement              no-console
+  356:46  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  356:56  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  369:46  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  369:56  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/var/www/salon-booking-system/src/app/book/utils/calendar-generator.ts
+  12:3   warning  'toIstanbulTime' is defined but never used  @typescript-eslint/no-unused-vars
+  14:65  warning  'WorkingHours' is defined but never used    @typescript-eslint/no-unused-vars
+  55:3   warning  'config' is defined but never used          @typescript-eslint/no-unused-vars
+
+/var/www/salon-booking-system/src/app/book/utils/error-handling.ts
+   27:22  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   43:43  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   53:30  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  157:40  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  180:5   warning  Unexpected console statement              no-console
+  181:5   warning  Unexpected console statement              no-console
+  182:5   warning  Unexpected console statement              no-console
+  183:5   warning  Unexpected console statement              no-console
+  192:7   warning  Unexpected console statement              no-console
+  205:20  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  245:18  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  273:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  273:46  warning  'context' is defined but never used       @typescript-eslint/no-unused-vars
+  288:44  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  324:32  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  325:39  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  330:39  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  337:50  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  350:31  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  388:55  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/var/www/salon-booking-system/src/app/book/utils/form-validation.ts
+  171:12  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+
+✖ 214 problems (0 errors, 214 warnings)
+

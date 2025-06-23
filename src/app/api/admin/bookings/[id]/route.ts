@@ -2,11 +2,12 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { parseIstanbulDate, toDatabaseTime, fromDatabaseTime, createIstanbulDate, formatIstanbulDate } from '@/lib/timezone'
 
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params // ✅ إصلاح Next.js 15
     const body = await request.json()
     const { customerName, customerPhone, selectedDate, selectedTime, selectedServices, notes } = body
-    const bookingId = parseInt(params.id)
+    const bookingId = parseInt(id)
 
     const existingBooking = await prisma.reservation.findUnique({
       where: { id: bookingId },
@@ -97,8 +98,9 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params // ✅ إصلاح Next.js 15
     const body = await request.json()
     const { reason } = body
 
@@ -106,7 +108,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
       return NextResponse.json({ success: false, error: 'سبب الإلغاء مطلوب' }, { status: 400 })
     }
 
-    const bookingId = parseInt(params.id)
+    const bookingId = parseInt(id)
     const existingBooking = await prisma.reservation.findUnique({
       where: { id: bookingId },
       include: { customer: true }
@@ -143,7 +145,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     })
 
   } catch (error) {
-    if (error.code === 'P2025') {
+    if ((error as any).code === 'P2025') {
       return NextResponse.json({ success: false, error: 'الحجز غير موجود' }, { status: 404 })
     }
     return NextResponse.json({
@@ -154,10 +156,12 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
   }
 }
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params // ✅ إصلاح Next.js 15
+    
     const booking = await prisma.reservation.findUnique({
-      where: { id: parseInt(params.id) },
+      where: { id: parseInt(id) },
       include: {
         customer: {
           select: {

@@ -1,0 +1,216 @@
+'use client'
+
+import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react'
+import { 
+  BookingColors, 
+  WeekSettings, 
+  AppSettings,
+  ColorThemeState,
+  DEFAULT_APP_SETTINGS,
+  CSS_VARIABLES
+} from '@/types/theme.types'
+
+// إنشاء Context
+const ColorThemeContext = createContext<ColorThemeState | undefined>(undefined)
+
+// Props للـ Provider
+interface ColorThemeProviderProps {
+  children: ReactNode
+}
+
+/**
+ * Provider للألوان الموحدة
+ */
+export function ColorThemeProvider({ children }: ColorThemeProviderProps) {
+  const [colors, setColors] = useState<BookingColors>(DEFAULT_APP_SETTINGS.colors)
+  const [weekSettings, setWeekSettings] = useState<WeekSettings>(DEFAULT_APP_SETTINGS.week)
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  /**
+   * تطبيق الألوان على CSS Variables
+   */
+  const applyColorsToDocument = (colorsToApply: BookingColors) => {
+    if (typeof document === 'undefined') return // تحقق من البيئة
+
+    const root = document.documentElement
+    root.style.setProperty(CSS_VARIABLES.BOOKED, colorsToApply.booked)
+    root.style.setProperty(CSS_VARIABLES.BLOCKED, colorsToApply.blocked)
+    root.style.setProperty(CSS_VARIABLES.AVAILABLE, colorsToApply.available)
+    root.style.setProperty(CSS_VARIABLES.TODAY, colorsToApply.today)
+  }
+
+  /**
+   * تحميل الإعدادات من API
+   */
+  const loadSettings = async () => {
+    try {
+      setIsLoading(true)
+      setError(null)
+
+      const response = await fetch('/api/admin/settings/app')
+      const data = await response.json()
+
+      if (data.success && data.settings) {
+        const settings: AppSettings = data.settings
+        
+        // تحديث الحالة
+        setColors(settings.colors)
+        setWeekSettings(settings.week)
+        
+        // تطبيق الألوان فوراً
+        applyColorsToDocument(settings.colors)
+        
+      } else {
+        // استخدام الافتراضية عند عدم وجود إعدادات
+        applyColorsToDocument(DEFAULT_APP_SETTINGS.colors)
+      }
+    } catch (error) {
+      console.error('❌ خطأ في تحميل الإعدادات:', error)
+      setError('فشل في تحميل إعدادات الألوان')
+      
+      // استخدام الافتراضية عند الخطأ
+      applyColorsToDocument(DEFAULT_APP_SETTINGS.colors)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  /**
+   * حفظ الإعدادات في API
+   */
+  const saveSettings = async (newSettings: AppSettings) => {
+    try {
+      const response = await fetch('/api/admin/settings/app', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ settings: newSettings })
+      })
+
+      const data = await response.json()
+
+      if (!data.success) {
+        throw new Error(data.error || 'فشل في حفظ الإعدادات')
+      }
+
+    } catch (error) {
+      console.error('❌ خطأ في حفظ الإعدادات:', error)
+      throw error
+    }
+  }
+
+  /**
+   * تحديث الألوان
+   */
+  const updateColors = async (newColors: Partial<BookingColors>) => {
+    try {
+      const updatedColors = { ...colors, ...newColors }
+      const newSettings: AppSettings = {
+        colors: updatedColors,
+        week: weekSettings
+      }
+
+      // تطبيق فوري
+      setColors(updatedColors)
+      applyColorsToDocument(updatedColors)
+
+      // حفظ في الخلفية
+      await saveSettings(newSettings)
+      
+    } catch (error) {
+      console.error('❌ خطأ في تحديث الألوان:', error)
+      setError('فشل في حفظ الألوان الجديدة')
+      throw error
+    }
+  }
+
+  /**
+   * تحديث إعدادات الأسبوع
+   */
+  const updateWeekSettings = async (newWeekSettings: Partial<WeekSettings>) => {
+    try {
+      const updatedWeekSettings = { ...weekSettings, ...newWeekSettings }
+      const newSettings: AppSettings = {
+        colors: colors,
+        week: updatedWeekSettings
+      }
+
+      // تحديث فوري
+      setWeekSettings(updatedWeekSettings)
+
+      // حفظ في الخلفية
+      await saveSettings(newSettings)
+      
+    } catch (error) {
+      console.error('❌ خطأ في تحديث إعدادات الأسبوع:', error)
+      setError('فشل في حفظ إعدادات الأسبوع')
+      throw error
+    }
+  }
+
+  /**
+   * إعادة تعيين للإعدادات الافتراضية
+   */
+  const resetToDefaults = async () => {
+    try {
+      // تطبيق فوري
+      setColors(DEFAULT_APP_SETTINGS.colors)
+      setWeekSettings(DEFAULT_APP_SETTINGS.week)
+      applyColorsToDocument(DEFAULT_APP_SETTINGS.colors)
+
+      // حفظ في الخلفية
+      await saveSettings(DEFAULT_APP_SETTINGS)
+      
+    } catch (error) {
+      console.error('❌ خطأ في إعادة التعيين:', error)
+      setError('فشل في إعادة تعيين الإعدادات')
+      throw error
+    }
+  }
+
+  /**
+   * إعادة تحميل الإعدادات
+   */
+  const reloadSettings = async () => {
+    await loadSettings()
+  }
+
+  // تحميل الإعدادات عند البدء
+  useEffect(() => {
+    loadSettings()
+  }, [])
+
+  // قيمة Context
+  const contextValue: ColorThemeState = {
+    // البيانات
+    colors,
+    weekSettings,
+    isLoading,
+    error,
+    
+    // الدوال
+    updateColors,
+    updateWeekSettings,
+    resetToDefaults,
+    reloadSettings
+  }
+
+  return (
+    <ColorThemeContext.Provider value={contextValue}>
+      {children}
+    </ColorThemeContext.Provider>
+  )
+}
+
+/**
+ * Hook لاستخدام Context
+ */
+export function useColorTheme(): ColorThemeState {
+  const context = useContext(ColorThemeContext)
+  
+  if (context === undefined) {
+    throw new Error('useColorTheme must be used within a ColorThemeProvider')
+  }
+  
+  return context
+}

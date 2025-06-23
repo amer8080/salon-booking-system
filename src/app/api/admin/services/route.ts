@@ -4,7 +4,6 @@ import { prisma } from '@/lib/prisma'  // ✅ مُصحح
 // إضافة خدمة جديدة
 export async function POST(request: NextRequest) {
   try {
-    console.log('➕ إضافة خدمة جديدة...')
     
     const body = await request.json()
     const { 
@@ -83,7 +82,6 @@ export async function POST(request: NextRequest) {
       }
     })
 
-    console.log('✅ تم إنشاء خدمة جديدة بنجاح:', newService.id)
 
     return NextResponse.json({
       success: true,
@@ -92,7 +90,6 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('❌ خطأ في إنشاء الخدمة:', error)
     
     return NextResponse.json(
       { 
@@ -108,7 +105,6 @@ export async function POST(request: NextRequest) {
 // جلب جميع الخدمات (للأدمن) - مع المعطلة
 export async function GET(request: NextRequest) {
   try {
-    console.log('📋 جلب جميع الخدمات للأدمن...')
 
     const services = await prisma.service.findMany({
       orderBy: [
@@ -117,7 +113,6 @@ export async function GET(request: NextRequest) {
       ]
     })
 
-    console.log('✅ تم جلب', services.length, 'خدمة بنجاح')
 
     return NextResponse.json({
       success: true,
@@ -127,7 +122,6 @@ export async function GET(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('❌ خطأ في جلب الخدمات:', error)
     
     return NextResponse.json(
       { 

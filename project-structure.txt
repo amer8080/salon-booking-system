@@ -1,0 +1,682 @@
+.
+├── .env
+├── eslint.config.mjs
+├── .eslintrc.json
+├── .gitignore
+├── .next
+│   ├── app-build-manifest.json
+│   ├── app-path-routes-manifest.json
+│   ├── build
+│   │   └── chunks
+│   │       ├── node_modules_b5d1def4._.js
+│   │       ├── node_modules_b5d1def4._.js.map
+│   │       ├── postcss_config_js_transform_ts_c2e3f562._.js
+│   │       ├── postcss_config_js_transform_ts_c2e3f562._.js.map
+│   │       ├── [root-of-the-server]__23dcc81a._.js
+│   │       ├── [root-of-the-server]__23dcc81a._.js.map
+│   │       ├── [root-of-the-server]__8d1c356d._.js
+│   │       ├── [root-of-the-server]__8d1c356d._.js.map
+│   │       ├── [turbopack]_runtime.js
+│   │       └── [turbopack]_runtime.js.map
+│   ├── BUILD_ID
+│   ├── build-manifest.json
+│   ├── cache
+│   │   ├── .rscinfo
+│   │   ├── swc
+│   │   │   └── plugins
+│   │   │       └── v7_linux_x86_64_9.0.0
+│   │   └── webpack
+│   │       ├── client-production
+│   │       │   ├── 0.pack
+│   │       │   ├── 10.pack
+│   │       │   ├── 11.pack
+│   │       │   ├── 12.pack
+│   │       │   ├── 13.pack
+│   │       │   ├── 14.pack
+│   │       │   ├── 15.pack
+│   │       │   ├── 16.pack
+│   │       │   ├── 1.pack
+│   │       │   ├── 2.pack
+│   │       │   ├── 3.pack
+│   │       │   ├── 4.pack
+│   │       │   ├── 5.pack
+│   │       │   ├── 6.pack
+│   │       │   ├── 7.pack
+│   │       │   ├── 8.pack
+│   │       │   ├── 9.pack
+│   │       │   ├── index.pack
+│   │       │   └── index.pack.old
+│   │       ├── edge-server-production
+│   │       │   ├── 0.pack
+│   │       │   └── index.pack
+│   │       └── server-production
+│   │           ├── 0.pack
+│   │           ├── 1.pack
+│   │           ├── 2.pack
+│   │           ├── 3.pack
+│   │           ├── 4.pack
+│   │           ├── 5.pack
+│   │           ├── 6.pack
+│   │           ├── 7.pack
+│   │           ├── 8.pack
+│   │           ├── 9.pack
+│   │           ├── index.pack
+│   │           └── index.pack.old
+│   ├── diagnostics
+│   │   ├── build-diagnostics.json
+│   │   └── framework.json
+│   ├── export-marker.json
+│   ├── fallback-build-manifest.json
+│   ├── images-manifest.json
+│   ├── next-minimal-server.js.nft.json
+│   ├── next-server.js.nft.json
+│   ├── package.json
+│   ├── prerender-manifest.json
+│   ├── react-loadable-manifest.json
+│   ├── required-server-files.json
+│   ├── routes-manifest.json
+│   ├── server
+│   │   ├── app
+│   │   │   ├── admin
+│   │   │   │   ├── bookings
+│   │   │   │   │   ├── page
+│   │   │   │   │   │   ├── app-build-manifest.json
+│   │   │   │   │   │   ├── app-paths-manifest.json
+│   │   │   │   │   │   ├── build-manifest.json
+│   │   │   │   │   │   ├── next-font-manifest.json
+│   │   │   │   │   │   ├── react-loadable-manifest.json
+│   │   │   │   │   │   └── server-reference-manifest.json
+│   │   │   │   │   ├── page_client-reference-manifest.js
+│   │   │   │   │   ├── page.js
+│   │   │   │   │   ├── page.js.map
+│   │   │   │   │   └── page.js.nft.json
+│   │   │   │   ├── bookings.html
+│   │   │   │   ├── bookings.meta
+│   │   │   │   ├── bookings.rsc
+│   │   │   │   ├── customers
+│   │   │   │   │   ├── page_client-reference-manifest.js
+│   │   │   │   │   ├── page.js
+│   │   │   │   │   └── page.js.nft.json
+│   │   │   │   ├── customers.html
+│   │   │   │   ├── customers.meta
+│   │   │   │   ├── customers.rsc
+│   │   │   │   ├── login
+│   │   │   │   │   ├── page_client-reference-manifest.js
+│   │   │   │   │   ├── page.js
+│   │   │   │   │   └── page.js.nft.json
+│   │   │   │   ├── login.html
+│   │   │   │   ├── login.meta
+│   │   │   │   ├── login.rsc
+│   │   │   │   ├── page
+│   │   │   │   │   ├── app-build-manifest.json
+│   │   │   │   │   ├── app-paths-manifest.json
+│   │   │   │   │   ├── build-manifest.json
+│   │   │   │   │   ├── next-font-manifest.json
+│   │   │   │   │   ├── react-loadable-manifest.json
+│   │   │   │   │   └── server-reference-manifest.json
+│   │   │   │   ├── page_client-reference-manifest.js
+│   │   │   │   ├── page.js
+│   │   │   │   ├── page.js.map
+│   │   │   │   ├── page.js.nft.json
+│   │   │   │   ├── services
+│   │   │   │   │   ├── new
+│   │   │   │   │   │   ├── page_client-reference-manifest.js
+│   │   │   │   │   │   ├── page.js
+│   │   │   │   │   │   └── page.js.nft.json
+│   │   │   │   │   ├── new.html
+│   │   │   │   │   ├── new.meta
+│   │   │   │   │   ├── new.rsc
+│   │   │   │   │   ├── page_client-reference-manifest.js
+│   │   │   │   │   ├── page.js
+│   │   │   │   │   └── page.js.nft.json
+│   │   │   │   ├── services.html
+│   │   │   │   ├── services.meta
+│   │   │   │   └── services.rsc
+│   │   │   ├── admin.html
+│   │   │   ├── admin.meta
+│   │   │   ├── admin.rsc
+│   │   │   ├── api
+│   │   │   │   ├── admin
+│   │   │   │   │   ├── blocked-times
+│   │   │   │   │   │   ├── [id]
+│   │   │   │   │   │   │   ├── route_client-reference-manifest.js
+│   │   │   │   │   │   │   ├── route.js
+│   │   │   │   │   │   │   └── route.js.nft.json
+│   │   │   │   │   │   ├── route
+│   │   │   │   │   │   │   ├── app-build-manifest.json
+│   │   │   │   │   │   │   ├── app-paths-manifest.json
+│   │   │   │   │   │   │   ├── build-manifest.json
+│   │   │   │   │   │   │   ├── next-font-manifest.json
+│   │   │   │   │   │   │   ├── react-loadable-manifest.json
+│   │   │   │   │   │   │   └── server-reference-manifest.json
+│   │   │   │   │   │   ├── route_client-reference-manifest.js
+│   │   │   │   │   │   ├── route.js
+│   │   │   │   │   │   ├── route.js.map
+│   │   │   │   │   │   └── route.js.nft.json
+│   │   │   │   │   ├── bookings
+│   │   │   │   │   │   ├── [id]
+│   │   │   │   │   │   │   ├── route_client-reference-manifest.js
+│   │   │   │   │   │   │   ├── route.js
+│   │   │   │   │   │   │   └── route.js.nft.json
+│   │   │   │   │   │   ├── route
+│   │   │   │   │   │   │   ├── app-build-manifest.json
+│   │   │   │   │   │   │   ├── app-paths-manifest.json
+│   │   │   │   │   │   │   ├── build-manifest.json
+│   │   │   │   │   │   │   ├── next-font-manifest.json
+│   │   │   │   │   │   │   ├── react-loadable-manifest.json
+│   │   │   │   │   │   │   └── server-reference-manifest.json
+│   │   │   │   │   │   ├── route_client-reference-manifest.js
+│   │   │   │   │   │   ├── route.js
+│   │   │   │   │   │   ├── route.js.map
+│   │   │   │   │   │   └── route.js.nft.json
+│   │   │   │   │   ├── customers
+│   │   │   │   │   │   ├── route_client-reference-manifest.js
+│   │   │   │   │   │   ├── route.js
+│   │   │   │   │   │   └── route.js.nft.json
+│   │   │   │   │   ├── dashboard
+│   │   │   │   │   │   ├── route
+│   │   │   │   │   │   │   ├── app-build-manifest.json
+│   │   │   │   │   │   │   ├── app-paths-manifest.json
+│   │   │   │   │   │   │   ├── build-manifest.json
+│   │   │   │   │   │   │   ├── next-font-manifest.json
+│   │   │   │   │   │   │   ├── react-loadable-manifest.json
+│   │   │   │   │   │   │   └── server-reference-manifest.json
+│   │   │   │   │   │   ├── route_client-reference-manifest.js
+│   │   │   │   │   │   ├── route.js
+│   │   │   │   │   │   ├── route.js.map
+│   │   │   │   │   │   └── route.js.nft.json
+│   │   │   │   │   ├── login
+│   │   │   │   │   │   ├── route_client-reference-manifest.js
+│   │   │   │   │   │   ├── route.js
+│   │   │   │   │   │   └── route.js.nft.json
+│   │   │   │   │   └── services
+│   │   │   │   │       ├── [id]
+│   │   │   │   │       │   ├── route_client-reference-manifest.js
+│   │   │   │   │       │   ├── route.js
+│   │   │   │   │       │   └── route.js.nft.json
+│   │   │   │   │       ├── route
+│   │   │   │   │       │   ├── app-build-manifest.json
+│   │   │   │   │       │   ├── app-paths-manifest.json
+│   │   │   │   │       │   ├── build-manifest.json
+│   │   │   │   │       │   ├── next-font-manifest.json
+│   │   │   │   │       │   ├── react-loadable-manifest.json
+│   │   │   │   │       │   └── server-reference-manifest.json
+│   │   │   │   │       ├── route_client-reference-manifest.js
+│   │   │   │   │       ├── route.js
+│   │   │   │   │       ├── route.js.map
+│   │   │   │   │       └── route.js.nft.json
+│   │   │   │   ├── bookings
+│   │   │   │   │   ├── available-times
+│   │   │   │   │   │   ├── route_client-reference-manifest.js
+│   │   │   │   │   │   ├── route.js
+│   │   │   │   │   │   └── route.js.nft.json
+│   │   │   │   │   ├── route_client-reference-manifest.js
+│   │   │   │   │   ├── route.js
+│   │   │   │   │   └── route.js.nft.json
+│   │   │   │   ├── mysql-timezone
+│   │   │   │   │   ├── route_client-reference-manifest.js
+│   │   │   │   │   ├── route.js
+│   │   │   │   │   └── route.js.nft.json
+│   │   │   │   └── services
+│   │   │   │       ├── route_client-reference-manifest.js
+│   │   │   │       ├── route.js
+│   │   │   │       └── route.js.nft.json
+│   │   │   ├── book
+│   │   │   │   ├── page_client-reference-manifest.js
+│   │   │   │   ├── page.js
+│   │   │   │   └── page.js.nft.json
+│   │   │   ├── book.html
+│   │   │   ├── book.meta
+│   │   │   ├── book.rsc
+│   │   │   ├── favicon.ico
+│   │   │   │   ├── route
+│   │   │   │   │   ├── app-build-manifest.json
+│   │   │   │   │   ├── app-paths-manifest.json
+│   │   │   │   │   └── build-manifest.json
+│   │   │   │   ├── route.js
+│   │   │   │   ├── route.js.map
+│   │   │   │   └── route.js.nft.json
+│   │   │   ├── favicon.ico.body
+│   │   │   ├── favicon.ico.meta
+│   │   │   ├── index.html
+│   │   │   ├── index.meta
+│   │   │   ├── index.rsc
+│   │   │   ├── _not-found
+│   │   │   │   ├── page
+│   │   │   │   │   ├── app-build-manifest.json
+│   │   │   │   │   ├── app-paths-manifest.json
+│   │   │   │   │   ├── build-manifest.json
+│   │   │   │   │   ├── next-font-manifest.json
+│   │   │   │   │   ├── react-loadable-manifest.json
+│   │   │   │   │   └── server-reference-manifest.json
+│   │   │   │   ├── page_client-reference-manifest.js
+│   │   │   │   ├── page.js
+│   │   │   │   ├── page.js.map
+│   │   │   │   └── page.js.nft.json
+│   │   │   ├── _not-found.html
+│   │   │   ├── _not-found.meta
+│   │   │   ├── _not-found.rsc
+│   │   │   ├── page
+│   │   │   │   ├── app-build-manifest.json
+│   │   │   │   ├── app-paths-manifest.json
+│   │   │   │   ├── build-manifest.json
+│   │   │   │   ├── next-font-manifest.json
+│   │   │   │   ├── react-loadable-manifest.json
+│   │   │   │   └── server-reference-manifest.json
+│   │   │   ├── page_client-reference-manifest.js
+│   │   │   ├── page.js
+│   │   │   ├── page.js.map
+│   │   │   └── page.js.nft.json
+│   │   ├── app-paths-manifest.json
+│   │   ├── chunks
+│   │   │   ├── 169.js
+│   │   │   ├── 275.js
+│   │   │   ├── 447.js
+│   │   │   ├── 548.js
+│   │   │   ├── 580.js
+│   │   │   ├── 658.js
+│   │   │   ├── 814.js
+│   │   │   ├── node_modules_next_1e70f71a._.js
+│   │   │   ├── node_modules_next_1e70f71a._.js.map
+│   │   │   ├── node_modules_next_1ff25a6e._.js
+│   │   │   ├── node_modules_next_1ff25a6e._.js.map
+│   │   │   ├── node_modules_next_229848ed._.js
+│   │   │   ├── node_modules_next_229848ed._.js.map
+│   │   │   ├── node_modules_next_3afc4cff._.js
+│   │   │   ├── node_modules_next_3afc4cff._.js.map
+│   │   │   ├── node_modules_next_4f0e5d8a._.js
+│   │   │   ├── node_modules_next_4f0e5d8a._.js.map
+│   │   │   ├── [root-of-the-server]__33611669._.js
+│   │   │   ├── [root-of-the-server]__33611669._.js.map
+│   │   │   ├── [root-of-the-server]__48b32c58._.js
+│   │   │   ├── [root-of-the-server]__48b32c58._.js.map
+│   │   │   ├── [root-of-the-server]__4b70a017._.js
+│   │   │   ├── [root-of-the-server]__4b70a017._.js.map
+│   │   │   ├── [root-of-the-server]__7877efb0._.js
+│   │   │   ├── [root-of-the-server]__7877efb0._.js.map
+│   │   │   ├── [root-of-the-server]__a68c9c2e._.js
+│   │   │   ├── [root-of-the-server]__a68c9c2e._.js.map
+│   │   │   ├── ssr
+│   │   │   │   ├── _222449c0._.js
+│   │   │   │   ├── _222449c0._.js.map
+│   │   │   │   ├── _5f904819._.js
+│   │   │   │   ├── _5f904819._.js.map
+│   │   │   │   ├── _6ff14c09._.js
+│   │   │   │   ├── _6ff14c09._.js.map
+│   │   │   │   ├── _91ae9d1e._.js
+│   │   │   │   ├── _91ae9d1e._.js.map
+│   │   │   │   ├── node_modules_182435a1._.js
+│   │   │   │   ├── node_modules_182435a1._.js.map
+│   │   │   │   ├── node_modules_4aa313e6._.js
+│   │   │   │   ├── node_modules_4aa313e6._.js.map
+│   │   │   │   ├── node_modules_84bfc1e5._.js
+│   │   │   │   ├── node_modules_84bfc1e5._.js.map
+│   │   │   │   ├── node_modules_934d7884._.js
+│   │   │   │   ├── node_modules_934d7884._.js.map
+│   │   │   │   ├── node_modules_96715ba7._.js
+│   │   │   │   ├── node_modules_96715ba7._.js.map
+│   │   │   │   ├── node_modules_next_dist_0962b827._.js
+│   │   │   │   ├── node_modules_next_dist_0962b827._.js.map
+│   │   │   │   ├── node_modules_next_dist_client_components_forbidden-error_ea7ea172.js
+│   │   │   │   ├── node_modules_next_dist_client_components_forbidden-error_ea7ea172.js.map
+│   │   │   │   ├── node_modules_next_dist_client_components_unauthorized-error_c8949b27.js
+│   │   │   │   ├── node_modules_next_dist_client_components_unauthorized-error_c8949b27.js.map
+│   │   │   │   ├── [root-of-the-server]__0a46983d._.js
+│   │   │   │   ├── [root-of-the-server]__0a46983d._.js.map
+│   │   │   │   ├── [root-of-the-server]__16ea7f20._.js
+│   │   │   │   ├── [root-of-the-server]__16ea7f20._.js.map
+│   │   │   │   ├── [root-of-the-server]__1bec7f6a._.js
+│   │   │   │   ├── [root-of-the-server]__1bec7f6a._.js.map
+│   │   │   │   ├── [root-of-the-server]__324249b4._.js
+│   │   │   │   ├── [root-of-the-server]__324249b4._.js.map
+│   │   │   │   ├── [root-of-the-server]__4c58c055._.js
+│   │   │   │   ├── [root-of-the-server]__4c58c055._.js.map
+│   │   │   │   ├── [root-of-the-server]__6302eb5e._.js
+│   │   │   │   ├── [root-of-the-server]__6302eb5e._.js.map
+│   │   │   │   ├── src_app_a4430781._.js
+│   │   │   │   ├── src_app_a4430781._.js.map
+│   │   │   │   ├── [turbopack]_browser_dev_hmr-client_hmr-client_ts_59fa4ecd._.js
+│   │   │   │   ├── [turbopack]_browser_dev_hmr-client_hmr-client_ts_59fa4ecd._.js.map
+│   │   │   │   ├── [turbopack]_browser_dev_hmr-client_hmr-client_ts_69db9782._.js
+│   │   │   │   ├── [turbopack]_browser_dev_hmr-client_hmr-client_ts_69db9782._.js.map
+│   │   │   │   ├── [turbopack]_browser_dev_hmr-client_hmr-client_ts_cd763190._.js
+│   │   │   │   ├── [turbopack]_browser_dev_hmr-client_hmr-client_ts_cd763190._.js.map
+│   │   │   │   ├── [turbopack]_browser_dev_hmr-client_hmr-client_ts_f6d9c1c4._.js
+│   │   │   │   ├── [turbopack]_browser_dev_hmr-client_hmr-client_ts_f6d9c1c4._.js.map
+│   │   │   │   ├── [turbopack]_runtime.js
+│   │   │   │   └── [turbopack]_runtime.js.map
+│   │   │   ├── [turbopack]_runtime.js
+│   │   │   └── [turbopack]_runtime.js.map
+│   │   ├── functions-config-manifest.json
+│   │   ├── interception-route-rewrite-manifest.js
+│   │   ├── middleware-build-manifest.js
+│   │   ├── middleware-manifest.json
+│   │   ├── middleware-react-loadable-manifest.js
+│   │   ├── next-font-manifest.js
+│   │   ├── next-font-manifest.json
+│   │   ├── pages
+│   │   │   ├── 404.html
+│   │   │   ├── 500.html
+│   │   │   ├── _app.js
+│   │   │   ├── _app.js.nft.json
+│   │   │   ├── _document.js
+│   │   │   ├── _document.js.nft.json
+│   │   │   ├── _error.js
+│   │   │   └── _error.js.nft.json
+│   │   ├── pages-manifest.json
+│   │   ├── server-reference-manifest.js
+│   │   ├── server-reference-manifest.json
+│   │   └── webpack-runtime.js
+│   ├── static
+│   │   ├── 9hqvelBa7xUq2JOkDNKC4
+│   │   │   ├── _buildManifest.js
+│   │   │   └── _ssgManifest.js
+│   │   ├── chunks
+│   │   │   ├── 235-2df24d9ca82bb6a6.js
+│   │   │   ├── 4bd1b696-832a161add6cb29b.js
+│   │   │   ├── _4e698f6d._.js
+│   │   │   ├── _4e698f6d._.js.map
+│   │   │   ├── 684-7db4a7807629a8e0.js
+│   │   │   ├── 874-5102ba2be6d1cd65.js
+│   │   │   ├── _93808211._.js
+│   │   │   ├── _93808211._.js.map
+│   │   │   ├── app
+│   │   │   │   ├── admin
+│   │   │   │   │   ├── bookings
+│   │   │   │   │   │   └── page-c617192263d06573.js
+│   │   │   │   │   ├── customers
+│   │   │   │   │   │   └── page-e1723972f6a1cec7.js
+│   │   │   │   │   ├── login
+│   │   │   │   │   │   └── page-22ec6f49f80a64d1.js
+│   │   │   │   │   ├── page-23db8c68120fee97.js
+│   │   │   │   │   └── services
+│   │   │   │   │       ├── new
+│   │   │   │   │       │   └── page-bf24222907003dc2.js
+│   │   │   │   │       └── page-22120e9ceb3beb83.js
+│   │   │   │   ├── api
+│   │   │   │   │   ├── admin
+│   │   │   │   │   │   ├── blocked-times
+│   │   │   │   │   │   │   ├── [id]
+│   │   │   │   │   │   │   │   └── route-f443cea993e22ff2.js
+│   │   │   │   │   │   │   └── route-7a91e5f7299f81c3.js
+│   │   │   │   │   │   ├── bookings
+│   │   │   │   │   │   │   ├── [id]
+│   │   │   │   │   │   │   │   └── route-316e8fee95ee30b9.js
+│   │   │   │   │   │   │   └── route-cc11d06188c72ddc.js
+│   │   │   │   │   │   ├── customers
+│   │   │   │   │   │   │   └── route-cf2999a61930f515.js
+│   │   │   │   │   │   ├── dashboard
+│   │   │   │   │   │   │   └── route-385399117ecc0adf.js
+│   │   │   │   │   │   ├── login
+│   │   │   │   │   │   │   └── route-1ed0608f5c4875ec.js
+│   │   │   │   │   │   └── services
+│   │   │   │   │   │       ├── [id]
+│   │   │   │   │   │       │   └── route-6079cb809cb7cc4a.js
+│   │   │   │   │   │       └── route-2e3304a14fb6f88e.js
+│   │   │   │   │   ├── bookings
+│   │   │   │   │   │   ├── available-times
+│   │   │   │   │   │   │   └── route-0a00672ebaaf5f2f.js
+│   │   │   │   │   │   └── route-5238ac29b96d0406.js
+│   │   │   │   │   ├── mysql-timezone
+│   │   │   │   │   │   └── route-33585273e67e221a.js
+│   │   │   │   │   └── services
+│   │   │   │   │       └── route-411b83341ef617f9.js
+│   │   │   │   ├── book
+│   │   │   │   │   └── page-4e3c3528956f24cf.js
+│   │   │   │   ├── layout-9eec397c00988cf6.js
+│   │   │   │   ├── _not-found
+│   │   │   │   │   └── page-2ba6ff6fc2e2cc3a.js
+│   │   │   │   └── page-ee7761e30eab60c9.js
+│   │   │   ├── _e69f0d32._.js
+│   │   │   ├── framework-f593a28cde54158e.js
+│   │   │   ├── main-app-953a935668832f0c.js
+│   │   │   ├── main-fd4a0e16a8e249ef.js
+│   │   │   ├── [next]_internal_font_google_geist_e531dabc_module_css_f9ee138c._.single.css
+│   │   │   ├── [next]_internal_font_google_geist_e531dabc_module_css_f9ee138c._.single.css.map
+│   │   │   ├── [next]_internal_font_google_geist_mono_68a01160_module_css_f9ee138c._.single.css
+│   │   │   ├── [next]_internal_font_google_geist_mono_68a01160_module_css_f9ee138c._.single.css.map
+│   │   │   ├── node_modules_7f114968._.js
+│   │   │   ├── node_modules_7f114968._.js.map
+│   │   │   ├── node_modules_next_dist_1a6ee436._.js
+│   │   │   ├── node_modules_next_dist_1a6ee436._.js.map
+│   │   │   ├── node_modules_next_dist_2ecbf5fa._.js
+│   │   │   ├── node_modules_next_dist_2ecbf5fa._.js.map
+│   │   │   ├── node_modules_next_dist_b758c999._.js
+│   │   │   ├── node_modules_next_dist_b758c999._.js.map
+│   │   │   ├── node_modules_next_dist_build_polyfills_polyfill-nomodule.js
+│   │   │   ├── node_modules_next_dist_client_8f19e6fb._.js
+│   │   │   ├── node_modules_next_dist_client_8f19e6fb._.js.map
+│   │   │   ├── node_modules_next_dist_compiled_2ce9398a._.js
+│   │   │   ├── node_modules_next_dist_compiled_2ce9398a._.js.map
+│   │   │   ├── node_modules_@swc_helpers_cjs_00636ac3._.js
+│   │   │   ├── node_modules_@swc_helpers_cjs_00636ac3._.js.map
+│   │   │   ├── pages
+│   │   │   │   ├── _app-da15c11dea942c36.js
+│   │   │   │   └── _error-cc3f077a18ea1793.js
+│   │   │   ├── polyfills-42372ed130431b0a.js
+│   │   │   ├── [root-of-the-server]__8ebb6d4b._.css
+│   │   │   ├── [root-of-the-server]__8ebb6d4b._.css.map
+│   │   │   ├── src_2500bb67._.js
+│   │   │   ├── src_2500bb67._.js.map
+│   │   │   ├── src_app_admin_bookings_page_tsx_8450df25._.js
+│   │   │   ├── src_app_admin_page_tsx_8450df25._.js
+│   │   │   ├── src_app_favicon_ico_mjs_8a7a8fdc._.js
+│   │   │   ├── src_app_globals_css_f9ee138c._.single.css
+│   │   │   ├── src_app_globals_css_f9ee138c._.single.css.map
+│   │   │   ├── src_app_layout_tsx_c0237562._.js
+│   │   │   ├── src_app_page_tsx_8450df25._.js
+│   │   │   ├── [turbopack]_browser_dev_hmr-client_hmr-client_ts_61dcf9ba._.js
+│   │   │   ├── [turbopack]_browser_dev_hmr-client_hmr-client_ts_61dcf9ba._.js.map
+│   │   │   ├── [turbopack]_browser_dev_hmr-client_hmr-client_ts_66796270._.js
+│   │   │   ├── [turbopack]_browser_dev_hmr-client_hmr-client_ts_fd44f5a4._.js
+│   │   │   ├── [turbopack]_browser_dev_hmr-client_hmr-client_ts_fd44f5a4._.js.map
+│   │   │   └── webpack-29ebadaebe2fcb3f.js
+│   │   ├── css
+│   │   │   └── fb310ee2ef93e24b.css
+│   │   ├── development
+│   │   │   ├── _buildManifest.js
+│   │   │   ├── _clientMiddlewareManifest.json
+│   │   │   └── _ssgManifest.js
+│   │   └── media
+│   │       ├── 569ce4b8f30dc480-s.p.woff2
+│   │       ├── 747892c23ea88013-s.woff2
+│   │       ├── 8d697b304b401681-s.woff2
+│   │       ├── 93f479601ee12b01-s.p.woff2
+│   │       ├── 9610d9e46709d722-s.woff2
+│   │       ├── ba015fad6dcf6784-s.woff2
+│   │       ├── favicon.45db1c09.ico
+│   │       ├── gyByhwUxId8gMEwcGFWNOITd-s.p.da1ebef7.woff2
+│   │       ├── gyByhwUxId8gMEwSGFWNOITddY4-s.81df3a5b.woff2
+│   │       ├── gyByhwUxId8gMEwYGFWNOITddY4-s.b7d310ad.woff2
+│   │       ├── or3nQ6H_1_WfwkMZI_qYFrcdmhHkjko-s.p.be19f591.woff2
+│   │       ├── or3nQ6H_1_WfwkMZI_qYFrkdmhHkjkotbA-s.e32db976.woff2
+│   │       └── or3nQ6H_1_WfwkMZI_qYFrMdmhHkjkotbA-s.cb6bbcb1.woff2
+│   ├── trace
+│   ├── transform.js
+│   ├── transform.js.map
+│   └── types
+│       ├── app
+│       │   ├── admin
+│       │   │   ├── bookings
+│       │   │   │   └── page.ts
+│       │   │   ├── customers
+│       │   │   │   └── page.ts
+│       │   │   ├── login
+│       │   │   │   └── page.ts
+│       │   │   ├── page.ts
+│       │   │   └── services
+│       │   │       ├── new
+│       │   │       │   └── page.ts
+│       │   │       └── page.ts
+│       │   ├── api
+│       │   │   ├── admin
+│       │   │   │   ├── blocked-times
+│       │   │   │   │   ├── [id]
+│       │   │   │   │   │   └── route.ts
+│       │   │   │   │   └── route.ts
+│       │   │   │   ├── bookings
+│       │   │   │   │   ├── [id]
+│       │   │   │   │   │   └── route.ts
+│       │   │   │   │   └── route.ts
+│       │   │   │   ├── customers
+│       │   │   │   │   └── route.ts
+│       │   │   │   ├── dashboard
+│       │   │   │   │   └── route.ts
+│       │   │   │   ├── login
+│       │   │   │   │   └── route.ts
+│       │   │   │   └── services
+│       │   │   │       ├── [id]
+│       │   │   │       │   └── route.ts
+│       │   │   │       └── route.ts
+│       │   │   ├── bookings
+│       │   │   │   ├── available-times
+│       │   │   │   │   └── route.ts
+│       │   │   │   └── route.ts
+│       │   │   ├── mysql-timezone
+│       │   │   │   └── route.ts
+│       │   │   └── services
+│       │   │       └── route.ts
+│       │   ├── book
+│       │   │   └── page.ts
+│       │   ├── layout.ts
+│       │   └── page.ts
+│       ├── cache-life.d.ts
+│       └── package.json
+├── next.config.js
+├── next.config.ts
+├── next-env.d.ts
+├── package.json
+├── package-lock.json
+├── postcss.config.js
+├── prisma
+│   ├── schema.prisma
+│   └── seed.ts
+├── project-structure.txt
+├── public
+│   ├── file.svg
+│   ├── globe.svg
+│   ├── next.svg
+│   ├── vercel.svg
+│   └── window.svg
+├── README.md
+├── src
+│   ├── app
+│   │   ├── admin
+│   │   │   ├── bookings
+│   │   │   │   ├── components
+│   │   │   │   │   ├── BlockingSystem
+│   │   │   │   │   ├── Bookings
+│   │   │   │   │   │   ├── BookingCard.tsx
+│   │   │   │   │   │   ├── BookingsList.tsx
+│   │   │   │   │   │   └── index.ts
+│   │   │   │   │   ├── Calendar
+│   │   │   │   │   │   ├── CalendarGrid.tsx
+│   │   │   │   │   │   └── CalendarHeader.tsx
+│   │   │   │   │   ├── Modals
+│   │   │   │   │   │   ├── DeleteBookingModal.tsx
+│   │   │   │   │   │   ├── EditBookingModal.tsx
+│   │   │   │   │   │   └── NewBookingModal.tsx
+│   │   │   │   │   ├── UI
+│   │   │   │   │   │   ├── LoadingSpinner.tsx
+│   │   │   │   │   │   ├── PhoneMenu.tsx
+│   │   │   │   │   │   └── ViewToggleButtons.tsx
+│   │   │   │   │   └── Views
+│   │   │   │   │       ├── DayView.tsx
+│   │   │   │   │       └── index.ts
+│   │   │   │   ├── hooks
+│   │   │   │   │   ├── useBookings.ts
+│   │   │   │   │   └── useDayView.ts
+│   │   │   │   ├── page.tsx
+│   │   │   │   ├── page.tsx.backup-before-calendar-1749550146
+│   │   │   │   ├── page.tsx.backup-before-edit-modal
+│   │   │   │   ├── page.tsx.backup-before-fix
+│   │   │   │   ├── page.tsx.backup-working
+│   │   │   │   ├── page.tsx.fault
+│   │   │   │   ├── page.tsx.original-1749299391
+│   │   │   │   ├── page.tsx.working
+│   │   │   │   ├── project-roadmap.md
+│   │   │   │   ├── types
+│   │   │   │   │   └── booking.types.ts
+│   │   │   │   └── utils
+│   │   │   ├── customers
+│   │   │   │   └── page.tsx
+│   │   │   ├── login
+│   │   │   │   └── page.tsx
+│   │   │   ├── page.tsx
+│   │   │   └── services
+│   │   │       ├── new
+│   │   │       │   └── page.tsx
+│   │   │       └── page.tsx
+│   │   ├── api
+│   │   │   ├── admin
+│   │   │   │   ├── blocked-times
+│   │   │   │   │   ├── [id]
+│   │   │   │   │   │   └── route.ts
+│   │   │   │   │   └── route.ts
+│   │   │   │   ├── bookings
+│   │   │   │   │   ├── [id]
+│   │   │   │   │   │   └── route.ts
+│   │   │   │   │   ├── route.ts
+│   │   │   │   │   ├── route.ts.backup
+│   │   │   │   │   └── route.ts.old
+│   │   │   │   ├── customers
+│   │   │   │   │   └── route.ts
+│   │   │   │   ├── dashboard
+│   │   │   │   │   └── route.ts
+│   │   │   │   ├── login
+│   │   │   │   │   └── route.ts
+│   │   │   │   └── services
+│   │   │   │       ├── [id]
+│   │   │   │       │   └── route.ts
+│   │   │   │       └── route.ts
+│   │   │   ├── bookings
+│   │   │   │   ├── available-times
+│   │   │   │   │   └── route.ts
+│   │   │   │   └── route.ts
+│   │   │   ├── mysql-timezone
+│   │   │   │   └── route.ts
+│   │   │   └── services
+│   │   │       └── route.ts
+│   │   ├── book
+│   │   │   └── page.tsx
+│   │   ├── favicon.ico
+│   │   ├── globals.css
+│   │   ├── layout.tsx
+│   │   └── page.tsx
+│   ├── components
+│   ├── generated
+│   │   └── prisma
+│   │       ├── client.d.ts
+│   │       ├── client.js
+│   │       ├── default.d.ts
+│   │       ├── default.js
+│   │       ├── edge.d.ts
+│   │       ├── edge.js
+│   │       ├── index-browser.js
+│   │       ├── index.d.ts
+│   │       ├── index.js
+│   │       ├── libquery_engine-debian-openssl-3.0.x.so.node
+│   │       ├── package.json
+│   │       ├── runtime
+│   │       │   ├── edge-esm.js
+│   │       │   ├── edge.js
+│   │       │   ├── index-browser.d.ts
+│   │       │   ├── index-browser.js
+│   │       │   ├── library.d.ts
+│   │       │   ├── library.js
+│   │       │   ├── react-native.js
+│   │       │   └── wasm.js
+│   │       ├── schema.prisma
+│   │       ├── wasm.d.ts
+│   │       └── wasm.js
+│   └── lib
+│       ├── date-helpers.ts
+│       ├── prisma.ts
+│       ├── services-utils.ts
+│       ├── timezone.ts
+│       └── timezone.ts.backup
+├── tailwind.config.js
+├── tsconfig.json
+└── tsconfig.tsbuildinfo
+
+147 directories, 533 files

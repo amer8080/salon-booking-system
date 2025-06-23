@@ -1,4 +1,5 @@
 'use client'
+import { logError } from '@/lib/logger-client';
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
@@ -8,7 +9,7 @@ import {
   Users, 
   Sparkles, 
   Settings, 
-  BarChart3, 
+  
   Clock,
   CheckCircle,
   XCircle,
@@ -57,7 +58,7 @@ export default function AdminDashboard() {
         setError(data.error || 'فشل في تحميل الإحصائيات')
       }
     } catch (error) {
-      console.error('خطأ في تحميل إحصائيات لوحة التحكم:', error)
+      logError('خطأ في تحميل إحصائيات لوحة التحكم:', error)
       setError('خطأ في الاتصال بالخادم')
     } finally {
       setLoading(false)

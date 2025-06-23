@@ -2,26 +2,431 @@
 @tailwind components;
 @tailwind utilities;
 
+/* CSS Variables للألوان المخصصة */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* ألوان الحجوزات - قيم افتراضية */
+  --booking-color-booked: #f97316;    /* orange-500 */
+  --booking-color-blocked: #ef4444;   /* red-500 */
+  --booking-color-available: #f9fafb; /* gray-50 */
+  --booking-color-today: #4f46e5;     /* indigo-600 */
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* فئات CSS للألوان المخصصة */
+.booking-color-booked {
+  background-color: var(--booking-color-booked);
+}
+
+.booking-color-blocked {
+  background-color: var(--booking-color-blocked);
+}
+
+.booking-color-available {
+  background-color: var(--booking-color-available);
+}
+
+.booking-color-today {
+  background-color: var(--booking-color-today);
+}
+
+/* متغيرات للنصوص المناسبة */
+.booking-text-booked {
+  color: white; /* نص أبيض للخلفيات الداكنة */
+}
+
+.booking-text-blocked {
+  color: white; /* نص أبيض للخلفيات الداكنة */
+}
+
+.booking-text-available {
+  color: #374151; /* نص رمادي داكن للخلفيات الفاتحة */
+}
+
+.booking-text-today {
+  color: white; /* نص أبيض للخلفيات الداكنة */
+}
+
+/* فئات مساعدة للحدود */
+.booking-border-booked {
+  border-color: var(--booking-color-booked);
+}
+
+.booking-border-blocked {
+  border-color: var(--booking-color-blocked);
+}
+
+.booking-border-available {
+  border-color: var(--booking-color-available);
+}
+
+.booking-border-today {
+  border-color: var(--booking-color-today);
+}
+
+/* تأثيرات التفاعل */
+.booking-hover-booked:hover {
+  background-color: var(--booking-color-booked);
+  filter: brightness(0.9);
+}
+
+.booking-hover-blocked:hover {
+  background-color: var(--booking-color-blocked);
+  filter: brightness(0.9);
+}
+
+.booking-hover-available:hover {
+  background-color: var(--booking-color-available);
+  filter: brightness(0.95);
+}
+
+.booking-hover-today:hover {
+  background-color: var(--booking-color-today);
+  filter: brightness(0.9);
+}
+
+/* تأثيرات النقر */
+.booking-active-booked:active {
+  background-color: var(--booking-color-booked);
+  filter: brightness(0.8);
+}
+
+.booking-active-blocked:active {
+  background-color: var(--booking-color-blocked);
+  filter: brightness(0.8);
+}
+
+.booking-active-available:active {
+  background-color: var(--booking-color-available);
+  filter: brightness(0.9);
+}
+
+.booking-active-today:active {
+  background-color: var(--booking-color-today);
+  filter: brightness(0.8);
+}
+
+/* إعدادات RTL */
+[dir="rtl"] {
+  text-align: right;
+}
+
+/* تحسينات عامة */
+* {
+  box-sizing: border-box;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+/* تحسينات الـ scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* تحسينات الطباعة */
+@media print {
+  .no-print {
+    display: none;
+  }
+  
+  .print-friendly {
+    background: white !important;
+    color: black !important;
+  }
+}
+
+/* تحسينات الجوال للتقويم */
+@media (max-width: 768px) {
+  .mobile-hidden {
+    display: none;
+  }
+  
+  .mobile-full-width {
+    width: 100%;
+  }
+
+  /* تحسين الجداول للجوال */
+  .mobile-table-compact {
+    font-size: 0.75rem;
+  }
+
+  .mobile-table-compact td,
+  .mobile-table-compact th {
+    padding: 0.25rem !important;
+    height: 1.5rem !important;
+  }
+
+  /* تحسين التقويم الشهري للجوال */
+  .mobile-calendar-compact .grid {
+    gap: 0.125rem !important;
+  }
+}
+
+/* تحسينات الأداء */
+.gpu-accelerated {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* التأكد من تحميل الخطوط بشكل صحيح */
+@font-face {
+  font-family: 'system';
+  font-style: normal;
+  font-weight: 300;
+  src: local('.SFNSText-Light'), local('.HelveticaNeueDeskInterface-Light'), local('.LucidaGrandeUI'), local('Ubuntu Light'), local('Segoe UI Light'), local('Roboto-Light'), local('DroidSans'), local('Tahoma');
+}
+
+/* تحسين عرض التواريخ والأرقام */
+.ltr-numbers {
+  direction: ltr;
+  unicode-bidi: bidi-override;
+}
+
+/* تحسينات الوصولية */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* focus للوصولية */
+.focus-visible:focus {
+  outline: 2px solid #4f46e5;
+  outline-offset: 2px;
+}
+
+/* تأثيرات الانتقال الناعمة */
+.smooth-transition {
+  transition: all 0.2s ease-in-out;
+}
+
+.smooth-transition-slow {
+  transition: all 0.3s ease-in-out;
+}
+
+/* إخفاء العناصر مع الحفاظ على التخطيط */
+.invisible-but-present {
+  visibility: hidden;
+}
+
+/* نمط للعناصر المعطلة */
+.disabled-element {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+/* إضافة لـ globals.css - CSS مساعد لـ WeekView RTL */
+
+/* ضمان RTL للجدول الأسبوعي */
+.mobile-table-compact {
+  direction: rtl;
+  table-layout: fixed !important;
+}
+
+/* توحيد عرض الأعمدة */
+.mobile-table-compact th,
+.mobile-table-compact td {
+  text-align: center !important;
+  vertical-align: middle !important;
+}
+
+/* عمود الوقت ثابت العرض */
+.mobile-table-compact .time-column {
+  width: 80px !important;
+  min-width: 80px !important;
+  max-width: 80px !important;
+}
+
+/* تحسينات الجوال */
+@media (max-width: 768px) {
+  .mobile-table-compact {
+    font-size: 11px;
+  }
+  
+  .mobile-table-compact th,
+  .mobile-table-compact td {
+    padding: 2px 1px !important;
+    height: 24px !important;
+  }
+  
+  .mobile-table-compact .time-column {
+    width: 64px !important;
+    min-width: 64px !important;
+    max-width: 64px !important;
+  }
+}
+
+/* ضمان الاتجاه الصحيح للنص */
+.mobile-table-compact [dir="rtl"] {
+  direction: rtl !important;
+}
+
+/* إصلاح أي تداخل في الاتجاه */
+.mobile-table-compact * {
+  box-sizing: border-box;
+}
+/* إضافة هذا في نهاية src/app/globals.css */
+
+/* =========================
+   تحسينات Theme System
+   ========================= */
+
+/* ضمان أن CSS Variables تعمل في جميع المتصفحات */
+:root {
+  /* الألوان الافتراضية (fallback) */
+  --booking-color-booked: #f97316;    /* orange-500 */
+  --booking-color-blocked: #ef4444;   /* red-500 */
+  --booking-color-available: #f9fafb; /* gray-50 */
+  --booking-color-today: #4f46e5;     /* indigo-600 */
+  
+  /* متغيرات إضافية للتحسين */
+  --booking-transition: all 0.2s ease-in-out;
+  --booking-border-radius: 0.5rem;
+  --booking-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* تحسين الألوان مع opacity للتفاعل */
+.booking-color-booked-light {
+  background-color: color-mix(in srgb, var(--booking-color-booked) 10%, transparent);
+}
+
+.booking-color-blocked-light {
+  background-color: color-mix(in srgb, var(--booking-color-blocked) 10%, transparent);
+}
+
+.booking-color-available-light {
+  background-color: color-mix(in srgb, var(--booking-color-available) 50%, white);
+}
+
+.booking-color-today-light {
+  background-color: color-mix(in srgb, var(--booking-color-today) 10%, transparent);
+}
+
+/* تحسين التأثيرات التفاعلية */
+.booking-interactive {
+  transition: var(--booking-transition);
+  cursor: pointer;
+}
+
+.booking-interactive:hover {
+  transform: scale(1.02);
+  box-shadow: var(--booking-shadow);
+}
+
+.booking-interactive:active {
+  transform: scale(0.98);
+}
+
+/* فئات CSS للنصوص التلقائية (حسب سطوع الخلفية) */
+.booking-text-auto-booked {
+  color: white; /* النص الأبيض للألوان الداكنة */
+}
+
+.booking-text-auto-blocked {
+  color: white; /* النص الأبيض للألوان الداكنة */
+}
+
+.booking-text-auto-available {
+  color: #374151; /* النص الداكن للألوان الفاتحة */
+}
+
+.booking-text-auto-today {
+  color: white; /* النص الأبيض للألوان الداكنة */
+}
+
+/* تحسينات إضافية للـ RTL */
+[dir="rtl"] .booking-container {
+  text-align: right;
+}
+
+[dir="rtl"] .booking-icon {
+  margin-left: 0.5rem;
+  margin-right: 0;
+}
+
+/* تحسين عرض الألوان في الإعدادات */
+.color-preview {
+  border: 2px solid var(--booking-color-available);
+  border-radius: var(--booking-border-radius);
+  transition: var(--booking-transition);
+}
+
+.color-preview:hover {
+  border-color: var(--booking-color-today);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--booking-color-today) 20%, transparent);
+}
+
+/* Loading states للألوان */
+.booking-color-loading {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading-shimmer 1.5s infinite;
+}
+
+@keyframes loading-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* تحسين الوصولية */
+.booking-color-focus:focus-visible {
+  outline: 2px solid var(--booking-color-today);
+  outline-offset: 2px;
+}
+
+/* تحسين الطباعة */
+@media print {
+  .booking-color-booked {
+    background-color: #f97316 !important;
+    color: white !important;
+  }
+  
+  .booking-color-blocked {
+    background-color: #ef4444 !important;
+    color: white !important;
+  }
+  
+  .booking-color-available {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border: 1px solid #000000 !important;
+  }
+  
+  .booking-color-today {
+    background-color: #4f46e5 !important;
+    color: white !important;
+  }
+}
+
+/* تحسين الـ Dark Mode (للمستقبل) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* يمكن إضافة ألوان داكنة هنا في المستقبل */
   }
 }

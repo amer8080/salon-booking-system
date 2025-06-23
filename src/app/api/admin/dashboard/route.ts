@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'  // ✅ مُصحح
+import { prisma } from '@/lib/prisma'
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
-    console.log('🔍 جمع إحصائيات لوحة التحكم الكاملة...')
-
     // جمع الإحصائيات بالتوازي لتحسين الأداء
     const [
       totalBookings,
@@ -53,14 +51,6 @@ export async function GET(request: NextRequest) {
       })
     ])
 
-    console.log('✅ تم جمع الإحصائيات بنجاح:', {
-      totalBookings,
-      todayBookings,
-      pendingBookings,
-      totalCustomers,
-      totalServices
-    })
-
     const stats = {
       totalBookings,
       todayBookings,
@@ -77,8 +67,6 @@ export async function GET(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('❌ خطأ في جمع إحصائيات لوحة التحكم:', error)
-    
     return NextResponse.json(
       { 
         success: false, 

@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'  // ✅ مُصحح
+import { prisma } from '@/lib/prisma'
 
 // تحديث خدمة موجودة
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    console.log('🔄 تحديث الخدمة:', params.id)
+    const { id } = await params // ✅ إصلاح Next.js 15
     
     const body = await request.json()
     const { 
@@ -29,7 +29,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     // تحديث الخدمة في قاعدة البيانات
     const updatedService = await prisma.service.update({
       where: {
-        id: parseInt(params.id)
+        id: parseInt(id)
       },
       data: {
         name: nameAr, // الاسم الرئيسي بالعربية
@@ -44,7 +44,6 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
       }
     })
 
-    console.log('✅ تم تحديث الخدمة بنجاح:', updatedService.id)
 
     return NextResponse.json({
       success: true,
@@ -53,7 +52,6 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     })
 
   } catch (error) {
-    console.error('❌ خطأ في تحديث الخدمة:', error)
     
     return NextResponse.json(
       { 
@@ -67,9 +65,9 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 }
 
 // تحديث حالة تفعيل/تعطيل الخدمة
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    console.log('🔄 تحديث حالة الخدمة:', params.id)
+    const { id } = await params // ✅ إصلاح Next.js 15
     
     const body = await request.json()
     const { isActive } = body
@@ -85,14 +83,13 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     // تحديث حالة الخدمة
     const updatedService = await prisma.service.update({
       where: {
-        id: parseInt(params.id)
+        id: parseInt(id)
       },
       data: {
         isActive: isActive
       }
     })
 
-    console.log('✅ تم تحديث حالة الخدمة:', updatedService.id, '→', isActive)
 
     return NextResponse.json({
       success: true,
@@ -101,7 +98,6 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     })
 
   } catch (error) {
-    console.error('❌ خطأ في تحديث حالة الخدمة:', error)
     
     return NextResponse.json(
       { 
@@ -115,11 +111,11 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
 }
 
 // حذف خدمة
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    console.log('🗑️ حذف الخدمة:', params.id)
+    const { id } = await params // ✅ إصلاح Next.js 15
     
-    const serviceId = parseInt(params.id)
+    const serviceId = parseInt(id)
 
     // التحقق من وجود حجوزات مرتبطة بهذه الخدمة
     const reservationsWithService = await prisma.reservation.findMany({
@@ -147,7 +143,6 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
       }
     })
 
-    console.log('✅ تم حذف الخدمة بنجاح:', serviceId)
 
     return NextResponse.json({
       success: true,
@@ -155,10 +150,9 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     })
 
   } catch (error) {
-    console.error('❌ خطأ في حذف الخدمة:', error)
     
-    // التحقق من نوع الخطأ
-    if (error.code === 'P2025') {
+    // التحقق من نوع الخطأ - إصلاح TypeScript
+    if ((error as any).code === 'P2025') {
       return NextResponse.json(
         { success: false, error: 'الخدمة غير موجودة' },
         { status: 404 }
@@ -177,13 +171,13 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
 }
 
 // جلب تفاصيل خدمة محددة
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    console.log('🔍 جلب تفاصيل الخدمة:', params.id)
+    const { id } = await params // ✅ إصلاح Next.js 15
     
     const service = await prisma.service.findUnique({
       where: {
-        id: parseInt(params.id)
+        id: parseInt(id)
       }
     })
 
@@ -194,7 +188,6 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       )
     }
 
-    console.log('✅ تم جلب تفاصيل الخدمة بنجاح')
 
     return NextResponse.json({
       success: true,
@@ -202,7 +195,6 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     })
 
   } catch (error) {
-    console.error('❌ خطأ في جلب تفاصيل الخدمة:', error)
     
     return NextResponse.json(
       { 

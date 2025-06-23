@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { parseIstanbulDate, toDatabaseTime, fromDatabaseTime, formatIstanbulDate } from '@/lib/timezone'
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const blockedTimes = await prisma.blockedTime.findMany({
       orderBy: {
@@ -29,7 +29,6 @@ export async function GET(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('خطأ في جلب الأوقات المقفلة:', error)
     
     return NextResponse.json(
       { 
@@ -42,9 +41,9 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
-    const body = await request.json()
+    const body = await _request.json()
     const { date, startTime, endTime, isRecurring, recurringType, reason } = body
 
     if (!date) {
@@ -91,7 +90,6 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('خطأ في إقفال الوقت:', error)
     
     return NextResponse.json(
       { 

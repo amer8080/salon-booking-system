@@ -11,7 +11,6 @@ export async function GET(request: NextRequest) {
     const endDate = searchParams.get('endDate')
     const view = searchParams.get('view') || 'week' // week, month, day
 
-    console.log(`📅 طلب حجوزات - العرض: ${view}, من: ${startDate}, إلى: ${endDate}`)
 
     // إعداد تصفية التواريخ
     let dateFilter = {}
@@ -30,7 +29,6 @@ export async function GET(request: NextRequest) {
         }
       }
       
-      console.log(`🔍 تصفية التواريخ: ${start.toISOString()} إلى ${end.toISOString()}`)
     } else {
       // إذا لم يتم تحديد تواريخ، استخدم الأسبوع الحالي
       const now = new Date()
@@ -49,7 +47,6 @@ export async function GET(request: NextRequest) {
         }
       }
       
-      console.log(`📅 استخدام الأسبوع الحالي: ${startOfWeek.toISOString()} إلى ${endOfWeek.toISOString()}`)
     }
 
     // جلب الحجوزات مع التصفية
@@ -63,7 +60,6 @@ export async function GET(request: NextRequest) {
       }
     })
 
-    console.log(`✅ تم جلب ${bookings.length} حجز للفترة المحددة (بدلاً من جميع الحجوزات)`)
 
     const formattedBookings = bookings.map(booking => ({
       id: booking.id,
@@ -90,7 +86,6 @@ export async function GET(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('خطأ في جلب الحجوزات:', error)
     return NextResponse.json(
       { success: false, error: 'خطأ في جلب الحجوزات' },
       { status: 500 }
@@ -188,7 +183,6 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('خطأ في إنشاء الحجز:', error)
     
     return NextResponse.json(
       { 

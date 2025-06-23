@@ -1,0 +1,43 @@
+
+> type-check
+> tsc --noEmit
+
+src/app/admin/bookings/components/Views/DayView.tsx(66,27): error TS2339: Property 'logError' does not exist on type '{ autoFixBooking: (booking: any) => any; }'.
+src/app/admin/bookings/components/Views/DayView.tsx(298,41): error TS2339: Property 'serviceNames' does not exist on type 'Booking'.
+src/app/admin/bookings/components/Views/DayView.tsx(298,70): error TS2339: Property 'serviceNames' does not exist on type 'Booking'.
+src/app/admin/bookings/components/Views/DayView.tsx(299,42): error TS2339: Property 'serviceNames' does not exist on type 'Booking'.
+src/app/admin/bookings/components/Views/DayView.tsx(300,43): error TS2339: Property 'serviceNames' does not exist on type 'Booking'.
+src/app/admin/bookings/components/Views/DayView.tsx(300,87): error TS2339: Property 'serviceNames' does not exist on type 'Booking'.
+src/app/admin/bookings/hooks/useBookings.ts(86,21): error TS2345: Argument of type '{ [key: string]: string; }' is not assignable to parameter of type 'SetStateAction<{ [key: string]: Service; }>'.
+  Type '{ [key: string]: string; }' is not assignable to type '{ [key: string]: Service; }'.
+    'string' index signatures are incompatible.
+      Type 'string' is not assignable to type 'Service'.
+src/app/admin/bookings/page.tsx(649,9): error TS2322: Type '{ [key: string]: Service; }' is not assignable to type '{ [key: string]: string; }'.
+  'string' index signatures are incompatible.
+    Type 'Service' is not assignable to type 'string'.
+src/app/admin/bookings/page.tsx(661,9): error TS2322: Type '{ [key: string]: Service; }' is not assignable to type '{ [key: string]: string; }'.
+  'string' index signatures are incompatible.
+    Type 'Service' is not assignable to type 'string'.
+src/app/admin/bookings/page.tsx(673,9): error TS2322: Type '{ [key: string]: Service; }' is not assignable to type '{ [key: string]: string; }'.
+  'string' index signatures are incompatible.
+    Type 'Service' is not assignable to type 'string'.
+src/app/admin/customers/components/CustomerFilters.tsx(5,10): error TS2865: Import 'CustomerFilters' conflicts with local value, so must be declared with a type-only import when 'isolatedModules' is enabled.
+src/app/api/admin/blocked-times/[id]/route.ts(42,15): error TS2339: Property 'code' does not exist on type 'unknown'.
+src/app/book/components/BookingConfirmationStep.tsx(47,79): error TS2339: Property 'whatsappMessage' does not exist on type 'BookingSummary'.
+src/app/book/hooks/useBookingSteps.ts(56,30): error TS2339: Property 'accessible' does not exist on type '{ id: number; title: string; description: string; icon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>; }'.
+src/app/book/hooks/useBookingSteps.ts(120,5): error TS2741: Property 'completed' is missing in type '{ id: number; title: string; description: string; icon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>; }' but required in type 'StepConfig'.
+src/app/book/hooks/useBookingSteps.ts(130,5): error TS2322: Type '{ id: number; title: string; description: string; icon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>; }[]' is not assignable to type 'StepConfig[]'.
+  Property 'completed' is missing in type '{ id: number; title: string; description: string; icon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>; }' but required in type 'StepConfig'.
+src/app/book/hooks/useBookingSteps.ts(199,31): error TS2339: Property 'completed' does not exist on type '{ id: number; title: string; description: string; icon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>; }'.
+src/app/book/hooks/useBookingSteps.ts(212,37): error TS2339: Property 'completed' does not exist on type '{ id: number; title: string; description: string; icon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>; }'.
+src/app/book/page.tsx(222,11): error TS2322: Type '{ completed: boolean; accessible: true; id: number; title: string; description: string; icon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>; }[]' is not assignable to type 'StepConfig[]'.
+  Type '{ completed: boolean; accessible: true; id: number; title: string; description: string; icon: React.ForwardRefExoticComponent<Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>>; }' is not assignable to type 'StepConfig'.
+    Types of property 'id' are incompatible.
+      Type 'number' is not assignable to type 'BookingStep'.
+src/app/book/page.tsx(228,11): error TS2322: Type 'number' is not assignable to type 'BookingStep'.
+src/app/book/page.tsx(241,15): error TS2322: Type '() => Promise<boolean>' is not assignable to type '() => Promise<void>'.
+  Type 'Promise<boolean>' is not assignable to type 'Promise<void>'.
+    Type 'boolean' is not assignable to type 'void'.
+src/app/book/page.tsx(242,15): error TS2322: Type '() => Promise<boolean>' is not assignable to type '() => Promise<void>'.
+  Type 'Promise<boolean>' is not assignable to type 'Promise<void>'.
+    Type 'boolean' is not assignable to type 'void'.

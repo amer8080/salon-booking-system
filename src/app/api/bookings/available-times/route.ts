@@ -181,7 +181,6 @@ export async function GET(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('خطأ في جلب الأوقات المتاحة:', error)
     
     return NextResponse.json(
       { 

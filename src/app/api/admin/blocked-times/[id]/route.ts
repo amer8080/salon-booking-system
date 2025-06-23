@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(
+  request: NextRequest, 
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
-    const blockedTimeId = parseInt(params.id)
-
+    const { id } = await params  // ← الإضافة المهمة: await params
+    
+    const blockedTimeId = parseInt(id)
     if (isNaN(blockedTimeId)) {
       return NextResponse.json(
         { success: false, error: 'معرف الإقفال غير صحيح' },
@@ -28,25 +32,21 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     })
 
     const message = blockedTime.startTime ? 'تم فتح الوقت بنجاح' : 'تم فتح اليوم بنجاح'
-
+    
     return NextResponse.json({
       success: true,
       message: message
     })
-
   } catch (error) {
-    console.error('خطأ في حذف الإقفال:', error)
-    
-    if (error.code === 'P2025') {
+    if ((error as any)?.code === 'P2025') {
       return NextResponse.json(
         { success: false, error: 'الإقفال غير موجود' },
         { status: 404 }
       )
     }
-    
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: 'حدث خطأ في حذف الإقفال',
         details: process.env.NODE_ENV === 'development' ? String(error) : undefined
       },
@@ -55,10 +55,14 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
   }
 }
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(
+  request: NextRequest, 
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
-    const blockedTimeId = parseInt(params.id)
-
+    const { id } = await params  // ← الإضافة المهمة: await params
+    
+    const blockedTimeId = parseInt(id)
     if (isNaN(blockedTimeId)) {
       return NextResponse.json(
         { success: false, error: 'معرف الإقفال غير صحيح' },
@@ -91,13 +95,10 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
         createdAt: blockedTime.createdAt.toISOString()
       }
     })
-
   } catch (error) {
-    console.error('خطأ في جلب الإقفال:', error)
-    
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: 'حدث خطأ في جلب الإقفال',
         details: process.env.NODE_ENV === 'development' ? String(error) : undefined
       },

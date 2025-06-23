@@ -28,7 +28,6 @@ export async function POST(request: NextRequest) {
       // تسجيل دخول ناجح
       const token = generateSimpleToken()
       
-      console.log('✅ تسجيل دخول أدمن ناجح:', username, 'في:', new Date().toISOString())
       
       return NextResponse.json({
         success: true,
@@ -42,7 +41,6 @@ export async function POST(request: NextRequest) {
       })
     } else {
       // بيانات خاطئة
-      console.log('❌ محاولة تسجيل دخول فاشلة:', username)
       
       return NextResponse.json(
         { success: false, error: 'اسم المستخدم أو كلمة المرور غير صحيحة' },
@@ -51,7 +49,6 @@ export async function POST(request: NextRequest) {
     }
 
   } catch (error) {
-    console.error('خطأ في تسجيل دخول الأدمن:', error)
     
     return NextResponse.json(
       { 

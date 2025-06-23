@@ -23,7 +23,6 @@ export async function disconnectPrisma() {
 export async function testConnection() {
   try {
     await prisma.$connect()
-    console.log('✅ Prisma connected successfully')
     return true
   } catch (error) {
     console.error('❌ Prisma connection failed:', error)

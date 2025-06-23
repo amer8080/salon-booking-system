@@ -107,7 +107,6 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('خطأ في إنشاء الحجز:', error)
     
     return NextResponse.json(
       { 

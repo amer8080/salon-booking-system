@@ -17,7 +17,7 @@ export function parseServices(services: string | null): string[] {
     }
     
     return [];
-  } catch (error) {
+  } catch (_error) {
     // إذا فشل JSON parsing، تعامل كنص عادي
     if (typeof services === 'string') {
       const cleanService = services.trim();

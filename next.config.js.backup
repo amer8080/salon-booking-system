@@ -1,0 +1,98 @@
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  // ✅ Strict mode for SaaS quality
+  reactStrictMode: true,
+  
+  // ✅ ESLint and TypeScript enabled
+  eslint: {
+    ignoreDuringBuilds: false,
+    dirs: ['src'],
+  },
+  typescript: {
+    ignoreBuildErrors: false, // Strict type checking
+  },
+  
+  // ✅ Performance optimizations for SaaS
+  compress: true,
+  poweredByHeader: false,
+  generateEtags: true,
+  
+  // ✅ Bundle optimization
+  experimental: {
+    optimizePackageImports: [
+      'lucide-react',
+      '@prisma/client',
+      'react-hot-toast'
+    ],
+    typedRoutes: true, // Type-safe routing
+    instrumentationHook: true, // Performance monitoring
+  },
+  
+  // ✅ Image optimization for multi-tenant
+  images: {
+    formats: ['image/webp', 'image/avif'],
+    minimumCacheTTL: 60,
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+  },
+  
+  // ✅ Headers for security (SaaS requirement)
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY',
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'origin-when-cross-origin',
+          },
+          {
+            key: 'Permissions-Policy',
+            value: 'camera=(), microphone=(), geolocation=()',
+          },
+        ],
+      },
+    ]
+  },
+  
+  // ✅ Webpack optimizations for large SaaS apps
+  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+    // Optimize bundle splitting for multi-tenant
+    config.optimization.splitChunks = {
+      chunks: 'all',
+      cacheGroups: {
+        core: {
+          name: 'core',
+          test: /[\\/]src[\\/](core|lib)[\\/]/,
+          priority: 30,
+        },
+        adapters: {
+          name: 'adapters',
+          test: /[\\/]src[\\/]adapters[\\/]/,
+          priority: 20,
+        },
+        vendor: {
+          name: 'vendor',
+          test: /[\\/]node_modules[\\/]/,
+          priority: 10,
+        },
+      },
+    }
+    
+    return config
+  },
+  
+  // ✅ Environment variables validation
+  env: {
+    CUSTOM_KEY: process.env.CUSTOM_KEY,
+  },
+}
+
+module.exports = nextConfig

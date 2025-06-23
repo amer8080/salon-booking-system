@@ -44,7 +44,6 @@ export async function GET() {
     })
 
   } catch (error) {
-    console.error('خطأ في قراءة الخدمات:', error)
     
     return NextResponse.json(
       { 

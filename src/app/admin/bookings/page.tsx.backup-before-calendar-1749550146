@@ -1,0 +1,1024 @@
+'use client'
+import EditBookingModal from './components/Modals/EditBookingModal'
+import DeleteBookingModal from './components/Modals/DeleteBookingModal'
+import { Booking, Service, EditBookingData, BlockedTime, BOOKING_CONSTANTS } from './types/booking.types'
+import { useBookings } from './hooks/useBookings'
+import LoadingSpinner from './components/UI/LoadingSpinner'
+import CalendarGrid from './components/Calendar/CalendarGrid'
+import NewBookingModal from './components/Modals/NewBookingModal'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import {
+  Calendar,
+  Edit,
+  Trash2,
+  Clock,
+  Phone,
+  User,
+  Sparkles,
+  ArrowLeft,
+  LogOut,
+  ChevronLeft,
+  ChevronRight,
+  Plus,
+  Copy,
+  MessageCircle,
+  AlertTriangle,
+  Save,
+  X,
+  Check,
+  Lock,
+  Unlock,
+  Shield
+} from 'lucide-react'
+import { fromDatabaseTime, formatIstanbulDate, formatArabicDate, parseIstanbulDate, getDaysInMonth, } from '@/lib/timezone'
+
+export default function AdminBookingsPage() {
+ const {
+  bookings,
+  services,
+  servicesWithCategories,
+  allServices,
+  blockedTimes,
+  loading,
+  error,
+  fetchBookings,
+  fetchServices,
+  fetchBlockedTimes,
+  refreshData,
+  setError,
+  setBookings,
+  setBlockedTimes
+} = useBookings()
+  const [selectedDate, setSelectedDate] = useState('')
+  const [currentMonth, setCurrentMonth] = useState(new Date())
+  const [currentDateRange, setCurrentDateRange] = useState(() => {
+    const now = new Date()
+    const year = now.getFullYear()
+    const month = now.getMonth()
+    return {
+      startDate: `${year}-${(month + 1).toString().padStart(2, '0')}-01`,
+      endDate: new Date(year, month + 1, 0).toISOString().split('T')[0],
+      view: 'month'
+    }
+  })
+  const [selectedDayBookings, setSelectedDayBookings] = useState<Booking[]>([])
+  const [showPhoneMenu, setShowPhoneMenu] = useState<string | null>(null)
+
+  const [editingBooking, setEditingBooking] = useState<Booking | null>(null)
+  const [deletingBooking, setDeletingBooking] = useState<Booking | null>(null)
+ 
+
+  // حالات الحجز الجديد
+  const [isCreatingBooking, setIsCreatingBooking] = useState(false)
+
+  const [isSelectingDaysForBlock, setIsSelectingDaysForBlock] = useState(false)
+  const [isSelectingTimesForBlock, setIsSelectingTimesForBlock] = useState(false)
+  const [selectedDaysToBlock, setSelectedDaysToBlock] = useState<string[]>([])
+  const [selectedTimesToBlock, setSelectedTimesToBlock] = useState<string[]>([])
+
+  const router = useRouter()
+
+  const monthNames = [
+    'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
+    'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'
+  ]
+
+  const dayNames = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت']
+  const availableYears = [2020, 2021, 2022, 2023, 2024, 2025, 2026]
+
+  const categoryColors = {
+    hair: 'bg-green-100 text-green-700',
+    makeup: 'bg-purple-100 text-purple-700',
+    nails: 'bg-blue-100 text-blue-700',
+    skincare: 'bg-yellow-100 text-yellow-700',
+    default: 'bg-gray-100 text-gray-700'
+  }
+
+  const getServiceColor = (serviceId: string) => {
+    const service = servicesWithCategories[serviceId]
+    if (!service) return categoryColors.default
+
+    switch (service.category) {
+      case 'hair': return categoryColors.hair
+      case 'makeup': return categoryColors.makeup
+      case 'nails': return categoryColors.nails
+      case 'skincare': return categoryColors.skincare
+      default: return categoryColors.default
+    }
+  }
+
+  const generateAdminTimeSlots = () => {
+    const slots = []
+    for (let hour = 11; hour <= 19; hour++) {
+      for (let minute = 0; minute < 60; minute += 30) {
+        if (hour === 19 && minute > 0) break
+        const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`
+        slots.push(timeString)
+      }
+    }
+    return slots
+  }
+
+  const adminTimeSlots = generateAdminTimeSlots()
+
+ // ✅ أضف هذا فقط:
+useEffect(() => {
+  const token = localStorage.getItem('adminToken')
+  if (!token) {
+    router.push('/admin/login')
+    return
+  }
+}, [router])
+
+// ✅ أضف هذا للحجوزات:
+useEffect(() => {
+  if (Object.keys(services).length > 0) {
+    fetchBookings(currentDateRange.startDate, currentDateRange.endDate)
+  }
+}, [currentDateRange, services, fetchBookings]) 
+
+  const isDayBlocked = (dateString: string) => {
+    return blockedTimes.some(blocked =>
+      blocked.date === dateString &&
+      blocked.startTime === null &&
+      blocked.endTime === null
+    )
+  }
+
+  const isTimeBlocked = (dateString: string, timeString: string) => {
+    return blockedTimes.some(blocked =>
+      blocked.date === dateString &&
+      blocked.startTime === timeString
+    )
+  }
+
+  const getBlockedDayId = (dateString: string) => {
+    const blocked = blockedTimes.find(blocked =>
+      blocked.date === dateString &&
+      blocked.startTime === null &&
+      blocked.endTime === null
+    )
+    return blocked?.id
+  }
+
+  const getBlockedTimeId = (dateString: string, timeString: string) => {
+    const blocked = blockedTimes.find(blocked =>
+      blocked.date === dateString &&
+      blocked.startTime === timeString
+    )
+    return blocked?.id
+  }
+
+  const toggleDaySelection = (dateString: string) => {
+    setSelectedDaysToBlock(prev =>
+      prev.includes(dateString)
+        ? prev.filter(d => d !== dateString)
+        : [...prev, dateString]
+    )
+  }
+// ✅ إضافة دالة جديدة لمعالجة تغيير الشهر
+const handleMonthChange = (newMonth: Date) => {
+  setCurrentMonth(newMonth)
+}
+
+// ✅ إضافة دالة جديدة لمعالجة اختيار اليوم
+const handleDaySelect = (dateString: string, dayBookings: Booking[]) => {
+  setSelectedDate(dateString)
+  setSelectedDayBookings(dayBookings)
+}
+  const toggleTimeSelection = (timeString: string) => {
+    const isBooked = selectedDayBookings.some(booking => {
+      const startDateTime = fromDatabaseTime(booking.startTime)
+      const bookingTime = formatIstanbulDate(startDateTime, 'time')
+      return bookingTime === timeString
+    })
+
+    if (isBooked) return
+
+    setSelectedTimesToBlock(prev =>
+      prev.includes(timeString)
+        ? prev.filter(t => t !== timeString)
+        : [...prev, timeString]
+    )
+  }
+
+  const processSelectedDays = async () => {
+    if (selectedDaysToBlock.length === 0) {
+      alert('يرجى اختيار أيام')
+      return
+    }
+
+    const daysToBlock = selectedDaysToBlock.filter(date => !isDayBlocked(date))
+    const daysToUnblock = selectedDaysToBlock.filter(date => isDayBlocked(date))
+
+    try {
+      if (daysToBlock.length > 0) {
+        const blockRequests = daysToBlock.map(date =>
+          fetch('/api/admin/blocked-times', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              date: date,
+              startTime: null,
+              endTime: null,
+              isRecurring: false,
+              reason: 'إقفال يوم كامل'
+            })
+          })
+        )
+        await Promise.all(blockRequests)
+      }
+
+      if (daysToUnblock.length > 0) {
+        const unblockRequests = daysToUnblock.map(date => {
+          const blockedId = getBlockedDayId(date)
+          return blockedId ? fetch(`/api/admin/blocked-times/${blockedId}`, {
+            method: 'DELETE'
+          }) : null
+        }).filter(Boolean)
+
+        await Promise.all(unblockRequests)
+      }
+
+      setSelectedDaysToBlock([])
+      setIsSelectingDaysForBlock(false)
+      fetchBlockedTimes()
+
+      const message = []
+      if (daysToBlock.length > 0) message.push(`تم إقفال ${daysToBlock.length} يوم`)
+      if (daysToUnblock.length > 0) message.push(`تم فتح ${daysToUnblock.length} يوم`)
+      alert(message.join(' و ') + '!')
+    } catch (error) {
+      alert('خطأ في معالجة الأيام')
+    }
+  }
+
+  const processSelectedTimes = async () => {
+    if (selectedTimesToBlock.length === 0) {
+      alert('يرجى اختيار أوقات')
+      return
+    }
+
+    const timesToBlock = selectedTimesToBlock.filter(time => !isTimeBlocked(selectedDate, time))
+    const timesToUnblock = selectedTimesToBlock.filter(time => isTimeBlocked(selectedDate, time))
+
+    try {
+      if (timesToBlock.length > 0) {
+        const blockRequests = timesToBlock.map(time =>
+          fetch('/api/admin/blocked-times', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              date: selectedDate,
+              startTime: time,
+              endTime: time,
+              isRecurring: false,
+              reason: 'إقفال وقت محدد'
+            })
+          })
+        )
+        await Promise.all(blockRequests)
+      }
+
+      if (timesToUnblock.length > 0) {
+        const unblockRequests = timesToUnblock.map(time => {
+          const blockedId = getBlockedTimeId(selectedDate, time)
+          return blockedId ? fetch(`/api/admin/blocked-times/${blockedId}`, {
+            method: 'DELETE'
+          }) : null
+        }).filter(Boolean)
+
+        await Promise.all(unblockRequests)
+      }
+
+      setSelectedTimesToBlock([])
+      setIsSelectingTimesForBlock(false)
+      fetchBlockedTimes()
+
+      const message = []
+      if (timesToBlock.length > 0) message.push(`تم إقفال ${timesToBlock.length} وقت`)
+      if (timesToUnblock.length > 0) message.push(`تم فتح ${timesToUnblock.length} وقت`)
+      alert(message.join(' و ') + '!')
+    } catch (error) {
+      alert('خطأ في معالجة الأوقات')
+    }
+  }
+
+  const unblockDay = async (dateString: string) => {
+    try {
+      const blockedDay = blockedTimes.find(blocked =>
+        blocked.date === dateString &&
+        blocked.startTime === null
+      )
+
+      if (blockedDay) {
+        await fetch(`/api/admin/blocked-times/${blockedDay.id}`, {
+          method: 'DELETE'
+        })
+
+        fetchBlockedTimes()
+        alert('تم فتح اليوم بنجاح!')
+      }
+    } catch (error) {
+      alert('خطأ في فتح اليوم')
+    }
+  }
+
+  const unblockTime = async (dateString: string, timeString: string) => {
+    try {
+      const blockedTime = blockedTimes.find(blocked =>
+        blocked.date === dateString &&
+        blocked.startTime === timeString
+      )
+
+      if (blockedTime) {
+        await fetch(`/api/admin/blocked-times/${blockedTime.id}`, {
+          method: 'DELETE'
+        })
+
+        fetchBlockedTimes()
+        alert('تم فتح الوقت بنجاح!')
+      }
+    } catch (error) {
+      alert('خطأ في فتح الوقت')
+    }
+  }
+
+  // دوال إدارة الحجز الجديد
+const openNewBooking = () => {
+  setIsCreatingBooking(true)
+}
+
+  const saveNewBooking = async (bookingData: EditBookingData) => {
+  try {
+    const response = await fetch('/api/admin/bookings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        customerName: bookingData.customerName,
+        phoneNumber: bookingData.customerPhone,
+        selectedDate: bookingData.selectedDate,
+        selectedTime: bookingData.selectedTime,
+        selectedServices: bookingData.selectedServices,
+        notes: bookingData.notes,
+        createdBy: 'admin'
+      }),
+    })
+
+    const data = await response.json()
+
+    if (data.success) {
+      setIsCreatingBooking(false)
+      fetchBookings(currentDateRange.startDate, currentDateRange.endDate)
+      alert('تم إنشاء الحجز بنجاح!')
+    } else {
+      alert('فشل في إنشاء الحجز: ' + data.error)
+      throw new Error(data.error)
+    }
+  } catch (error) {
+    console.error('خطأ في إنشاء الحجز:', error)
+    alert('خطأ في الاتصال بالخادم')
+    throw error
+  }
+}
+
+
+
+
+   const navigateMonth = (direction: 'prev' | 'next') => {
+    setCurrentMonth(prev => {
+      const newDate = new Date(prev)
+      newDate.setMonth(prev.getMonth() + (direction === 'prev' ? -1 : 1))
+
+      const year = newDate.getFullYear()
+      const month = newDate.getMonth()
+      const newRange = {
+        startDate: `${year}-${(month + 1).toString().padStart(2,'0')}-01`,
+        endDate: new Date(year, month + 1, 0).toISOString().split('T')[0],
+        view: 'month' as const
+      }
+
+      setCurrentDateRange(newRange)
+      return newDate
+    })
+  }
+
+
+// ——— تغيير الشهر من القائمة المنسدلة ———
+  const changeMonth = (monthIndex: number) => {
+    const year = currentMonth.getFullYear()
+    const newDate = new Date(year, monthIndex, 1)
+    setCurrentMonth(newDate)
+
+    const startDate = `${year}-${(monthIndex + 1).toString().padStart(2,'0')}-01`
+    const endDate   = new Date(year, monthIndex + 1, 0).toISOString().split('T')[0]
+    setCurrentDateRange({ startDate, endDate, view: 'month' })
+  }
+
+
+
+   const changeYear = (yearValue: number) => {
+    const month = currentMonth.getMonth()
+    const newDate = new Date(yearValue, month, 1)
+    setCurrentMonth(newDate)
+
+    const startDate = `${yearValue}-${(month + 1).toString().padStart(2,'0')}-01`
+    const endDate   = new Date(yearValue, month + 1, 0).toISOString().split('T')[0]
+    setCurrentDateRange({ startDate, endDate, view: 'month' })
+  }
+
+
+
+  const getBookingsForDate = (date: Date) => {
+    const year = date.getFullYear()
+    const month = date.getMonth()
+    const day = date.getDate()
+    const dateString = `${year}-${(month + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`
+
+    return bookings.filter(booking => {
+      const bookingDateTime = fromDatabaseTime(booking.date)
+      const bookingDateString = formatIstanbulDate(bookingDateTime, 'date')
+      return bookingDateString === dateString
+    })
+  }
+
+  const selectDate = (date: Date) => {
+    const year = date.getFullYear()
+    const month = date.getMonth()
+    const day = date.getDate()
+    const dateString = `${year}-${(month + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`
+
+    setSelectedDate(dateString)
+
+    const dayBookings = getBookingsForDate(date)
+    setSelectedDayBookings(dayBookings)
+  }
+
+  const copyPhoneNumber = (phone: string) => {
+    navigator.clipboard.writeText(phone)
+    setShowPhoneMenu(null)
+  }
+
+  const openWhatsApp = (phone: string, customerName: string) => {
+    const cleanPhone = phone.replace(/[^\d+]/g, '')
+    const message = `مرحباً ${customerName}، بخصوص موعدك في صالون ريم...`
+    const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`
+    window.open(whatsappUrl, '_blank')
+    setShowPhoneMenu(null)
+  }
+
+  const makeCall = (phone: string) => {
+    window.open(`tel:${phone}`, '_self')
+    setShowPhoneMenu(null)
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem('adminToken')
+    router.push('/admin/login')
+  }
+
+  const openEditBooking = (booking: Booking) => {
+  setEditingBooking(booking)
+}
+
+  const openDeleteBooking = (booking: Booking) => {
+  setDeletingBooking(booking)
+}
+
+ const saveBookingChanges = async (bookingId: number, editData: EditBookingData) => {
+  try {
+    const response = await fetch(`/api/admin/bookings/${bookingId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        customerName: editData.customerName,
+        customerPhone: editData.customerPhone,
+        selectedDate: editData.selectedDate,
+        selectedTime: editData.selectedTime,
+        selectedServices: editData.selectedServices,
+        notes: editData.notes
+      })
+    })
+
+    const data = await response.json()
+
+    if (data.success) {
+      setEditingBooking(null)
+      fetchBookings(currentDateRange.startDate, currentDateRange.endDate)
+      alert('تم تحديث الحجز بنجاح!')
+    } else {
+      alert('فشل في تحديث الحجز: ' + data.error)
+      throw new Error(data.error)
+    }
+  } catch (error) {
+    console.error('خطأ في حفظ التعديلات:', error)
+    alert('خطأ في الاتصال بالخادم')
+    throw error
+  }
+}
+const deleteBooking = async (bookingId: number, reason: string) => {
+  try {
+    const response = await fetch(`/api/admin/bookings/${bookingId}`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ reason: reason })
+    })
+
+    const data = await response.json()
+
+    if (data.success) {
+      setDeletingBooking(null)
+      fetchBookings(currentDateRange.startDate, currentDateRange.endDate)
+      alert('تم حذف الحجز بنجاح!')
+    } else {
+      alert('فشل في حذف الحجز: ' + data.error)
+      throw new Error(data.error)
+    }
+  } catch (error) {
+    console.error('خطأ في حذف الحجز:', error)
+    alert('خطأ في الاتصال بالخادم')
+    throw error
+  }
+}
+  const formatArabicDateDisplay = (dateString: string) => {
+    const dateObj = fromDatabaseTime(dateString)
+    return formatArabicDate(dateObj)
+  }
+
+  const getSelectedDaysAction = () => {
+    const blockedCount = selectedDaysToBlock.filter(date => isDayBlocked(date)).length
+    const unlockedCount = selectedDaysToBlock.filter(date => !isDayBlocked(date)).length
+
+    if (blockedCount > 0 && unlockedCount > 0) {
+      return { type: 'mixed', text: `معالجة المحدد (${blockedCount} فتح + ${unlockedCount} إقفال)`, icon: Shield }
+    } else if (blockedCount > 0) {
+      return { type: 'unlock', text: `🔓 فتح المحدد (${blockedCount})`, icon: Unlock }
+    } else {
+      return { type: 'lock', text: `🔒 إقفال المحدد (${unlockedCount})`, icon: Lock }
+    }
+  }
+
+  const getSelectedTimesAction = () => {
+    const blockedCount = selectedTimesToBlock.filter(time => isTimeBlocked(selectedDate, time)).length
+    const unlockedCount = selectedTimesToBlock.filter(time => !isTimeBlocked(selectedDate, time)).length
+
+    if (blockedCount > 0 && unlockedCount > 0) {
+      return { type: 'mixed', text: `معالجة المحدد (${blockedCount} فتح + ${unlockedCount} إقفال)`, icon: Shield }
+    } else if (blockedCount > 0) {
+      return { type: 'unlock', text: `🔓 فتح المحدد (${blockedCount})`, icon: Unlock }
+    } else {
+      return { type: 'lock', text: `🔒 إقفال المحدد (${unlockedCount})`, icon: Lock }
+    }
+  }
+
+  const days = getDaysInMonth(currentMonth)
+  const today = new Date()
+  const todayString = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate().toString().padStart(2, '0')}`
+
+  if (loading) {
+  return <LoadingSpinner />
+}
+  const selectedDaysAction = getSelectedDaysAction()
+  const selectedTimesAction = getSelectedTimesAction()
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50">
+      <header className="bg-white shadow-sm border-b">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4 rtl:space-x-reverse">
+              <Link href="/admin" className="flex items-center text-purple-600 hover:text-purple-800">
+                <ArrowLeft className="w-5 h-5 ml-2" />
+                العودة للوحة التحكم
+              </Link>
+            </div>
+
+            <div className="flex items-center space-x-4 rtl:space-x-reverse">
+              <h1 className="text-xl font-bold text-gray-800">إدارة الحجوزات</h1>
+              <Calendar className="w-6 h-6 text-purple-600" />
+            </div>
+
+            <button
+              onClick={handleLogout}
+              className="flex items-center space-x-2 rtl:space-x-reverse text-red-600 hover:text-red-800 transition-colors duration-300"
+            >
+              <LogOut className="w-4 h-4" />
+              <span>خروج</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {error && (
+          <div className="mb-8 bg-red-50 border border-red-200 rounded-xl p-4">
+            <div className="flex items-center">
+              <X className="w-5 h-5 text-red-500 ml-2" />
+              <p className="text-red-700">{error}</p>
+            </div>
+          </div>
+        )}
+
+        <div className="bg-white rounded-xl shadow-lg p-4 mb-4">
+          <div className="flex items-center justify-center space-x-4 rtl:space-x-reverse">
+            {!isSelectingDaysForBlock ? (
+              <button
+                onClick={() => {
+                  setIsSelectingDaysForBlock(true)
+                  setSelectedDaysToBlock([])
+                }}
+                className="flex items-center space-x-2 rtl:space-x-reverse bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition-colors"
+              >
+                <Shield className="w-4 h-4" />
+                <span>📅 تحديد أيام للإقفال/الفتح</span>
+              </button>
+            ) : (
+              <div className="flex items-center space-x-3 rtl:space-x-reverse">
+                <div className="flex items-center space-x-2 rtl:space-x-reverse bg-orange-100 px-3 py-2 rounded-lg">
+                  <Shield className="w-4 h-4 text-orange-600" />
+                  <span className="text-orange-800 font-medium">وضع تحديد الأيام مُفعل</span>
+                </div>
+                <button
+                  onClick={processSelectedDays}
+                  disabled={selectedDaysToBlock.length === 0}
+                  className={`flex items-center space-x-2 rtl:space-x-reverse text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50 ${
+                    selectedDaysAction.type === 'unlock' ? 'bg-green-600 hover:bg-green-700' :
+                    selectedDaysAction.type === 'lock' ? 'bg-red-600 hover:bg-red-700' :
+                    'bg-blue-600 hover:bg-blue-700'
+                  }`}
+                >
+                  <selectedDaysAction.icon className="w-4 h-4" />
+                  <span>{selectedDaysAction.text}</span>
+                </button>
+                <button
+                  onClick={() => {
+                    setIsSelectingDaysForBlock(false)
+                    setSelectedDaysToBlock([])
+                  }}
+                  className="flex items-center space-x-2 rtl:space-x-reverse bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                  <span>إلغاء</span>
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+
+       <CalendarGrid
+          currentMonth={currentMonth}
+          onMonthChange={handleMonthChange}
+          bookings={bookings}
+          onDaySelect={handleDaySelect}
+          selectedDate={selectedDate}
+          blockedTimes={blockedTimes}
+          isSelectingDaysForBlock={isSelectingDaysForBlock}
+          selectedDaysToBlock={selectedDaysToBlock}
+          onToggleDaySelection={toggleDaySelection}
+          services={services}
+          getServiceColor={getServiceColor}
+        />
+
+        {selectedDate && (
+          <div className="bg-white rounded-xl shadow-lg p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-bold text-gray-800">
+                حجوزات {formatArabicDateDisplay(selectedDate)} ({selectedDayBookings.length} {selectedDayBookings.length === 1 ? 'موعد' : 'مواعيد'})
+              </h3>
+
+              <div className="flex items-center space-x-3 rtl:space-x-reverse">
+                {!isSelectingTimesForBlock ? (
+                  <button
+                    onClick={() => {
+                      setIsSelectingTimesForBlock(true)
+                      setSelectedTimesToBlock([])
+                    }}
+                    className="flex items-center space-x-2 rtl:space-x-reverse bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition-colors"
+                  >
+                    <Clock className="w-4 h-4" />
+                    <span>⏰ تحديد ساعات للإقفال/الفتح</span>
+                  </button>
+                ) : (
+                  <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                    <button
+                      onClick={processSelectedTimes}
+                      disabled={selectedTimesToBlock.length === 0}
+                      className={`flex items-center space-x-2 rtl:space-x-reverse text-white px-3 py-2 rounded-lg transition-colors disabled:opacity-50 ${
+                        selectedTimesAction.type === 'unlock' ? 'bg-green-600 hover:bg-green-700' :
+                        selectedTimesAction.type === 'lock' ? 'bg-red-600 hover:bg-red-700' :
+                        'bg-blue-600 hover:bg-blue-700'
+                      }`}
+                    >
+                      <selectedTimesAction.icon className="w-4 h-4" />
+                      <span>{selectedTimesAction.text}</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        setIsSelectingTimesForBlock(false)
+                        setSelectedTimesToBlock([])
+                      }}
+                      className="flex items-center space-x-2 rtl:space-x-reverse bg-gray-600 text-white px-3 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+                    >
+                      <X className="w-4 h-4" />
+                      <span>إلغاء</span>
+                    </button>
+                  </div>
+                )}
+
+                <button
+                  onClick={openNewBooking}
+                  className="flex items-center space-x-2 rtl:space-x-reverse bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>حجز جديد</span>
+                </button>
+              </div>
+            </div>
+
+            {isDayBlocked(selectedDate) ? (
+              <div className="text-center py-8">
+                <Lock className="w-16 h-16 mx-auto mb-4 text-red-500" />
+                <p className="text-lg text-red-600 font-medium">هذا اليوم مقفل كاملاً</p>
+                {selectedDayBookings.length > 0 && (
+                  <p className="text-sm text-gray-600 mt-2">
+                    يحتوي على {selectedDayBookings.length} حجز سابق
+                  </p>
+                )}
+                <button
+                  onClick={() => unblockDay(selectedDate)}
+                  className="mt-4 flex items-center space-x-2 rtl:space-x-reverse bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors mx-auto"
+                >
+                  <Unlock className="w-4 h-4" />
+                  <span>فتح اليوم</span>
+                </button>
+              </div>
+            ) : selectedDayBookings.length === 0 && !isSelectingTimesForBlock && adminTimeSlots.filter(time => isTimeBlocked(selectedDate, time)).length === 0 ? (
+              <div className="text-center py-12 text-gray-500">
+                <Calendar className="w-16 h-16 mx-auto mb-4 text-gray-300" />
+                <p className="text-lg">لا توجد حجوزات أو أوقات مقفلة في هذا اليوم</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {isSelectingTimesForBlock && (
+                  <div className="bg-orange-50 border border-orange-200 rounded-xl p-4 mb-6">
+                    <h4 className="font-medium text-orange-800 mb-3">اختر الأوقات للإقفال أو الفتح:</h4>
+                    <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2">
+                      {adminTimeSlots.map((time) => {
+                        const isBooked = selectedDayBookings.some(booking => {
+                          const startDateTime = fromDatabaseTime(booking.startTime)
+                          const bookingTime = formatIstanbulDate(startDateTime, 'time')
+                          return bookingTime === time
+                        })
+                        const isBlocked = isTimeBlocked(selectedDate, time)
+                        const isSelectedForBlock = selectedTimesToBlock.includes(time)
+                        const canSelect = !isBooked
+
+                        return (
+                          <div
+                            key={time}
+                            onClick={() => canSelect && toggleTimeSelection(time)}
+                            className={`
+                              p-2 rounded-lg text-sm font-medium text-center transition-all cursor-pointer
+                              ${!canSelect
+                                ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                                : isSelectedForBlock
+                                  ? 'bg-orange-500 text-white'
+                                  : isBlocked
+                                    ? 'bg-red-100 border border-red-300 text-red-700 hover:border-orange-400'
+                                    : 'bg-white border border-gray-300 hover:border-orange-400'
+                              }
+                            `}
+                          >
+                            {time}
+                            {isBooked && <div className="text-xs">محجوز</div>}
+                            {isBlocked && !isBooked && <div className="text-xs">🔒</div>}
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {!isSelectingTimesForBlock && (
+                  <div className="bg-gray-50 border rounded-xl p-4 mb-6">
+                    <h4 className="font-medium text-gray-800 mb-3">جميع الأوقات لهذا اليوم:</h4>
+                    <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2">
+                      {adminTimeSlots.map((time) => {
+                        const booking = selectedDayBookings.find(booking => {
+                          const startDateTime = fromDatabaseTime(booking.startTime)
+                          const bookingTime = formatIstanbulDate(startDateTime, 'time')
+                          return bookingTime === time
+                        })
+                        const isBlocked = isTimeBlocked(selectedDate, time)
+
+                        return (
+                          <div
+                            key={time}
+                            className={`
+                              p-2 rounded-lg text-sm font-medium text-center
+                              ${booking
+                                ? 'bg-blue-100 border border-blue-300 text-blue-700'
+                                : isBlocked
+                                  ? 'bg-red-100 border border-red-300 text-red-700'
+                                  : 'bg-green-100 border border-green-300 text-green-700'
+                              }
+                            `}
+                          >
+                            {time}
+                            <div className="text-xs mt-1">
+                              {booking ? 'محجوز' : isBlocked ? 'مقفل' : 'متاح'}
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {selectedDayBookings.map((booking) => {
+                  const startDateTime = fromDatabaseTime(booking.startTime)
+                  const timeString = formatIstanbulDate(startDateTime, 'time')
+
+                  return (
+                    <div
+                      key={booking.id}
+                      className={`border rounded-xl p-4 transition-all duration-200 hover:shadow-md ${
+                        booking.status === 'confirmed'
+                          ? 'border-green-200 bg-green-50'
+                          : booking.status === 'completed'
+                            ? 'border-blue-200 bg-blue-50'
+                            : 'border-red-200 bg-red-50'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-4 rtl:space-x-reverse mb-2">
+                            <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                              <User className="w-4 h-4 text-gray-500" />
+                              <span className="font-semibold text-gray-800">{booking.customerName}</span>
+                            </div>
+
+                            <div className="relative">
+                              <button
+                                onClick={() => setShowPhoneMenu(showPhoneMenu === booking.customerPhone ? null : booking.customerPhone)}
+                                className="flex items-center space-x-2 rtl:space-x-reverse text-purple-600 hover:text-purple-800"
+                              >
+                                <Phone className="w-4 h-4" />
+                                <span>{booking.customerPhone}</span>
+                              </button>
+
+                              {showPhoneMenu === booking.customerPhone && (
+                                <div className="absolute left-0 mt-2 w-48 bg-white rounded-lg shadow-lg border z-10">
+                                  <button
+                                    onClick={() => makeCall(booking.customerPhone)}
+                                    className="w-full text-right px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2 rtl:space-x-reverse"
+                                  >
+                                    <Phone className="w-4 h-4 text-green-600" />
+                                    <span>اتصال</span>
+                                  </button>
+                                  <button
+                                    onClick={() => openWhatsApp(booking.customerPhone, booking.customerName)}
+                                    className="w-full text-right px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2 rtl:space-x-reverse"
+                                  >
+                                    <MessageCircle className="w-4 h-4 text-green-600" />
+                                    <span>واتساب</span>
+                                  </button>
+                                  <button
+                                    onClick={() => copyPhoneNumber(booking.customerPhone)}
+                                    className="w-full text-right px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2 rtl:space-x-reverse"
+                                  >
+                                    <Copy className="w-4 h-4 text-blue-600" />
+                                    <span>نسخ الرقم</span>
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="flex items-center space-x-4 rtl:space-x-reverse text-sm text-gray-600">
+                            <div className="flex items-center space-x-1 rtl:space-x-reverse">
+                              <Clock className="w-4 h-4" />
+                              <span>{timeString}</span>
+                              {isTimeBlocked(selectedDate, timeString) && (
+                                <button
+                                  onClick={() => unblockTime(selectedDate, timeString)}
+                                  className="ml-2 text-red-500 hover:text-red-700"
+                                  title="إلغاء إقفال هذا الوقت"
+                                >
+                                  <Lock className="w-3 h-3" />
+                                </button>
+                              )}
+                            </div>
+
+                            <div className="flex items-center space-x-1 rtl:space-x-reverse">
+                              <Sparkles className="w-4 h-4" />
+                              <div className="flex flex-wrap gap-1">
+                                {booking.services.map((serviceId, serviceIndex) => (
+                                  <span
+                                    key={`service-${booking.id}-${serviceIndex}`}
+                                    className={`text-xs px-2 py-1 rounded-full ${getServiceColor(serviceId)}`}
+                                  >
+                                    {services[serviceId] || `خدمة ${serviceId}`}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                          <button
+                            onClick={() => openEditBooking(booking)}
+                            className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
+                            title="تعديل الحجز"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </button>
+
+                          <button
+                            onClick={() => openDeleteBooking(booking)}
+                            className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors"
+                            title="حذف الحجز"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })}
+
+                {!isSelectingTimesForBlock && adminTimeSlots.filter(time => isTimeBlocked(selectedDate, time)).length > 0 && (
+                  <div className="mt-4">
+                    <h4 className="font-medium text-gray-700 mb-3">الأوقات المقفلة:</h4>
+                    {adminTimeSlots.filter(time => isTimeBlocked(selectedDate, time)).map(time => (
+                      <div key={time} className="border border-red-200 bg-red-50 rounded-lg p-3 mb-2">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                            <Lock className="w-4 h-4 text-red-600" />
+                            <span className="font-medium text-red-700">{time} - مقفل</span>
+                          </div>
+                          <button
+                            onClick={() => unblockTime(selectedDate, time)}
+                            className="flex items-center space-x-1 rtl:space-x-reverse text-green-600 hover:text-green-800 text-sm"
+                          >
+                            <Unlock className="w-4 h-4" />
+                            <span>فتح</span>
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* نافذة إنشاء حجز جديد */}
+     <NewBookingModal
+  isOpen={isCreatingBooking}
+  onClose={() => setIsCreatingBooking(false)}
+  services={services}
+  allServices={allServices}
+  adminTimeSlots={adminTimeSlots}
+  onSave={saveNewBooking}
+  getServiceColor={getServiceColor}
+  selectedDate={selectedDate}
+/>
+
+      {/* نافذة تعديل الحجز */}
+     <EditBookingModal
+  isOpen={!!editingBooking}
+  onClose={() => setEditingBooking(null)}
+  booking={editingBooking}
+  services={services}
+  allServices={allServices}
+  adminTimeSlots={adminTimeSlots}
+  onSave={saveBookingChanges}
+  getServiceColor={getServiceColor}
+/>
+
+
+      {/* نافذة حذف الحجز */}
+ <DeleteBookingModal
+  isOpen={!!deletingBooking}
+  onClose={() => setDeletingBooking(null)}
+  booking={deletingBooking}
+  onDelete={deleteBooking}
+  services={services}
+/>
+      {showPhoneMenu && (
+        <div
+          className="fixed inset-0 z-5"
+          onClick={() => setShowPhoneMenu(null)}
+        />
+      )}
+    </div>
+  )
+}

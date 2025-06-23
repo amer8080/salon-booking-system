@@ -175,3 +175,69 @@ export function formatArabicDate(date: Date): string {
   
   return `${dayName}، ${day} ${monthName} ${year}`
 }
+
+/**
+ * دالة إنشاء أيام الشهر للتقويم - النسخة المحسنة
+ * ترجع بيانات مفصلة متوافقة مع CalendarGrid.tsx
+ */
+export function getDaysInMonth(date: Date): Array<{
+  date: string
+  day: number
+  isCurrentMonth: boolean
+  isPast: boolean
+  isToday: boolean
+}> {
+  const currentDate = toIstanbulTime(new Date())
+  const firstDay = new Date(date.getFullYear(), date.getMonth(), 1)
+  const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0)
+  const firstDayOfWeek = firstDay.getDay()
+  const daysInMonth = lastDay.getDate()
+
+  const days = []
+
+  // أيام الشهر السابق
+  for (let i = firstDayOfWeek - 1; i >= 0; i--) {
+    const prevDate = new Date(date.getFullYear(), date.getMonth(), -i)
+    const dateString = formatIstanbulDate(prevDate, 'date')
+    days.push({
+      date: dateString,
+      day: prevDate.getDate(),
+      isCurrentMonth: false,
+      isPast: prevDate < getIstanbulStartOfDay(currentDate),
+      isToday: isSameDayIstanbul(prevDate, currentDate)
+    })
+  }
+
+  // أيام الشهر الحالي
+  for (let day = 1; day <= daysInMonth; day++) {
+    const currentDay = new Date(date.getFullYear(), date.getMonth(), day)
+    const dateString = formatIstanbulDate(currentDay, 'date')
+    days.push({
+      date: dateString,
+      day: day,
+      isCurrentMonth: true,
+      isPast: currentDay < getIstanbulStartOfDay(currentDate),
+      isToday: isSameDayIstanbul(currentDay, currentDate)
+    })
+  }
+
+  // أيام الشهر التالي لملء الشبكة (إجمالي 42 يوم = 6 أسابيع × 7 أيام)
+  const remainingDays = 42 - days.length
+  for (let day = 1; day <= remainingDays; day++) {
+    const nextDate = new Date(date.getFullYear(), date.getMonth() + 1, day)
+    const dateString = formatIstanbulDate(nextDate, 'date')
+    days.push({
+      date: dateString,
+      day: day,
+      isCurrentMonth: false,
+      isPast: nextDate < getIstanbulStartOfDay(currentDate),
+      isToday: isSameDayIstanbul(nextDate, currentDate)
+    })
+  }
+
+  return days
+}
+export function formatArabicDateDisplay(dateString: string): string {
+  const dateObj = fromDatabaseTime(dateString)
+  return formatArabicDate(dateObj)
+}

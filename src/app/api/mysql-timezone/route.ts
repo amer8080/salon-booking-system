@@ -16,7 +16,6 @@ export async function POST() {
     })
 
   } catch (error) {
-    console.error('خطأ في تعديل المنطقة الزمنية:', error)
     
     return NextResponse.json(
       { 

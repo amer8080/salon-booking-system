@@ -1,0 +1,89 @@
+// src/types/theme.types.ts
+// أنواع البيانات للنظام الموحد للألوان
+
+/**
+ * ألوان الحجوزات الأساسية
+ */
+export interface BookingColors {
+  booked: string      // لون الحجوزات المؤكدة
+  blocked: string     // لون الأوقات المقفلة  
+  available: string   // لون الأوقات المتاحة
+  today: string       // لون اليوم الحالي
+}
+
+/**
+ * إعدادات الأسبوع
+ */
+export interface WeekSettings {
+  firstDayOfWeek: 0 | 1 | 6  // 0=الأحد، 1=الإثنين، 6=السبت
+}
+
+/**
+ * جميع إعدادات التطبيق
+ */
+export interface AppSettings {
+  colors: BookingColors
+  week: WeekSettings
+}
+
+/**
+ * حالة Context للألوان
+ */
+export interface ColorThemeState {
+  // البيانات
+  colors: BookingColors
+  weekSettings: WeekSettings
+  isLoading: boolean
+  error: string | null
+  
+  // الدوال
+  updateColors: (colors: Partial<BookingColors>) => Promise<void>
+  updateWeekSettings: (settings: Partial<WeekSettings>) => Promise<void>
+  resetToDefaults: () => Promise<void>
+  reloadSettings: () => Promise<void>
+}
+
+/**
+ * الألوان الافتراضية
+ */
+export const DEFAULT_COLORS: BookingColors = {
+  booked: '#f97316',    // orange-500
+  blocked: '#ef4444',   // red-500
+  available: '#f9fafb', // gray-50
+  today: '#4f46e5'      // indigo-600
+}
+
+/**
+ * إعدادات الأسبوع الافتراضية
+ */
+export const DEFAULT_WEEK_SETTINGS: WeekSettings = {
+  firstDayOfWeek: 0  // الأحد
+}
+
+/**
+ * جميع الإعدادات الافتراضية
+ */
+export const DEFAULT_APP_SETTINGS: AppSettings = {
+  colors: DEFAULT_COLORS,
+  week: DEFAULT_WEEK_SETTINGS
+}
+
+/**
+ * مفاتيح CSS Variables
+ */
+export const CSS_VARIABLES = {
+  BOOKED: '--booking-color-booked',
+  BLOCKED: '--booking-color-blocked', 
+  AVAILABLE: '--booking-color-available',
+  TODAY: '--booking-color-today'
+} as const
+
+/**
+ * أسماء الألوان للعرض
+ */
+export const COLOR_LABELS = {
+  booked: 'الحجوزات المؤكدة',
+  blocked: 'الأوقات المقفلة',
+  available: 'الأوقات المتاحة', 
+  today: 'اليوم الحالي'
+} as const

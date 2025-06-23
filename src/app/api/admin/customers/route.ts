@@ -4,15 +4,26 @@ import { prisma } from '@/lib/prisma'
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
+    
+    // Pagination parameters
+    const page = parseInt(searchParams.get('page') || '1')
+    const limit = searchParams.get('limit') // null means "all"
+    const limitNum = limit ? parseInt(limit) : undefined
+    
+    // Filter parameters
     const search = searchParams.get('search') || ''
     const status = searchParams.get('status') || 'all'
-    const minVisits = searchParams.get('minVisits') || '0'
+    const minVisits = parseInt(searchParams.get('minVisits') || '0')
     const lastVisitDays = searchParams.get('lastVisitDays') || 'all'
+    
+    // Sorting parameters
+    const sortBy = searchParams.get('sortBy') || 'lastVisit'
+    const sortOrder = searchParams.get('sortOrder') || 'desc'
 
-    // بناء شروط البحث
+    // Build where clause
     const whereConditions: any = {}
 
-    // البحث في الاسم أو رقم الهاتف
+    // Search filter
     if (search) {
       whereConditions.OR = [
         { name: { contains: search } },
@@ -20,63 +31,105 @@ export async function GET(request: NextRequest) {
       ]
     }
 
-    // فلترة حسب الحالة
+    // Status filter
     if (status !== 'all') {
       whereConditions.status = status
     }
 
-    // فلترة حسب عدد الزيارات
-    if (minVisits !== '0') {
-      whereConditions.totalVisits = { gte: parseInt(minVisits) }
+    // Visits filter
+    if (minVisits > 0) {
+      whereConditions.totalVisits = { gte: minVisits }
     }
 
-    // فلترة حسب آخر زيارة
+    // Last visit filter
     if (lastVisitDays !== 'all') {
       const daysAgo = new Date()
       daysAgo.setDate(daysAgo.getDate() - parseInt(lastVisitDays))
       whereConditions.lastVisit = { gte: daysAgo }
     }
 
-    const customers = await prisma.customer.findMany({
-      where: whereConditions,
-      include: {
-        reservations: {
-          orderBy: { createdAt: 'desc' },
-          take: 5,
-          select: {
-            id: true,
-            date: true,
-            startTime: true,
-            services: true,
-            status: true,
-            totalPrice: true
-          }
-        },
-        // جلب جميع الكوبونات لحساب الإحصائيات
-        coupons: {
-          orderBy: { createdAt: 'desc' }
-        },
-        _count: {
-          select: {
-            reservations: true,
-            coupons: true
+    // Build orderBy
+    const orderByClause: any = {}
+    
+    // Handle special sorting cases
+    if (sortBy === 'name') {
+      orderByClause.name = sortOrder
+    } else if (sortBy === 'totalVisits') {
+      orderByClause.totalVisits = sortOrder
+    } else if (sortBy === 'lastVisit') {
+      orderByClause.lastVisit = sortOrder
+    } else if (sortBy === 'createdAt') {
+      orderByClause.createdAt = sortOrder
+    } else {
+      // Default fallback
+      orderByClause.lastVisit = 'desc'
+    }
+
+    // Calculate pagination
+    const skip = limitNum ? (page - 1) * limitNum : 0
+    const take = limitNum || undefined
+
+    // Execute queries in parallel for better performance
+    const [customers, totalCount] = await Promise.all([
+      // Get customers with pagination
+      prisma.customer.findMany({
+        where: whereConditions,
+        orderBy: orderByClause,
+        skip,
+        take,
+        include: {
+          reservations: {
+            orderBy: { createdAt: 'desc' },
+            take: 5,
+            select: {
+              id: true,
+              date: true,
+              startTime: true,
+              services: true,
+              status: true,
+              totalPrice: true
+            }
+          },
+          coupons: {
+            orderBy: { createdAt: 'desc' }
+          },
+          _count: {
+            select: {
+              reservations: true,
+              coupons: true
+            }
           }
         }
-      },
-      orderBy: [
-        { totalVisits: 'desc' },
-        { lastVisit: 'desc' }
-      ]
-    })
+      }),
+      
+      // Get total count for pagination
+      prisma.customer.count({
+        where: whereConditions
+      })
+    ])
 
-    // حساب إحصائيات إضافية لكل عميل
+    // Calculate general stats (not affected by filters)
+    const [totalCustomers, activeCustomers, vipCustomersCount, newCustomersThisMonth] = await Promise.all([
+      prisma.customer.count(),
+      prisma.customer.count({ where: { status: 'active' } }),
+      prisma.customer.count({ where: { totalVisits: { gte: 20 } } }), // VIP customers
+      prisma.customer.count({
+        where: {
+          createdAt: {
+            gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+          }
+        }
+      })
+    ])
+
+    // Process customers with enhanced stats
     const customersWithStats = customers.map(customer => {
-      // إصلاح حساب الكوبونات
+      // Fix coupon calculations
       const totalCoupons = customer.coupons.length
       const usedCoupons = customer.coupons.filter(c => c.isUsed).length
       const availableCoupons = customer.coupons.filter(c => !c.isUsed).length
       
-      // حساب متوسط الفترة بين الزيارات
+      // Calculate average days between visits
       const reservations = customer.reservations
       let avgDaysBetweenVisits = 0
       if (reservations.length > 1) {
@@ -85,17 +138,17 @@ export async function GET(request: NextRequest) {
         avgDaysBetweenVisits = Math.round(totalDays / (dates.length - 1))
       }
 
-      // تحديد مستوى العميل
-      let customerLevel = 'جديد'
-      if (customer.totalVisits >= 20) customerLevel = 'VIP'
-      else if (customer.totalVisits >= 10) customerLevel = 'ذهبي'
-      else if (customer.totalVisits >= 5) customerLevel = 'فضي'
-      else if (customer.totalVisits >= 2) customerLevel = 'عادي'
+      // Determine customer level (updated to match new design)
+      let customerLevel = 'عميل جديد'
+      if (customer.totalVisits >= 20) customerLevel = 'عميل VIP'
+      else if (customer.totalVisits >= 10) customerLevel = 'عميل ذهبي'
+      else if (customer.totalVisits >= 5) customerLevel = 'عميل فضي'
+      else if (customer.totalVisits >= 2) customerLevel = 'عميل عادي'
 
-      // حساب آخر زيارة بالأيام
-      const daysSinceLastVisit = Math.floor(
-        (new Date().getTime() - new Date(customer.lastVisit).getTime()) / (1000 * 60 * 60 * 24)
-      )
+      // Calculate days since last visit
+      const daysSinceLastVisit = customer.lastVisit 
+        ? Math.floor((new Date().getTime() - new Date(customer.lastVisit).getTime()) / (1000 * 60 * 60 * 24))
+        : 999 // High number for customers with no visits
 
       return {
         id: customer.id,
@@ -119,15 +172,31 @@ export async function GET(request: NextRequest) {
       }
     })
 
+    // Calculate pagination metadata
+    const totalPages = limitNum ? Math.ceil(totalCount / limitNum) : 1
+    const hasNext = limitNum ? page * limitNum < totalCount : false
+    const hasPrev = page > 1
+
     return NextResponse.json({
       success: true,
       customers: customersWithStats,
-      total: customersWithStats.length
+      pagination: {
+        page,
+        limit: limitNum || totalCount,
+        total: totalCount,
+        totalPages,
+        hasNext,
+        hasPrev
+      },
+      stats: {
+        totalCustomers,
+        activeCustomers,
+        vipCustomers: vipCustomersCount,
+        newCustomersThisMonth
+      }
     })
 
   } catch (error) {
-    console.error('خطأ في جلب العملاء:', error)
-    console.error('تفاصيل الخطأ:', error)
     
     return NextResponse.json(
       { 
@@ -152,7 +221,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // التحقق من عدم وجود رقم الهاتف مسبقاً
+    // Check for existing phone number
     const existingCustomer = await prisma.customer.findUnique({
       where: { phone }
     })
@@ -171,7 +240,9 @@ export async function POST(request: NextRequest) {
         notes,
         status,
         totalVisits: 0,
-        language: 'ar'
+        language: 'ar',
+        firstVisit: new Date(),
+        lastVisit: new Date()
       }
     })
 
@@ -182,7 +253,6 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('خطأ في إضافة العميل:', error)
     return NextResponse.json(
       { success: false, error: 'خطأ في إضافة العميل' },
       { status: 500 }

@@ -1,4 +1,5 @@
 'use client'
+import { logError } from '@/lib/logger-client';
 
 import { useState } from 'react'
 import { 
@@ -85,7 +86,7 @@ export default function AdminServicesNewPage() {
         setError(data.error || 'فشل في إضافة الخدمة')
       }
     } catch (error) {
-      console.error('خطأ في إضافة الخدمة:', error)
+      logError('خطأ في إضافة الخدمة:', error)
       setError('خطأ في الاتصال بالخادم')
     } finally {
       setLoading(false)

@@ -1,4 +1,5 @@
 'use client'
+import { logError } from '@/lib/logger-client';
 
 import { useState, useEffect } from 'react'
 import { 
@@ -83,7 +84,7 @@ export default function AdminServicesPage() {
         setError(data.error || 'فشل في تحميل الخدمات')
       }
     } catch (error) {
-      console.error('خطأ في تحميل الخدمات:', error)
+      logError('خطأ في تحميل الخدمات:', error)
       setError('خطأ في الاتصال بالخادم')
     } finally {
       setLoading(false)
@@ -112,7 +113,7 @@ export default function AdminServicesPage() {
         alert('فشل في تحديث حالة الخدمة')
       }
     } catch (error) {
-      console.error('خطأ في تحديث حالة الخدمة:', error)
+      logError('خطأ في تحديث حالة الخدمة:', error)
       alert('خطأ في الاتصال بالخادم')
     }
   }
@@ -132,7 +133,7 @@ export default function AdminServicesPage() {
         alert('فشل في حذف الخدمة')
       }
     } catch (error) {
-      console.error('خطأ في حذف الخدمة:', error)
+      logError('خطأ في حذف الخدمة:', error)
       alert('خطأ في الاتصال بالخادم')
     }
   }
@@ -158,7 +159,7 @@ export default function AdminServicesPage() {
         alert('فشل في تحديث الخدمة')
       }
     } catch (error) {
-      console.error('خطأ في تحديث الخدمة:', error)
+      logError('خطأ في تحديث الخدمة:', error)
       alert('خطأ في الاتصال بالخادم')
     }
   }

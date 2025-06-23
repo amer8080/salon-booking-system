@@ -1,0 +1,145 @@
+=== تحليل شامل لنظام حجوزات الصالون ===
+التاريخ: Fri Jun 20 01:04:57 PM +03 2025
+
+=== إحصائيات الملفات ===
+عدد ملفات TypeScript/React:
+27
+
+تفاصيل الأسطر لكل ملف:
+   176 src/app/book/types/calendar.types.ts
+   128 src/app/book/types/booking-form.types.ts
+   225 src/app/book/types/api-responses.types.ts
+    26 src/app/book/index.ts
+   456 src/app/book/hooks/usePhoneVerification.ts
+   455 src/app/book/hooks/useServices.ts
+   481 src/app/book/hooks/useTimeSlots.ts
+   506 src/app/book/hooks/useCalendar.ts
+   300 src/app/book/hooks/useBookingSteps.ts
+   349 src/app/book/hooks/useBookingSubmit.ts
+    39 src/app/book/components/index.ts
+     0 src/app/book/components/modals/index.ts
+   309 src/app/book/utils/calendar-generator.ts
+   374 src/app/book/utils/form-validation.ts
+   402 src/app/book/utils/error-handling.ts
+   469 src/app/book/utils/booking-helpers.ts
+  4695 total
+
+=== هيكل المشروع ===
+src/app/book
+├── components
+│   ├── BookingCalendar.tsx
+│   ├── BookingConfirmationStep.tsx
+│   ├── BookingSelectionStep.tsx
+│   ├── BookingStepIndicator.tsx
+│   ├── index.ts
+│   ├── modals
+│   │   ├── BookingErrorModal.tsx
+│   │   ├── BookingSuccessModal.tsx
+│   │   └── index.ts
+│   ├── PhoneVerificationStep.tsx
+│   ├── ServicesList.tsx
+│   ├── TimeSlotsPicker.tsx
+│   └── ToastNotifications.tsx
+├── hooks
+│   ├── useBookingSteps.ts
+│   ├── useBookingSubmit.ts
+│   ├── useCalendar.ts
+│   ├── usePhoneVerification.ts
+│   ├── useServices.ts
+│   └── useTimeSlots.ts
+├── index.ts
+├── page.tsx
+├── page.tsx.backup
+├── types
+│   ├── api-responses.types.ts
+│   ├── booking-form.types.ts
+│   └── calendar.types.ts
+└── utils
+    ├── booking-helpers.ts
+    ├── calendar-generator.ts
+    ├── error-handling.ts
+    └── form-validation.ts
+
+6 directories, 28 files
+
+=== تحليل حجم البناء ===
+Route (app)                                 Size  First Load JS
++ First Load JS shared by all             101 kB
+
+=== التبعيات المثبتة ===
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "seed": "tsx prisma/seed.ts"
+    "@prisma/client": "^6.9.0",
+    "lucide-react": "^0.515.0",
+    "next": "15.3.3",
+    "prisma": "^6.9.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint-config-next": "15.3.3",
+
+=== فحص يدوي للمشاكل ===
+الملفات التي تحتوي على console.log:
+30
+الملفات التي تحتوي على TODO أو FIXME:
+0
+استخدام any type:
+31
+=== إحصائيات Components والـ Hooks ===
+عدد الـ Components:
+25
+عدد الـ Custom Hooks:
+31
+استخدام useState:
+78
+استخدام useEffect:
+35
+=== الملفات الكبيرة (أكثر من 200 سطر) ===
+   225 src/app/book/types/api-responses.types.ts
+   456 src/app/book/hooks/usePhoneVerification.ts
+   455 src/app/book/hooks/useServices.ts
+   481 src/app/book/hooks/useTimeSlots.ts
+   506 src/app/book/hooks/useCalendar.ts
+   300 src/app/book/hooks/useBookingSteps.ts
+   349 src/app/book/hooks/useBookingSubmit.ts
+   309 src/app/book/utils/calendar-generator.ts
+   374 src/app/book/utils/form-validation.ts
+   402 src/app/book/utils/error-handling.ts
+   469 src/app/book/utils/booking-helpers.ts
+  4695 total
+=== أخطاء البناء (إن وجدت) ===
+├ ƒ /api/admin/dashboard                   170 B         101 kB
+├ ƒ /api/admin/login                       170 B         101 kB
+├ ƒ /api/admin/services                    170 B         101 kB
+├ ƒ /api/admin/services/[id]               170 B         101 kB
+├ ƒ /api/admin/settings/app                170 B         101 kB
+├ ƒ /api/admin/settings/colors             170 B         101 kB
+├ ƒ /api/bookings                          170 B         101 kB
+├ ƒ /api/bookings/available-times          170 B         101 kB
+├ ƒ /api/mysql-timezone                    170 B         101 kB
+├ ƒ /api/services                          170 B         101 kB
+└ ○ /book                                  19 kB         123 kB
++ First Load JS shared by all             101 kB
+  ├ chunks/4bd1b696-a4b4829a0a1c5613.js  53.2 kB
+  ├ chunks/684-1a9ec89a570ace83.js       45.9 kB
+  └ other shared chunks (total)          1.92 kB
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+=== معلومات إضافية ===
+حجم مجلد المشروع:
+368K	src/app/book
+آخر تعديل على الملفات:
+-rw-r--r-- 1 root root 13679 Jun 20 12:21 src/app/book/utils/booking-helpers.ts
+-rw-r--r-- 1 root root 10810 Jun 20 12:00 src/app/book/hooks/useBookingSubmit.ts
+-rw-r--r-- 1 root root  8975 Jun 19 16:30 src/app/book/hooks/useBookingSteps.ts
+-rw-r--r-- 1 root root  1712 Jun 19 15:43 src/app/book/components/index.ts
+-rw-r--r-- 1 root root 11701 Jun 19 13:07 src/app/book/utils/error-handling.ts
+
+=== انتهى التحليل ===
