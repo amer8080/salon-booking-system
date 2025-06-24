@@ -4,7 +4,7 @@
 'use client'
 
 import React, { useState, useEffect, useCallback, createContext, useContext } from 'react'
-import { X, CheckCircle, XCircle, AlertTriangle, Info, Wifi, WifiOff, MessageCircle } from 'lucide-react'
+import { X, CheckCircle, XCircle, AlertTriangle, Info, WifiOff } from 'lucide-react'
 
 // Types
 interface Toast {

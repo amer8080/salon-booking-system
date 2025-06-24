@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { logError } from '@/lib/logger-client';
 
 import { useState } from 'react'
@@ -6,7 +6,6 @@ import {
   Sparkles, 
   ArrowLeft,
   Save,
-  X,
   AlertTriangle,
   CheckCircle
 } from 'lucide-react'

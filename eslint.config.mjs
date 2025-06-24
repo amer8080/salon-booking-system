@@ -1,14 +1,13 @@
-// eslint.config.mjs - التركيز على src/ فقط
+﻿// eslint.config.mjs - التركيز على src/ فقط مع auto-fix
 import js from '@eslint/js'
 import tseslint from '@typescript-eslint/eslint-plugin'
 import tsparser from '@typescript-eslint/parser'
-
 export default [
   {
     ignores: [
       '.next/**',
       'node_modules/**',
-      'out/**', 
+      'out/**',
       'dist/**',
       'build/**',
       '**/*.d.ts',
@@ -29,8 +28,13 @@ export default [
     plugins: { '@typescript-eslint': tseslint },
     rules: {
       '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/no-unused-vars': 'warn',
-      'no-console': 'warn',
+      '@typescript-eslint/no-unused-vars': ['error', { 
+        "args": "all",
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "ignoreRestSiblings": true
+      }],
+      'no-console': ['warn', { allow: ['warn', 'error'] }],
       'no-var': 'error',
       'prefer-const': 'error'
     }

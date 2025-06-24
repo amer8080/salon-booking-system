@@ -11,8 +11,6 @@ import {
   Settings, 
   
   Clock,
-  CheckCircle,
-  XCircle,
   AlertCircle,
   LogOut,
   Shield,
