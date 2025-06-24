@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+﻿import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
 // الإعدادات الافتراضية الشاملة
@@ -63,7 +63,7 @@ export async function GET() {
 /**
  * POST - حفظ إعدادات التطبيق
  */
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
     const body = await request.json()
     const { settings } = body

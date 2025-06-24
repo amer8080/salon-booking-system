@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+﻿import { NextRequest, NextResponse } from 'next/server'
 
 // بيانات الأدمن المؤقتة (بسيطة للتطوير)
 const ADMIN_CREDENTIALS = {
@@ -11,7 +11,7 @@ function generateSimpleToken() {
   return `admin_${Date.now()}_${Math.random().toString(36).substring(7)}`
 }
 
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
     const { username, password } = await request.json()
 

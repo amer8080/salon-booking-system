@@ -1,9 +1,9 @@
-import { parseServices, formatServicesForDatabase } from '@/lib/services-utils'
+﻿import { parseServices, formatServicesForDatabase } from '@/lib/services-utils'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { parseIstanbulDate, toDatabaseTime, fromDatabaseTime, formatIstanbulDate } from '@/lib/timezone'
+import { parseIstanbulDate, toDatabaseTime } from '@/lib/timezone'
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     // استخراج معاملات التاريخ من URL
     const { searchParams } = new URL(request.url)
@@ -85,7 +85,7 @@ export async function GET(request: NextRequest) {
       }
     })
 
-  } catch (error) {
+  } catch (error) { logError('API error', { error: error.message }) {
     return NextResponse.json(
       { success: false, error: 'خطأ في جلب الحجوزات' },
       { status: 500 }
@@ -93,7 +93,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
     const body = await request.json()
     const { customerName, phoneNumber, selectedDate, selectedTime, selectedServices, notes, createdBy = 'admin' } = body
@@ -183,14 +183,19 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
+  logError("API operation failed", { error: error.message, endpoint: "/api/bookings" })
     
     return NextResponse.json(
       { 
         success: false, 
         error: 'حدث خطأ في إنشاء الحجز',
         details: process.env.NODE_ENV === 'development' ? String(error) : undefined
-      },
+      
+},
       { status: 500 }
     )
   }
 }
+
+
+

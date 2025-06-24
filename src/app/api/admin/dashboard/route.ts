@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+﻿import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
 export async function GET(_request: NextRequest) {
@@ -62,7 +62,7 @@ export async function GET(_request: NextRequest) {
     return NextResponse.json({
       success: true,
       stats: stats,
-      timestamp: new Date().toISOString(),
+      _timestamp: new Date().toISOString(),
       message: 'تم جلب الإحصائيات بنجاح'
     })
 

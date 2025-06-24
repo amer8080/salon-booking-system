@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server'
+﻿import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'  // ✅ مُصحح
 
 // إضافة خدمة جديدة
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
     
     const body = await request.json()
@@ -103,7 +103,7 @@ export async function POST(request: NextRequest) {
 }
 
 // جلب جميع الخدمات (للأدمن) - مع المعطلة
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
 
     const services = await prisma.service.findMany({

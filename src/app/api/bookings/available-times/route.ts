@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+﻿import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { parseIstanbulDate, getIstanbulStartOfDay, getIstanbulEndOfDay, createIstanbulDate, formatIstanbulDate, fromDatabaseTime } from '@/lib/timezone'
 
@@ -28,7 +28,7 @@ function generateTimeSlots() {
   return slots
 }
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     const selectedDate = searchParams.get('date')

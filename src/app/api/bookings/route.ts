@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server'
+﻿import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { parseIstanbulDate, toDatabaseTime } from '@/lib/timezone'
 
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
     const body = await request.json()
     const { phoneNumber, customerName, selectedDate, selectedTime, selectedServices } = body
@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     const startTime = parseIstanbulDate(selectedDate, selectedTime)
     const endTime = new Date(startTime.getTime() + (30 * 60 * 1000))
 
-    const existingReservation = await prisma.reservation.findFirst({
+    const _existingReservation = await prisma.reservation.findFirst({
       where: {
         startTime: toDatabaseTime(startTime),
         status: {
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
       }
     })
 
-    if (existingReservation) {
+    if (_existingReservation) {
       return NextResponse.json(
         { success: false, error: 'هذا الوقت محجوز مسبقاً. يرجى اختيار وقت آخر.' },
         { status: 409 }
