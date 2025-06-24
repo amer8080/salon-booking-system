@@ -1,7 +1,7 @@
-// ======================================
+﻿// ======================================
 // Hook مخصص لإدارة منطق العرض اليومي
 // ======================================
-import { useState, useCallback } from 'react'
+import { useCallback } from 'react'
 
 interface UseDayViewProps {
   blockedTimes: any[]
@@ -79,3 +79,4 @@ export const useDayView = ({
     unblockSingleTime
   }
 }
+

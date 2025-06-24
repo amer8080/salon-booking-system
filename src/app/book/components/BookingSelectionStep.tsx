@@ -1,13 +1,13 @@
-// src/app/book/components/BookingSelectionStep.tsx
+﻿// src/app/book/components/BookingSelectionStep.tsx
 // نسخ المنطق الممتاز من الملف الطويل + إصلاح infinite loop
 
 'use client'
-import { logError, logWarn } from '@/lib/logger-client';
+import { logError } from '@/lib/logger-client';
 
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { Calendar, Clock, Sparkles, ArrowLeft, ArrowRight, CheckCircle, Loader2 } from 'lucide-react'
 import { BookingSelectionStepProps } from '../types/booking-form.types'
-import { formatArabicDate, parseIstanbulDate, createIstanbulDate, formatIstanbulDate, getTodayIstanbul, isToday } from '@/lib/timezone'
+import { formatArabicDate, createIstanbulDate, formatIstanbulDate, isToday } from '@/lib/timezone'
 
 interface Service {
   id: string

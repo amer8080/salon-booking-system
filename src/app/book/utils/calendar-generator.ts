@@ -1,4 +1,4 @@
-// src/app/book/utils/calendar-generator.ts
+﻿// src/app/book/utils/calendar-generator.ts
 // مولد التقويم المحسن مع دعم التفاعل والجوال
 
 import { 
@@ -11,7 +11,7 @@ import {
   getArabicMonthName,
   toIstanbulTime
 } from '@/lib/timezone'
-import { CalendarMonth, CalendarDay, CalendarGenerationOptions, WorkingHours } from '../types/calendar.types'
+import { CalendarMonth, CalendarDay, CalendarGenerationOptions } from '../types/calendar.types'
 
 // إعدادات افتراضية للتقويم
 const DEFAULT_OPTIONS: CalendarGenerationOptions = {

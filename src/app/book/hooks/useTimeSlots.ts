@@ -1,13 +1,13 @@
-import { logError } from "@/lib/logger-client";
+﻿import { logError } from "@/lib/logger-client";
 // src/app/book/hooks/useTimeSlots.ts
 // Hook لإدارة الأوقات المتاحة والمحجوزة
 
-import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
+import { useEffect, useCallback, useMemo, useRef } from 'react'
 import { TimeSlot, TimeSlotsState } from '../types/calendar.types'
 import { AvailableTimesAPIResponse } from '../types/api-responses.types'
-import { executeWithRetry, createErrorToast } from '../utils/error-handling'
+import { executeWithRetry } from '../utils/error-handling'
 import { formatTimeForDisplay } from '../utils/booking-helpers'
-import { getTodayIstanbul, createIstanbulDate } from '@/lib/timezone'
+import { createIstanbulDate } from '@/lib/timezone'
 
 interface UseTimeSlotsProps {
   selectedDate: string

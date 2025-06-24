@@ -1,11 +1,11 @@
-import { logWarn } from "@/lib/logger-client";
+﻿import { logWarn } from "@/lib/logger-client";
 // src/app/book/hooks/useBookingSteps.ts
 // Hook لإدارة خطوات النموذج والتنقل بينها
 
-import { useState, useCallback, useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { BookingStep, BookingFormData, StepConfig } from '../types/booking-form.types'
 // إصلاح الـ imports: فصل الدوال لمنع التضارب
-import { getStepsConfig, calculateProgress, isStepDataValid } from '../utils/booking-helpers'
+import { getStepsConfig, calculateProgress } from '../utils/booking-helpers'
 import { canProceedToNextStep } from '../utils/form-validation'
 
 interface UseBookingStepsProps {

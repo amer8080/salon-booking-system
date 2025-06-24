@@ -1,8 +1,8 @@
-import { logError, logWarn } from "@/lib/logger-client";
+﻿import { logError } from "@/lib/logger-client";
 // src/app/book/hooks/usePhoneVerification.ts
 // Hook لإدارة التحقق من رقم الهاتف و OTP
 
-import { useState, useCallback, useRef, useEffect } from 'react'
+import { useCallback, useRef, useEffect } from 'react'
 import { PhoneVerificationState, FormValidationErrors } from '../types/booking-form.types'
 import { 
   validateTurkishPhone, 
@@ -11,7 +11,7 @@ import {
   formatPhoneForDisplay,
   normalizePhoneForAPI 
 } from '../utils/form-validation'
-import { executeWithRetry, createErrorToast } from '../utils/error-handling'
+import { executeWithRetry } from '../utils/error-handling'
 
 interface UsePhoneVerificationProps {
   onVerificationSuccess?: (customerData: any) => void

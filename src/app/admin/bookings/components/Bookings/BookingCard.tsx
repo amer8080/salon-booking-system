@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState } from 'react'
 import { Booking, Service } from '../../types/booking.types'
 import { fromDatabaseTime, formatIstanbulDate, formatArabicDate } from '@/lib/timezone'
@@ -16,7 +16,7 @@ import {
   MessageCircle,
   FileText,
   CheckCircle,
-  AlertCircle,
+  
   Lock,
   Unlock
 } from 'lucide-react'
@@ -30,7 +30,7 @@ interface BookingCardProps {
   time?: string
   
   // الخدمات المتاحة
-  services: Record<string, Service>
+  _services: Record<string, Service>
   servicesWithCategories: Record<string, Service & { category: string }>
   
   // دوال الألوان
@@ -59,7 +59,7 @@ export default function BookingCard({
   booking,
   date,
   time,
-  services,
+  _services,
   servicesWithCategories,
   getServiceColor,
   onEdit,
@@ -413,3 +413,5 @@ export default function BookingCard({
     </div>
   )
 }
+
+

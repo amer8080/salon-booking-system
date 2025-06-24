@@ -1,4 +1,4 @@
-import { logError, logWarn, logInfo } from "@/lib/logger-client";
+﻿import { logError } from "@/lib/logger-client";
 // src/app/book/utils/error-handling.ts
 // نظام معالجة الأخطاء الذكي مع retry logic
 
