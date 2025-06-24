@@ -1,4 +1,4 @@
-// src/app/admin/bookings/components/UI/PhoneMenu.tsx
+﻿// src/app/admin/bookings/components/UI/PhoneMenu.tsx
 'use client'
 
 import React from 'react'
@@ -28,7 +28,7 @@ export default function PhoneMenu({
       await navigator.clipboard.writeText(phone)
       // يمكن إضافة toast notification هنا
       onClose()
-    } catch (error) {
+    } catch {
       // fallback للمتصفحات القديمة
       const textArea = document.createElement('textarea')
       textArea.value = phone
@@ -158,3 +158,6 @@ export default function PhoneMenu({
     </>
   )
 }
+
+
+

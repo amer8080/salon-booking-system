@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect } from 'react'
 import { 
@@ -150,7 +150,7 @@ const EditBookingModal: React.FC<EditBookingModalProps> = ({
       setIsSaving(true)
       await onSave(booking.id, editData)
       handleClose()
-    } catch (error) {
+    } catch {
       // يمكن إضافة معالجة أخطاء أكثر تفصيلاً هنا
     } finally {
       setIsSaving(false)
@@ -486,3 +486,6 @@ const EditBookingModal: React.FC<EditBookingModalProps> = ({
 }
 
 export default EditBookingModal
+
+
+

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect } from 'react'
 import { 
@@ -38,7 +38,7 @@ interface NewBookingModalProps {
 const NewBookingModal: React.FC<NewBookingModalProps> = ({
   isOpen,
   onClose,
-  services,
+  _services,
   allServices,
   adminTimeSlots,
   onSave,
@@ -169,7 +169,7 @@ const NewBookingModal: React.FC<NewBookingModalProps> = ({
       setIsSaving(true)
       await onSave(bookingData)
       handleClose()
-    } catch (error) {
+    } catch {
       // يمكن إضافة معالجة أخطاء أكثر تفصيلاً هنا
     } finally {
       setIsSaving(false)
@@ -519,3 +519,6 @@ const NewBookingModal: React.FC<NewBookingModalProps> = ({
 }
 
 export default NewBookingModal
+
+
+

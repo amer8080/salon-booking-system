@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { 
@@ -77,7 +77,7 @@ const DeleteBookingModal: React.FC<DeleteBookingModalProps> = ({
       setIsDeleting(true)
       await onDelete(booking.id, deleteReason.trim())
       handleClose()
-    } catch (error) {
+    } catch {
       setValidationError('فشل في حذف الحجز. يرجى المحاولة مرة أخرى.')
     } finally {
       setIsDeleting(false)
@@ -281,3 +281,6 @@ const DeleteBookingModal: React.FC<DeleteBookingModalProps> = ({
 }
 
 export default DeleteBookingModal
+
+
+
