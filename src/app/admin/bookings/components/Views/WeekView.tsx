@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState, useMemo, useCallback } from 'react'
 import { Booking, Service } from '../../types/booking.types'
 import BookingCard from '../Bookings/BookingCard'
@@ -6,7 +6,7 @@ import { fromDatabaseTime, formatIstanbulDate } from '@/lib/timezone'
 // ✅ إضافة imports الجديدة
 import { parseServices, getServiceNames } from '@/lib/services-parser'
 import { useErrorHandler } from '@/lib/error-handler'
-
+import { logWarn } from '@/lib/logger-client'
 interface WeekViewProps {
   // البيانات
   selectedDate: string
@@ -108,7 +108,7 @@ export default function WeekView({
         const key = `${bookingDate}-${bookingTime}`
         bookingsByDateTime[key] = booking
       } catch (error) {
-        console.warn('خطأ في معالجة بيانات الحجز:', booking, error)
+        logWarn('خطأ في معالجة بيانات الحجز', { error: String(error), metadata: { booking } })
       }
     })
 
@@ -313,3 +313,6 @@ export default function WeekView({
     </div>
   )
 }
+
+
+

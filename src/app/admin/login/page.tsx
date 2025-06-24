@@ -1,9 +1,10 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Shield, Eye, EyeOff, Sparkles, ArrowRight, Loader2 } from 'lucide-react'
+import { logError } from '@/lib/logger-client'
 
 export default function AdminLoginPage() {
   const [username, setUsername] = useState('')
@@ -37,7 +38,7 @@ export default function AdminLoginPage() {
         setError(data.error || 'خطأ في تسجيل الدخول')
       }
     } catch (error) {
-      console.error('خطأ في تسجيل الدخول:', error)
+      logError('خطأ في تسجيل الدخول:', error)
       setError('حدث خطأ في الاتصال بالخادم')
     } finally {
       setIsLoading(false)
