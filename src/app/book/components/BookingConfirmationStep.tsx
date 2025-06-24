@@ -5,7 +5,7 @@ import React, { useEffect } from 'react'
 import { CheckCircle, Edit, ArrowRight, Loader2, Calendar, Clock, User, Phone, Sparkles, Download, MessageCircle, X } from 'lucide-react'
 import { BookingConfirmationStepProps } from '../types/booking-form.types'
 import { createBookingSummary, formatTimeForDisplay, createWhatsAppURL } from '../utils/booking-helpers'
-import { parseIstanbulDate } from '@/lib/timezone'
+
 import { logError } from "@/lib/logger-client";
 
 export default function BookingConfirmationStep({
@@ -402,3 +402,4 @@ export function BookingSuccessModal({
     </div>
   )
 }
+

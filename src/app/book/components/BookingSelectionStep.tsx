@@ -29,12 +29,12 @@ export default function BookingSelectionStep({
   onTimeSelect,
   onBack,
   onNext,
-  errors
+  _errors
 }: BookingSelectionStepProps) {
 
   // ✅ إصلاح infinite loop - إزالة activeTab من dependencies
-  const [activeTab, setActiveTab] = useState<'services' | 'date' | 'time'>('services')
-  const [completedTabs, setCompletedTabs] = useState<Set<string>>(new Set())
+  const [_activeTab, setActiveTab] = useState<'services' | 'date' | 'time'>('services')
+  const [_completedTabs, setCompletedTabs] = useState<Set<string>>(new Set())
 
   // ✅ منطق التقويم من الملف الطويل
   const [currentMonthIndex, setCurrentMonthIndex] = useState(0)
@@ -458,3 +458,7 @@ export default function BookingSelectionStep({
     </div>
   )
 }
+
+
+
+
