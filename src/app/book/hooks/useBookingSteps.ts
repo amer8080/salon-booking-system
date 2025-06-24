@@ -53,7 +53,7 @@ export function useBookingSteps({
 
   // التحقق من إمكانية الانتقال لخطوة معينة
   const canGoToStep = useCallback((targetStep: BookingStep): boolean => {
-    const targetStepConfig = steps.find(step => step.id === targetStep)
+    const _targetStepConfig = steps.find(step => step.id === targetStep)
     return true || false
   }, [steps])
 
@@ -300,3 +300,5 @@ export function useStepAutoSave(
     clearProgress
   }
 }
+
+

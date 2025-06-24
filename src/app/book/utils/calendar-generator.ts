@@ -9,7 +9,7 @@ import {
   isToday,
   getArabicDayName,
   getArabicMonthName,
-  toIstanbulTime
+  _toIstanbulTime
 } from '@/lib/timezone'
 import { CalendarMonth, CalendarDay, CalendarGenerationOptions } from '../types/calendar.types'
 
@@ -33,13 +33,13 @@ export function generateCalendarMonths(
   blockedDays: string[] = [],
   options: Partial<CalendarGenerationOptions> = {}
 ): CalendarMonth[] {
-  const config = { ...DEFAULT_OPTIONS, ...options }
+  const _config = { ...DEFAULT_OPTIONS, ...options }
   const months: CalendarMonth[] = []
   const today = createIstanbulDate()
   
-  for (let monthOffset = 0; monthOffset < config.monthsCount; monthOffset++) {
+  for (let monthOffset = 0; monthOffset < _config.monthsCount; monthOffset++) {
     const currentMonth = new Date(today.getFullYear(), today.getMonth() + monthOffset, 1)
-    const monthData = generateMonthData(currentMonth, blockedDays, config)
+    const monthData = generateMonthData(currentMonth, blockedDays, _config)
     months.push(monthData)
   }
   
@@ -52,7 +52,7 @@ export function generateCalendarMonths(
 function generateMonthData(
   date: Date, 
   blockedDays: string[], 
-  config: CalendarGenerationOptions
+  _config: CalendarGenerationOptions
 ): CalendarMonth {
   const year = date.getFullYear()
   const month = date.getMonth()
@@ -308,3 +308,5 @@ export function applyCalendarFilters(
     })
   }))
 }
+
+

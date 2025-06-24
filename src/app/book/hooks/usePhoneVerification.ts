@@ -196,7 +196,7 @@ export function usePhoneVerification({
         await new Promise(resolve => setTimeout(resolve, 1000))
         
         // Check if phone number is blocked (demo check)
-        const normalizedPhone = normalizePhoneForAPI(state.phoneNumber)
+        const _normalizedPhone = normalizePhoneForAPI(state.phoneNumber)
         
         return { success: true, message: 'OTP sent successfully' }
       })
@@ -455,3 +455,5 @@ export function useOTPInput(
     otpValue: values.join('')
   }
 }
+
+

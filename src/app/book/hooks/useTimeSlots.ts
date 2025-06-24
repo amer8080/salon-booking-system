@@ -481,3 +481,4 @@ function getPeakBookingHours(slots: TimeSlot[]): string[] {
     .filter(([_, count]) => count === maxCount)
     .map(([hour]) => `${hour}:00`)
 }
+
