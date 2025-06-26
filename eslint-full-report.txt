@@ -1,0 +1,218 @@
+﻿
+> salon-booking@0.1.0 lint
+> next lint
+
+node.exe : 
+At C:\Program Files\nodejs\npm.ps1:29 char:3
++   & $NODE_EXE $NPM_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+ ⚠ The Next.js plugin was not detected in your ESLint configuration. See 
+https://nextjs.org/docs/app/api-reference/config/eslint#migrating-existing-config
+
+./src/app/admin/bookings/components/UI/CombinedHeader.tsx
+123:36  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/admin/bookings/components/Views/DayView.tsx
+24:17  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+58:3  Error: 'onDateChange' is defined but never used. Allowed unused args must match /^_/u.  
+@typescript-eslint/no-unused-vars
+69:52  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/admin/bookings/components/Views/WeekView.tsx
+17:17  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+51:3  Error: 'onDateChange' is defined but never used. Allowed unused args must match /^_/u.  
+@typescript-eslint/no-unused-vars
+60:52  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/admin/bookings/hooks/useBookings.ts
+87:36  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/admin/bookings/hooks/useDayView.ts
+7:17  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+9:21  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+10:32  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+53:14  Error: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+71:14  Error: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/admin/bookings/types/booking.types.ts
+104:9  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/admin/customers/components/modals/CustomerEditModal.tsx
+18:3  Error: 'customer' is defined but never used. Allowed unused args must match /^_/u.  
+@typescript-eslint/no-unused-vars
+
+./src/app/admin/customers/hooks/useCustomerModals.ts
+90:14  Error: '_error' is defined but never used.  @typescript-eslint/no-unused-vars
+124:14  Error: '_error' is defined but never used.  @typescript-eslint/no-unused-vars
+152:14  Error: '_error' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/admin/settings/page.tsx
+137:68  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/admin/blocked-times/[id]/route.ts
+5:3  Error: 'request' is defined but never used. Allowed unused args must match /^_/u.  
+@typescript-eslint/no-unused-vars
+41:19  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+59:3  Error: 'request' is defined but never used. Allowed unused args must match /^_/u.  
+@typescript-eslint/no-unused-vars
+
+./src/app/api/admin/bookings/route.ts
+88:68  Error: Parsing error: ';' expected.
+
+./src/app/api/admin/bookings/[id]/route.ts
+23:33  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+38:23  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+64:13  Error: 'existingReservation' is assigned a value but never used. Allowed unused vars must match /^_/u.  
+@typescript-eslint/no-unused-vars
+148:19  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+159:27  Error: 'request' is defined but never used. Allowed unused args must match /^_/u.  
+@typescript-eslint/no-unused-vars
+185:14  Error: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/api/admin/customers/route.ts
+24:28  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+52:26  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+255:12  Error: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/api/admin/services/[id]/route.ts
+114:30  Error: 'request' is defined but never used. Allowed unused args must match /^_/u.  
+@typescript-eslint/no-unused-vars
+155:19  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+174:27  Error: 'request' is defined but never used. Allowed unused args must match /^_/u.  
+@typescript-eslint/no-unused-vars
+
+./src/app/api/admin/settings/app/route.ts
+53:12  Error: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+138:12  Error: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+165:12  Error: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+189:12  Error: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/api/admin/settings/colors/route.ts
+42:12  Error: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+113:12  Error: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+140:12  Error: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/api/logging/route.ts
+23:12  Error: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/book/components/BookingConfirmationStep.tsx
+340:16  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/book/components/BookingSelectionStep.tsx
+55:31  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+56:28  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/book/components/ServicesList.tsx
+35:5  Error: 'servicesGrouped' is assigned a value but never used. Allowed unused vars must match /^_/u.  
+@typescript-eslint/no-unused-vars
+36:5  Error: 'selectedServicesData' is assigned a value but never used. Allowed unused vars must match /^_/u.  
+@typescript-eslint/no-unused-vars
+41:5  Error: 'isValidSelection' is assigned a value but never used. Allowed unused vars must match /^_/u.  
+@typescript-eslint/no-unused-vars
+44:24  Error: 'services' is defined but never used. Allowed unused args must match /^_/u.  
+@typescript-eslint/no-unused-vars
+427:18  Error: 'servicesGrouped' is assigned a value but never used. Allowed unused vars must match /^_/u.  
+@typescript-eslint/no-unused-vars
+
+./src/app/book/components/TimeSlotsPicker.tsx
+25:5  Error: 'bookedSlots' is assigned a value but never used. Allowed unused vars must match /^_/u.  
+@typescript-eslint/no-unused-vars
+26:5  Error: 'blockedSlots' is assigned a value but never used. Allowed unused vars must match /^_/u.  
+@typescript-eslint/no-unused-vars
+42:28  Error: 'time' is defined but never used. Allowed unused args must match /^_/u.  
+@typescript-eslint/no-unused-vars
+219:63  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/book/hooks/useBookingSubmit.ts
+12:26  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+84:40  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+85:39  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+86:39  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+146:13  Error: 'selectedServicesData' is assigned a value but never used. Allowed unused vars must match /^_/u.  
+@typescript-eslint/no-unused-vars
+187:21  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+220:14  Error: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+280:33  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+322:40  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/book/hooks/usePhoneVerification.ts
+17:42  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+18:21  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/book/hooks/useServices.ts
+13:21  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/book/hooks/useTimeSlots.ts
+17:21  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+222:21  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/book/page.tsx
+168:65  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/book/types/api-responses.types.ts
+10:13  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+150:34  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+218:9  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/book/types/booking-form.types.ts
+77:9  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/book/types/calendar.types.ts
+167:13  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/book/utils/booking-helpers.ts
+357:46  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+357:56  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+370:46  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+370:56  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/book/utils/error-handling.ts
+28:22  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+44:43  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+54:30  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+158:40  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+159:9  Error: 'errorLog' is assigned a value but never used. Allowed unused vars must match /^_/u.  
+@typescript-eslint/no-unused-vars
+203:20  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+243:18  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+271:41  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+286:44  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+322:32  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+323:39  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+328:39  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+335:50  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+348:31  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+386:55  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/book/utils/form-validation.ts
+171:12  Error: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/lib/error-handler.ts
+5:36  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/lib/logger-client.ts
+17:29  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+63:16  Error: 'e' is defined but never used.  @typescript-eslint/no-unused-vars
+99:7  Warning: Unexpected console statement. Only these console methods are allowed: warn, error.  no-console
+110:7  Warning: Unexpected console statement. Only these console methods are allowed: warn, error.  no-console
+
+./src/lib/logger.ts
+20:29  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+39:19  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+104:14  Error: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+157:7  Warning: Unexpected console statement. Only these console methods are allowed: warn, error.  no-console
+169:7  Warning: Unexpected console statement. Only these console methods are allowed: warn, error.  no-console
+228:14  Error: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/lib/services-parser.ts
+1:45  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+21:65  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/lib/services-utils.ts
+20:12  Error: '_error' is defined but never used.  @typescript-eslint/no-unused-vars
+
+info  - Need to disable some ESLint rules? Learn more here: 
+https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules

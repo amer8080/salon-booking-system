@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { parseServices, getServiceNames } from '@/lib/services-parser';
 import { useErrorHandler } from '@/lib/error-handler';
 import { useState, useRef, useMemo, useCallback } from 'react'
@@ -36,9 +36,7 @@ interface DayViewProps {
   onBlockTime?: (date: string, time: string) => void
   onUnblockTime?: (date: string, time: string) => void
 
-  // التنقل بين الأيام - تم نقله للهيدر الموحد
-  onDateChange: (newDate: string) => void
-}
+ 
 
 // 🚀 تحسين المكون بـ React.memo لمنع إعادة العرض غير الضرورية
 function DayView({
@@ -55,7 +53,6 @@ function DayView({
   onShowPhoneMenu,
   onBlockTime,
   onUnblockTime,
-  onDateChange
 }: DayViewProps) {
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<TimeSlot | null>(null)
   const [draggedBooking, setDraggedBooking] = useState<Booking | null>(null)
@@ -325,3 +322,4 @@ function DayView({
 
 // 🚀 تصدير المكون مع React.memo لتحسين الأداء
 export default React.memo(DayView);
+

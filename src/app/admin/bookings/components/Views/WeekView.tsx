@@ -29,10 +29,6 @@ interface WeekViewProps {
   onBlockTime?: (date: string, time: string) => void
   onUnblockTime?: (date: string, time: string) => void
 
-  // التنقل والتحول للعرض اليومي - تم نقلهم للهيدر الموحد
-  onDateChange: (newDate: string) => void
-  onSwitchToDayView: (date: string) => void
-}
 
 export default function WeekView({
   selectedDate,
@@ -48,7 +44,6 @@ export default function WeekView({
   onShowPhoneMenu,
   onBlockTime,
   onUnblockTime,
-  onDateChange,
   onSwitchToDayView
 }: WeekViewProps) {
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<{date: string, time: string, booking?: Booking} | null>(null)
@@ -313,6 +308,8 @@ export default function WeekView({
     </div>
   )
 }
+
+
 
 
 

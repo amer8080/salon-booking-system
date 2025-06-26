@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { logError } from '@/lib/logger-client';
 import EditBookingModal from './components/Modals/EditBookingModal'
 import DeleteBookingModal from './components/Modals/DeleteBookingModal'

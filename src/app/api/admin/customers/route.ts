@@ -1,5 +1,6 @@
 ﻿import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { logError } from '@/lib/logger-client'
 
 export async function GET(_request: NextRequest) {
   try {
@@ -253,9 +254,18 @@ export async function POST(_request: NextRequest) {
     })
 
   } catch (error) {
+    logError("Customer creation failed", {
+      error: error.message,
+      operation: "createCustomer",
+      endpoint: "/api/admin/customers"
+    })
     return NextResponse.json(
-      { success: false, error: 'خطأ في إضافة العميل' },
+      { success: false, error: 'خطأ في إضافة العميل' 
+  },
       { status: 500 }
     )
   }
 }
+
+
+

@@ -1,4 +1,5 @@
-// src/lib/services-utils.ts
+﻿// src/lib/services-utils.ts
+import { logWarn } from './logger-client'
 export function parseServices(services: string | null): string[] {
   if (!services || services.trim() === '') return [];
   
@@ -17,7 +18,12 @@ export function parseServices(services: string | null): string[] {
     }
     
     return [];
-  } catch (_error) {
+  } catch (error) {
+    logWarn('Services JSON parsing failed, using text fallback', {
+      error: error.message,
+      inputServices: services,
+      operation: 'parseServices'
+    })
     // إذا فشل JSON parsing، تعامل كنص عادي
     if (typeof services === 'string') {
       const cleanService = services.trim();
@@ -46,3 +52,4 @@ export function isValidServicesJSON(services: string): boolean {
     return false;
   }
 }
+

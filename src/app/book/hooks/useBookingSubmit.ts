@@ -1,4 +1,4 @@
-// src/app/book/hooks/useBookingSubmit.ts
+﻿// src/app/book/hooks/useBookingSubmit.ts
 // Hook لإرسال الحجز مع retry logic ومعالجة أخطاء ذكية
 
 import { useState, useCallback, useEffect } from 'react'
@@ -143,9 +143,6 @@ export function useBookingSubmit({
 
     try {
       // تحضير البيانات للإرسال
-      const selectedServicesData = services.filter(service => 
-        formData.selectedServices.includes(service.id)
-      )
 
       const bookingData = {
         phoneNumber: formData.phoneNumber,
@@ -218,8 +215,14 @@ export function useBookingSubmit({
       
       return await submitBooking(lastSubmissionData, services)
     } catch (error) {
+      logBookingError("Service data retrieval failed", {
+        error: error.message,
+        operation: "retrySubmission",
+        formData: lastSubmissionData
+      })
       setSubmitError('فشل في استرجاع بيانات الخدمات')
       return false
+    
     }
   }, [lastSubmissionData, submitBooking])
 
@@ -348,3 +351,4 @@ export function useNetworkMonitor() {
 
   return { isOnline, connectionSpeed }
 }
+

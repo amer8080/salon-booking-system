@@ -85,7 +85,8 @@ export async function GET(_request: NextRequest) {
       }
     })
 
-  } catch (error) { logError('API error', { error: error.message }) {
+  } catch (error) {
+    logError('API error', { error: error.message }) 
     return NextResponse.json(
       { success: false, error: 'خطأ في جلب الحجوزات' },
       { status: 500 }

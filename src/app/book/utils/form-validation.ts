@@ -1,6 +1,7 @@
-// src/app/book/utils/form-validation.ts
+﻿// src/app/book/utils/form-validation.ts
 // نظام validation محسن ومتقدم للنموذج
 
+import { logWarn } from '@/lib/logger-client'
 import { FormValidationErrors, ValidationResult, BookingFormData } from '../types/booking-form.types'
 import { getTodayIstanbul, parseIstanbulDate, createIstanbulDate } from '@/lib/timezone'
 
@@ -169,7 +170,13 @@ export function validateSelectedDate(date: string): { isValid: boolean; error?: 
     return { isValid: true }
     
   } catch (error) {
-    return { isValid: false, error: 'صيغة التاريخ غير صحيحة' }
+    logWarn("Date validation failed", {
+      error: error.message,
+      operation: "validateDate",
+      component: "form-validation"
+    })
+    return { isValid: false, error: 'صيغة التاريخ غير صحيحة' 
+  }
   }
 }
 

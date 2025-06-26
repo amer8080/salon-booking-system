@@ -190,3 +190,4 @@ export async function getFirstDayOfWeek(): Promise<number> {
     return DEFAULT_APP_SETTINGS.week.firstDayOfWeek
   }
 }
+

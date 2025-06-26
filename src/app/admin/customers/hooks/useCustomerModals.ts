@@ -1,5 +1,6 @@
-// hooks/useCustomerModals.ts
+﻿// hooks/useCustomerModals.ts
 import { useState } from 'react'
+import { logError } from '@/lib/logger-client'
 import { Customer, CustomerFormData } from '../types/customer.types'
 
 export const useCustomerModals = (onDataChange?: () => void) => {
@@ -87,8 +88,21 @@ export const useCustomerModals = (onDataChange?: () => void) => {
         alert('فشل في تحديث العميل: ' + data._error)
         return false
       }
-    } catch (_error) {
-      alert('خطأ في الاتصال بالخادم')
+    } catch (error) {
+      logError("Customer update failed", {
+        error: error.message,
+        operation: "updateCustomer",
+        customerId: editingCustomer?.id,
+        formData: editForm
+      })
+      
+      if (error.response?.status === 400) {
+        alert("بيانات العميل غير صحيحة - يرجى التحقق من المعلومات")
+      } else if (error.response?.status === 409) {
+        alert("رقم الهاتف مستخدم مسبقا")
+      } else {
+        alert("فشل في تحديث العميل - يرجى المحاولة مرة أخرى")
+      }
       return false
     } finally {
       setSaving(false)
@@ -121,8 +135,20 @@ export const useCustomerModals = (onDataChange?: () => void) => {
         alert('فشل في إضافة العميل: ' + data._error)
         return false
       }
-    } catch (_error) {
-      alert('خطأ في الاتصال بالخادم')
+    } catch (error) {
+      logError("Customer creation failed", {
+        error: error.message,
+        operation: "addCustomer",
+        formData: addForm
+      })
+      
+      if (error.response?.status === 400) {
+        alert("بيانات العميل غير صحيحة - يرجى التحقق من الاسم ورقم الهاتف")
+      } else if (error.response?.status === 409) {
+        alert("عميل بنفس رقم الهاتف موجود مسبقا")
+      } else {
+        alert("فشل في إضافة العميل - يرجى المحاولة مرة أخرى")
+      }
       return false
     } finally {
       setSaving(false)
@@ -149,8 +175,18 @@ export const useCustomerModals = (onDataChange?: () => void) => {
         alert('فشل في حذف العميل: ' + data._error)
         return false
       }
-    } catch (_error) {
-      alert('خطأ في الاتصال بالخادم')
+    } catch (error) {
+      logError("Customer deletion failed", {
+        error: error.message,
+        operation: "deleteCustomer",
+        customerId: deletingCustomer?.id
+      })
+      
+      if (error.response?.status === 400) {
+        alert("لا يمكن حذف العميل - يوجد حجوزات مرتبطة به")
+      } else {
+        alert("فشل في حذف العميل - يرجى المحاولة مرة أخرى")
+      }
       return false
     } finally {
       setDeleting(false)

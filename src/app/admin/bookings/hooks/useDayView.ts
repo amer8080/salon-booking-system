@@ -51,7 +51,13 @@ export const useDayView = ({
       fetchBlockedTimes()
       alert('تم إقفال الوقت بنجاح!')
     } catch (error) {
-      alert('خطأ في إقفال الوقت')
+      logError("Time blocking failed", {
+        error: error.message,
+        operation: "blockSingleTime",
+        date: date,
+        time: time
+      })
+      alert("فشل في إقفال الوقت - يرجى المحاولة مرة أخرى")
     }
   }, [fetchBlockedTimes])
 
@@ -69,7 +75,13 @@ export const useDayView = ({
         alert('تم فتح الوقت بنجاح!')
       }
     } catch (error) {
-      alert('خطأ في فتح الوقت')
+      logError("Time unblocking failed", {
+        error: error.message,
+        operation: "unblockSingleTime", 
+        date: date,
+        time: time
+      })
+      alert("فشل في فتح الوقت - يرجى المحاولة مرة أخرى")
     }
   }, [blockedTimes, fetchBlockedTimes])
 
@@ -79,4 +91,5 @@ export const useDayView = ({
     unblockSingleTime
   }
 }
+
 
