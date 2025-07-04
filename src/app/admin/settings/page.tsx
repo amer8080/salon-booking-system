@@ -1,10 +1,9 @@
-'use client'
+'use client';
 import { logError } from '@/lib/logger-client';
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import { ColorPicker } from 'antd'
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import {
   ArrowLeft,
   Calendar,
@@ -15,128 +14,148 @@ import {
   AlertCircle,
   CheckCircle,
   X,
-  Loader2
-} from 'lucide-react'
+  Loader2,
+  Clock,
+  Settings,
+} from 'lucide-react';
 
-// استخدام Theme System الجديد
-import { useColorTheme, useThemeActions } from '@/hooks/useColorTheme'
-import { BookingColors, WeekSettings, COLOR_LABELS } from '@/types/theme.types'
+// استخدام Enhanced Theme System
+import { useColorTheme } from '@/hooks/useColorTheme';
+import { 
+  BookingColors, 
+  WeekSettings, 
+  BusinessSettings,
+  LunchBreakSettings,
+} from '@/types/theme.types';
 
-export default function AdminSettingsPage() {
-  const router = useRouter()
-  const [message, setMessage] = useState<{type: 'success' | 'error', text: string} | null>(null)
-  const [isSaving, setIsSaving] = useState(false)
+// Import Components
+import ColorsTab from './components/ColorsTab';
+import BusinessTab from './components/BusinessTab';
+import AdvancedTab from './components/AdvancedTab';
+import WeekTab from './components/WeekTab';
 
-  // استخدام Theme Context بدلاً من State المحلي
-  const { colors, weekSettings, isLoading, error } = useColorTheme()
-  const { updateColors, updateWeekSettings, resetToDefaults } = useThemeActions()
+export default function EnhancedAdminSettingsPage() {
+  const router = useRouter();
+  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [activeTab, setActiveTab] = useState('colors');
 
-  // State مؤقت للتعديلات (قبل الحفظ)
-  const [tempColors, setTempColors] = useState<BookingColors>(colors)
-  const [tempWeekSettings, setTempWeekSettings] = useState<WeekSettings>(weekSettings)
+  // استخدام Enhanced Theme Context
+  const { 
+    colors, 
+    weekSettings, 
+    businessSettings, 
+    lunchBreakSettings,
+    isLoading, 
+    error,
+    updateColors,
+    updateWeekSettings,
+    updateBusinessSettings,
+    updateLunchBreakSettings,
+    resetToDefaults 
+  } = useColorTheme();
+
+  // State مؤقت للتعديلات
+  const [tempColors, setTempColors] = useState<BookingColors>(colors);
+  const [tempWeekSettings, setTempWeekSettings] = useState<WeekSettings>(weekSettings);
+  const [tempBusinessSettings, setTempBusinessSettings] = useState<BusinessSettings>(businessSettings);
+  const [tempLunchBreakSettings, setTempLunchBreakSettings] = useState<LunchBreakSettings>(lunchBreakSettings);
 
   // تحديث State المؤقت عند تغيير Context
   useEffect(() => {
-    setTempColors(colors)
-    setTempWeekSettings(weekSettings)
-  }, [colors, weekSettings])
+    setTempColors(colors);
+    setTempWeekSettings(weekSettings);
+    setTempBusinessSettings(businessSettings);
+    setTempLunchBreakSettings(lunchBreakSettings);
+  }, [colors, weekSettings, businessSettings, lunchBreakSettings]);
 
   // التحقق من صحة الدخول
   useEffect(() => {
-    const token = localStorage.getItem('adminToken')
+    const token = localStorage.getItem('adminToken');
     if (!token) {
-      router.push('/admin/login')
-      return
+      router.push('/admin/login');
+      return;
     }
-  }, [router])
+  }, [router]);
 
-  // فحص إذا كانت هناك تغييرات
-  const hasChanges = JSON.stringify(tempColors) !== JSON.stringify(colors) || 
-                     JSON.stringify(tempWeekSettings) !== JSON.stringify(weekSettings)
+  // فحص التغييرات
+  const hasChanges = 
+    JSON.stringify(tempColors) !== JSON.stringify(colors) ||
+    JSON.stringify(tempWeekSettings) !== JSON.stringify(weekSettings) ||
+    JSON.stringify(tempBusinessSettings) !== JSON.stringify(businessSettings) ||
+    JSON.stringify(tempLunchBreakSettings) !== JSON.stringify(lunchBreakSettings);
 
   // دوال المعالجة
   const handleLogout = () => {
-    localStorage.removeItem('adminToken')
-    router.push('/admin/login')
-  }
+    localStorage.removeItem('adminToken');
+    router.push('/admin/login');
+  };
 
   const showMessage = (type: 'success' | 'error', text: string) => {
-    setMessage({ type, text })
-    setTimeout(() => setMessage(null), 3000)
-  }
-
-  // تطبيق الألوان مؤقتاً (معاينة فورية)
-  const handleColorPreview = (colorKey: keyof BookingColors, value: string) => {
-    const newTempColors = { ...tempColors, [colorKey]: value }
-    setTempColors(newTempColors)
-    
-    // تطبيق مؤقت للمعاينة
-    if (typeof document !== 'undefined') {
-      const root = document.documentElement
-      root.style.setProperty(`--booking-color-${colorKey}`, value)
-    }
-  }
+    setMessage({ type, text });
+    setTimeout(() => setMessage(null), 3000);
+  };
 
   // حفظ التغييرات
   const handleSaveChanges = async () => {
     try {
-      setIsSaving(true)
-      
-      // حفظ الألوان إذا تغيرت
+      setIsSaving(true);
+
       if (JSON.stringify(tempColors) !== JSON.stringify(colors)) {
-        await updateColors(tempColors)
+        await updateColors(tempColors);
       }
-      
-      // حفظ إعدادات الأسبوع إذا تغيرت
+
       if (JSON.stringify(tempWeekSettings) !== JSON.stringify(weekSettings)) {
-        await updateWeekSettings(tempWeekSettings)
+        await updateWeekSettings(tempWeekSettings);
       }
-      
-      showMessage('success', 'تم حفظ جميع التغييرات بنجاح!')
-      
+
+      if (JSON.stringify(tempBusinessSettings) !== JSON.stringify(businessSettings)) {
+        await updateBusinessSettings(tempBusinessSettings);
+      }
+
+      if (JSON.stringify(tempLunchBreakSettings) !== JSON.stringify(lunchBreakSettings)) {
+        await updateLunchBreakSettings(tempLunchBreakSettings);
+      }
+
+      showMessage('success', 'تم حفظ جميع التغييرات بنجاح!');
     } catch (error) {
-      logError('خطأ في الحفظ:', error)
-      showMessage('error', 'حدث خطأ أثناء حفظ التغييرات')
+      logError('خطأ في الحفظ:', error);
+      showMessage('error', 'حدث خطأ أثناء حفظ التغييرات');
     } finally {
-      setIsSaving(false)
+      setIsSaving(false);
     }
-  }
+  };
 
   // إلغاء التغييرات
   const handleCancelChanges = () => {
-    setTempColors(colors)
-    setTempWeekSettings(weekSettings)
-    
-    // إعادة تطبيق الألوان الأصلية
-    if (typeof document !== 'undefined') {
-      const root = document.documentElement
-      root.style.setProperty('--booking-color-booked', colors.booked)
-      root.style.setProperty('--booking-color-blocked', colors.blocked)
-      root.style.setProperty('--booking-color-available', colors.available)
-      root.style.setProperty('--booking-color-today', colors.today)
-    }
-    
-    showMessage('success', 'تم إلغاء التغييرات')
-  }
+    setTempColors(colors);
+    setTempWeekSettings(weekSettings);
+    setTempBusinessSettings(businessSettings);
+    setTempLunchBreakSettings(lunchBreakSettings);
+    showMessage('success', 'تم إلغاء التغييرات');
+  };
 
   // إعادة تعيين افتراضية
   const handleResetToDefaults = async () => {
     try {
-      setIsSaving(true)
-      await resetToDefaults()
-      showMessage('success', 'تم إعادة تعيين جميع الإعدادات للافتراضية')
+      setIsSaving(true);
+      await resetToDefaults();
+      showMessage('success', 'تم إعادة تعيين جميع الإعدادات للافتراضية');
     } catch (error) {
-      logError('خطأ في الإعادة:', error)
-      showMessage('error', 'حدث خطأ أثناء إعادة التعيين')
+      logError('خطأ في الإعادة:', error);
+      showMessage('error', 'حدث خطأ أثناء إعادة التعيين');
     } finally {
-      setIsSaving(false)
+      setIsSaving(false);
     }
-  }
+  };
 
-  // معالجة تغيير إعدادات الأسبوع
-  const handleWeekSettingChange = (key: keyof WeekSettings, value: any) => {
-    setTempWeekSettings({ ...tempWeekSettings, [key]: value })
-  }
+  // التبويبات
+  const tabs = [
+    { id: 'colors', label: 'الألوان', icon: Palette, description: 'تخصيص ألوان الحجوزات' },
+    { id: 'business', label: 'إعدادات العمل', icon: Clock, description: 'ساعات العمل والمواعيد' },
+    { id: 'advanced', label: 'الإعدادات المتقدمة', icon: Settings, description: 'استراحة الغداء والإعدادات الأخرى' },
+    { id: 'week', label: 'إعدادات الأسبوع', icon: Calendar, description: 'تخصيص عرض الأسبوع' }
+  ];
 
   // شاشة التحميل
   if (isLoading) {
@@ -146,10 +165,10 @@ export default function AdminSettingsPage() {
           <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
             <Loader2 className="w-8 h-8 text-white animate-spin" />
           </div>
-          <p className="text-gray-600">جاري تحميل إعدادات الألوان...</p>
+          <p className="text-gray-600">جاري تحميل إعدادات النظام...</p>
         </div>
       </div>
-    )
+    );
   }
 
   // شاشة الخطأ
@@ -161,7 +180,7 @@ export default function AdminSettingsPage() {
             <AlertCircle className="w-8 h-8 text-white" />
           </div>
           <p className="text-red-600 mb-4">{error}</p>
-          <button 
+          <button
             onClick={() => window.location.reload()}
             className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
           >
@@ -169,7 +188,7 @@ export default function AdminSettingsPage() {
           </button>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -184,8 +203,8 @@ export default function AdminSettingsPage() {
             </Link>
 
             <div className="flex items-center space-x-4 rtl:space-x-reverse">
-              <h1 className="text-xl font-bold text-gray-800">إعدادات النظام</h1>
-              <Palette className="w-6 h-6 text-purple-600" />
+              <h1 className="text-xl font-bold text-gray-800">إعدادات النظام الشاملة</h1>
+              <Settings className="w-6 h-6 text-purple-600" />
             </div>
 
             <button
@@ -199,14 +218,16 @@ export default function AdminSettingsPage() {
         </div>
       </header>
 
-      <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="max-w-6xl mx-auto px-4 py-8">
         {/* رسالة النجاح/الخطأ */}
         {message && (
-          <div className={`mb-6 rounded-xl p-4 ${
-            message.type === 'success'
-              ? 'bg-green-50 border border-green-200'
-              : 'bg-red-50 border border-red-200'
-          }`}>
+          <div
+            className={`mb-6 rounded-xl p-4 ${
+              message.type === 'success'
+                ? 'bg-green-50 border border-green-200'
+                : 'bg-red-50 border border-red-200'
+            }`}
+          >
             <div className="flex items-center">
               {message.type === 'success' ? (
                 <CheckCircle className="w-5 h-5 text-green-500 ml-2" />
@@ -220,111 +241,74 @@ export default function AdminSettingsPage() {
           </div>
         )}
 
-        {/* صندوق تخصيص الألوان */}
-        <div className="bg-white rounded-xl shadow-lg p-8 mb-6">
-          <div className="flex items-center mb-6">
-            <Palette className="w-8 h-8 text-purple-600 ml-3" />
-            <div>
-              <h2 className="text-2xl font-bold text-gray-800">تخصيص ألوان الحجوزات</h2>
-              <p className="text-gray-600 mt-1">اختر الألوان المناسبة لحالات الحجوزات المختلفة</p>
-            </div>
-          </div>
-
-          {/* شبكة منتقيات الألوان */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-            {(Object.keys(tempColors) as Array<keyof BookingColors>).map((colorKey) => (
-              <div key={colorKey} className="space-y-3">
-                <label className="block text-sm font-medium text-gray-700">
-                  {COLOR_LABELS[colorKey]}
-                </label>
-                <div className="flex items-center space-x-3 rtl:space-x-reverse">
-                  <ColorPicker
-                    value={tempColors[colorKey]}
-                    onChange={(color) => handleColorPreview(colorKey, color.toHexString())}
-                    showText
-                    size="large"
-                  />
-                  <div
-                    className="w-16 h-12 rounded-lg border-2 border-gray-200 color-preview"
-                    style={{ backgroundColor: tempColors[colorKey] }}
-                    title="معاينة اللون"
-                  />
-                  <span className="text-sm text-gray-600 font-mono">{tempColors[colorKey]}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* معاينة الألوان */}
-          <div className="bg-gray-50 rounded-xl p-6">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">معاينة الألوان</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {(Object.keys(tempColors) as Array<keyof BookingColors>).map((colorKey) => (
-                <div key={colorKey} className="text-center">
-                  <div
-                    className="w-full h-20 rounded-lg mb-2 border-2 border-gray-200 flex items-center justify-center text-white font-semibold booking-interactive"
-                    style={{ backgroundColor: tempColors[colorKey] }}
-                  >
-                    {COLOR_LABELS[colorKey].split(' ')[0]}
-                  </div>
-                  <span className="text-sm text-gray-600">{COLOR_LABELS[colorKey]}</span>
-                </div>
+        {/* التبويبات */}
+        <div className="bg-white rounded-xl shadow-lg mb-6">
+          <div className="border-b">
+            <nav className="flex space-x-8 rtl:space-x-reverse px-6">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`py-4 px-2 border-b-2 font-medium text-sm whitespace-nowrap flex items-center space-x-2 rtl:space-x-reverse ${
+                    activeTab === tab.id
+                      ? 'border-purple-500 text-purple-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
+                >
+                  <tab.icon className="w-4 h-4" />
+                  <span>{tab.label}</span>
+                </button>
               ))}
-            </div>
+            </nav>
+          </div>
+
+          {/* محتوى التبويبات */}
+          <div className="p-8">
+            {activeTab === 'colors' && (
+              <ColorsTab 
+                tempColors={tempColors}
+                setTempColors={setTempColors}
+              />
+            )}
+
+            {activeTab === 'business' && (
+              <BusinessTab 
+                tempBusinessSettings={tempBusinessSettings}
+                setTempBusinessSettings={setTempBusinessSettings}
+              />
+            )}
+
+            {activeTab === 'advanced' && (
+              <AdvancedTab 
+                tempLunchBreakSettings={tempLunchBreakSettings}
+                setTempLunchBreakSettings={setTempLunchBreakSettings}
+              />
+            )}
+
+            {activeTab === 'week' && (
+              <WeekTab 
+                tempWeekSettings={tempWeekSettings}
+                setTempWeekSettings={setTempWeekSettings}
+              />
+            )}
           </div>
         </div>
 
-        {/* صندوق إعدادات الأسبوع */}
-        <div className="bg-white rounded-xl shadow-lg p-8">
-          <div className="flex items-center mb-6">
-            <Calendar className="w-8 h-8 text-blue-600 ml-3" />
-            <div>
-              <h2 className="text-2xl font-bold text-gray-800">إعدادات الأسبوع</h2>
-              <p className="text-gray-600 mt-1">اختر اليوم الأول في الأسبوع لعرض التقويم</p>
-            </div>
-          </div>
-
-          {/* اختيار أول يوم في الأسبوع */}
-          <div className="space-y-4">
-            <label className="block text-lg font-medium text-gray-700">
-              أول يوم في الأسبوع
-            </label>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {[
-                { value: 0, label: 'الأحد', emoji: '🌅', desc: 'النظام الأمريكي/العربي' },
-                { value: 1, label: 'الإثنين', emoji: '🌍', desc: 'النظام الأوروبي/الدولي' },
-                { value: 6, label: 'السبت', emoji: '🕌', desc: 'النظام الإسلامي التقليدي' }
-              ].map((option) => (
-                <div
-                  key={option.value}
-                  onClick={() => handleWeekSettingChange('firstDayOfWeek', option.value)}
-                  className={`p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 booking-interactive ${
-                    tempWeekSettings.firstDayOfWeek === option.value
-                      ? 'border-blue-500 bg-blue-50 shadow-md'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                >
-                  <div className="text-center">
-                    <div className="text-2xl mb-2">{option.emoji}</div>
-                    <h3 className="font-semibold text-gray-800">{option.label}</h3>
-                    <p className="text-sm text-gray-600 mt-1">{option.desc}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* أزرار التحكم */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-between mt-8">
+        {/* أزرار التحكم */}
+        <div className="bg-white rounded-xl shadow-lg p-6">
+          <div className="flex flex-col sm:flex-row gap-4 justify-between">
             <div className="flex gap-3">
               <button
                 onClick={handleSaveChanges}
                 disabled={isSaving || !hasChanges}
                 className="flex items-center space-x-2 rtl:space-x-reverse bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-300"
               >
-                {isSaving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-                <span>{isSaving ? 'جاري الحفظ...' : 'حفظ التغييرات'}</span>
+                {isSaving ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  <Save className="w-5 h-5" />
+                )}
+                <span>{isSaving ? 'جاري الحفظ...' : 'حفظ جميع التغييرات'}</span>
               </button>
 
               <button
@@ -333,7 +317,7 @@ export default function AdminSettingsPage() {
                 className="flex items-center space-x-2 rtl:space-x-reverse bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-300"
               >
                 <X className="w-5 h-5" />
-                <span>إلغاء</span>
+                <span>إلغاء التغييرات</span>
               </button>
             </div>
 
@@ -352,27 +336,34 @@ export default function AdminSettingsPage() {
               <div className="flex items-center">
                 <AlertCircle className="w-5 h-5 text-yellow-500 ml-2" />
                 <p className="text-yellow-700 text-sm">
-                  يوجد تغييرات غير محفوظة. اضغط "حفظ التغييرات" لتطبيقها على النظام.
+                  يوجد تغييرات غير محفوظة. اضغط "حفظ جميع التغييرات" لتطبيقها على النظام.
                 </p>
               </div>
             </div>
           )}
         </div>
 
-        {/* روابط سريعة */}
-        <div className="mt-8 bg-white rounded-xl shadow-lg p-6">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">روابط سريعة</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <Link
-              href="/admin/bookings"
-              className="flex items-center space-x-2 rtl:space-x-reverse text-purple-600 hover:text-purple-800 transition-colors"
-            >
-              <Calendar className="w-5 h-5" />
-              <span>إدارة الحجوزات</span>
-            </Link>
+        {/* معلومات النظام */}
+        <div className="mt-6 bg-white rounded-xl shadow-lg p-6">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">معلومات النظام</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+            <div>
+              <span className="font-medium text-gray-600">المنطقة الزمنية الحالية:</span>
+              <p className="text-gray-800">{businessSettings.timezone}</p>
+            </div>
+            <div>
+              <span className="font-medium text-gray-600">ساعات العمل:</span>
+              <p className="text-gray-800">
+                {businessSettings.businessHours.start} - {businessSettings.businessHours.end}
+              </p>
+            </div>
+            <div>
+              <span className="font-medium text-gray-600">مدة الموعد:</span>
+              <p className="text-gray-800">{businessSettings.slotDuration} دقيقة</p>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }

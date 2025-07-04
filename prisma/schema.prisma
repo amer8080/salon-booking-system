@@ -1,104 +1,98 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
 }
 
 datasource db {
-provider = "mysql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
 model Customer {
-  id           Int      @id @default(autoincrement())
+  id           Int           @id @default(autoincrement())
   name         String
-  phone        String   @unique
-  firstVisit   DateTime @default(now()) @map("first_visit")
-  totalVisits  Int      @default(1) @map("total_visits")
-  lastVisit    DateTime @default(now()) @map("last_visit")
-  status       String   @default("active")
-  language     String   @default("ar")
-  notes        String?  @db.Text
-  createdAt    DateTime @default(now()) @map("created_at")
-  
-  reservations Reservation[]
+  phone        String        @unique
+  firstVisit   DateTime      @default(now()) @map("first_visit")
+  totalVisits  Int           @default(1) @map("total_visits")
+  lastVisit    DateTime      @default(now()) @map("last_visit")
+  status       String        @default("active")
+  language     String        @default("ar")
+  notes        String?       @db.Text
+  createdAt    DateTime      @default(now()) @map("created_at")
   coupons      Coupon[]
-  
+  reservations Reservation[]
+
   @@map("customers")
 }
 
 model Service {
-  id          Int     @id @default(autoincrement())
-  name        String
-  nameAr      String  @map("name_ar")
-  nameEn      String  @map("name_en")
-  nameTr      String  @map("name_tr")
-  category    String
-  price       Decimal @db.Decimal(10,2)
-  duration    Int
-  description String? @db.Text
-  isActive    Boolean @default(true) @map("is_active")
-  displayOrder Int    @default(0) @map("display_order")
-  createdAt   DateTime @default(now()) @map("created_at")
-  
+  id           Int      @id @default(autoincrement())
+  name         String
+  nameAr       String   @map("name_ar")
+  nameEn       String   @map("name_en")
+  nameTr       String   @map("name_tr")
+  category     String
+  price        Decimal  @db.Decimal(10, 2)
+  duration     Int
+  description  String?  @db.Text
+  isActive     Boolean  @default(true) @map("is_active")
+  displayOrder Int      @default(0) @map("display_order")
+  createdAt    DateTime @default(now()) @map("created_at")
+
   @@map("services")
 }
 
 model Reservation {
-  id          Int      @id @default(autoincrement())
-  customerId  Int      @map("customer_id")
-  date        DateTime
-  startTime   DateTime @map("start_time")
-  endTime     DateTime @map("end_time")
-  services    String   @db.Text
-  status      String   @default("pending")
-  notes       String?  @db.Text
-  couponId    Int?     @map("coupon_id")
-  discount    Decimal  @default(0) @db.Decimal(10,2)
-  totalPrice  Decimal  @db.Decimal(10,2) @map("total_price")
-  createdBy   String   @default("customer") @map("created_by")
-  createdAt   DateTime @default(now()) @map("created_at")
-  
-  customer Customer @relation(fields: [customerId], references: [id])
-  coupon   Coupon?  @relation(fields: [couponId], references: [id])
-  
+  id         Int      @id @default(autoincrement())
+  customerId Int      @map("customer_id")
+  date       DateTime
+  startTime  DateTime @map("start_time")
+  endTime    DateTime @map("end_time")
+  services   String   @db.Text
+  status     String   @default("pending")
+  notes      String?  @db.Text
+  couponId   Int?     @map("coupon_id")
+  discount   Decimal  @default(0.00) @db.Decimal(10, 2)
+  totalPrice Decimal  @map("total_price") @db.Decimal(10, 2)
+  createdBy  String   @default("customer") @map("created_by")
+  createdAt  DateTime @default(now()) @map("created_at")
+  coupon     Coupon?  @relation(fields: [couponId], references: [id])
+  customer   Customer @relation(fields: [customerId], references: [id])
+
+  @@index([couponId], map: "reservations_coupon_id_fkey")
+  @@index([customerId], map: "reservations_customer_id_fkey")
   @@map("reservations")
 }
 
 model TimeSlot {
-  id             Int      @id @default(autoincrement())
-  date           DateTime
-  startTime      DateTime @map("start_time")
-  endTime        DateTime @map("end_time")
-  maxBookings    Int      @default(1) @map("max_bookings")
-  currentBookings Int     @default(0) @map("current_bookings")
-  isBlocked      Boolean  @default(false) @map("is_blocked")
-  blockReason    String?  @map("block_reason")
-  createdAt      DateTime @default(now()) @map("created_at")
-  
+  id              Int      @id @default(autoincrement())
+  date            DateTime
+  startTime       DateTime @map("start_time")
+  endTime         DateTime @map("end_time")
+  maxBookings     Int      @default(1) @map("max_bookings")
+  currentBookings Int      @default(0) @map("current_bookings")
+  isBlocked       Boolean  @default(false) @map("is_blocked")
+  blockReason     String?  @map("block_reason")
+  createdAt       DateTime @default(now()) @map("created_at")
+
   @@map("time_slots")
 }
 
 model Coupon {
-  id            Int       @id @default(autoincrement())
-  code          String    @unique
-  customerId    Int       @map("customer_id")
-  discountType  String    @map("discount_type")
-  discountValue Decimal   @db.Decimal(10,2) @map("discount_value")
-  visitMilestone Int      @map("visit_milestone")
-  isUsed        Boolean   @default(false) @map("is_used")
-  expiresAt     DateTime? @map("expires_at")
-  usedAt        DateTime? @map("used_at")
-  createdAt     DateTime  @default(now()) @map("created_at")
-  
-  customer     Customer      @relation(fields: [customerId], references: [id])
-  reservations Reservation[]
-  
+  id             Int           @id @default(autoincrement())
+  code           String        @unique
+  customerId     Int           @map("customer_id")
+  discountType   String        @map("discount_type")
+  discountValue  Decimal       @map("discount_value") @db.Decimal(10, 2)
+  visitMilestone Int           @map("visit_milestone")
+  isUsed         Boolean       @default(false) @map("is_used")
+  expiresAt      DateTime?     @map("expires_at")
+  usedAt         DateTime?     @map("used_at")
+  createdAt      DateTime      @default(now()) @map("created_at")
+  customer       Customer      @relation(fields: [customerId], references: [id])
+  reservations   Reservation[]
+
+  @@index([customerId], map: "coupons_customer_id_fkey")
   @@map("coupons")
 }
 
@@ -110,31 +104,66 @@ model OtpCode {
   attempts  Int      @default(0)
   isUsed    Boolean  @default(false) @map("is_used")
   createdAt DateTime @default(now()) @map("created_at")
-  
+
   @@map("otp_codes")
 }
 
 model Setting {
-  id          Int      @id @default(autoincrement())
-  settingKey  String   @unique @map("setting_key")
-  settingValue String  @db.Text @map("setting_value")
-  description String?
-  category    String   @default("general")
-  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at")
-  
+  id           Int      @id @default(autoincrement())
+  settingKey   String   @unique @map("setting_key")
+  settingValue String   @map("setting_value") @db.Text
+  description  String?
+  category     String   @default("general")
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at")
+
   @@map("settings")
 }
 
 model BlockedTime {
-  id            Int      @id @default(autoincrement())
+  id            Int       @id @default(autoincrement())
   date          DateTime
   startTime     DateTime? @map("start_time")
   endTime       DateTime? @map("end_time")
-  isRecurring   Boolean  @default(false) @map("is_recurring")
-  recurringType String?  @map("recurring_type")
+  isRecurring   Boolean   @default(false) @map("is_recurring")
+  recurringType String?   @map("recurring_type")
   reason        String?
-  createdBy     String   @map("created_by")
-  createdAt     DateTime @default(now()) @map("created_at")
-  
+  createdBy     String    @map("created_by")
+  createdAt     DateTime  @default(now()) @map("created_at")
+
   @@map("blocked_times")
+}
+
+model error_logs {
+  id           Int       @id @default(autoincrement())
+  level        String    @default("ERROR") @db.VarChar(10)
+  message      String    @db.Text
+  context      Json?
+  stack_trace  String?   @db.Text
+  user_id      String?   @db.VarChar(255)
+  api_endpoint String?   @db.VarChar(255)
+  created_at   DateTime? @default(now()) @db.Timestamp(0)
+
+  @@index([api_endpoint], map: "idx_api_endpoint")
+  @@index([created_at], map: "idx_created_at")
+  @@index([level], map: "idx_level")
+  @@index([user_id], map: "idx_user_id")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model reservations_backup_unify {
+  id          Int      @default(0)
+  customer_id Int
+  date        DateTime
+  start_time  DateTime
+  end_time    DateTime
+  services    String   @db.Text
+  status      String   @default("pending")
+  notes       String?  @db.Text
+  coupon_id   Int?
+  discount    Decimal  @default(0.00) @db.Decimal(10, 2)
+  total_price Decimal  @db.Decimal(10, 2)
+  created_by  String   @default("customer")
+  created_at  DateTime @default(now())
+
+  @@ignore
 }

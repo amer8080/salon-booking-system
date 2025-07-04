@@ -1,27 +1,22 @@
-﻿'use client'
+﻿'use client';
 import { logError } from '@/lib/logger-client';
-import EditBookingModal from './components/Modals/EditBookingModal'
-import DeleteBookingModal from './components/Modals/DeleteBookingModal'
-import { Booking, EditBookingData } from './types/booking.types'
-import { useBookings } from './hooks/useBookings'
-import { useDayView } from './hooks/useDayView'
-import LoadingSpinner from './components/UI/LoadingSpinner'
-import NewBookingModal from './components/Modals/NewBookingModal'
-import DayView from './components/Views/DayView'
-import WeekView from './components/Views/WeekView'
-import MonthView from './components/Views/MonthView'
-import CombinedHeader, { useViewMode } from './components/UI/CombinedHeader'
-import PhoneMenu from './components/UI/PhoneMenu'
-import { useState, useEffect, useMemo, useCallback } from 'react'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import { formatIstanbulDate, fromDatabaseTime } from '@/lib/timezone'
-import {
-  Calendar,
-  ArrowLeft,
-  LogOut,
-  X
-} from 'lucide-react'
+import EditBookingModal from './components/Modals/EditBookingModal';
+import DeleteBookingModal from './components/Modals/DeleteBookingModal';
+import { Booking, EditBookingData } from './types/booking.types';
+import { useBookings } from './hooks/useBookings';
+import { useDayView } from './hooks/useDayView';
+import LoadingSpinner from './components/UI/LoadingSpinner';
+import NewBookingModal from './components/Modals/NewBookingModal';
+import DayView from './components/Views/DayView';
+import WeekView from './components/Views/WeekView';
+import MonthView from './components/Views/MonthView';
+import CombinedHeader, { useViewMode } from './components/UI/CombinedHeader';
+import PhoneMenu from './components/UI/PhoneMenu';
+import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { formatIstanbulDate, fromDatabaseTime } from '@/lib/timezone';
+import { Calendar, ArrowLeft, LogOut, X } from 'lucide-react';
 
 export default function AdminBookingsPage() {
   const {
@@ -33,103 +28,111 @@ export default function AdminBookingsPage() {
     loading,
     error,
     fetchBookings,
-    fetchBlockedTimes
-  } = useBookings()
+    fetchBlockedTimes,
+  } = useBookings();
 
-  const servicesMap = useMemo(() => (
-    Object.fromEntries(Object.entries(services).map(([id, service]) => [id, service.name]))
-  ), [services])
+  const servicesMap = useMemo(
+    () => Object.fromEntries(Object.entries(services).map(([id, service]) => [id, service.name])),
+    [services],
+  );
 
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0])
-  const [currentMonth, setCurrentMonth] = useState(new Date())
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const [currentMonth, setCurrentMonth] = useState(new Date());
 
   // ✅ currentDateRange مبسط - سيتم التحكم به عبر useEffect
   const [currentDateRange, setCurrentDateRange] = useState(() => {
-    const now = new Date()
-    const startOfWeek = new Date(now)
-    startOfWeek.setDate(now.getDate() - now.getDay())
-    startOfWeek.setHours(0, 0, 0, 0)
-    const endOfWeek = new Date(startOfWeek)
-    endOfWeek.setDate(startOfWeek.getDate() + 6)
-    endOfWeek.setHours(23, 59, 59, 999)
+    const now = new Date();
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() - now.getDay());
+    startOfWeek.setHours(0, 0, 0, 0);
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    endOfWeek.setHours(23, 59, 59, 999);
 
     return {
       startDate: startOfWeek.toISOString().split('T')[0],
       endDate: endOfWeek.toISOString().split('T')[0],
-      view: 'week'
-    }
-  })
+      view: 'week',
+    };
+  });
 
-  const [showPhoneMenu, setShowPhoneMenu] = useState<{phone: string, customerName: string} | null>(null)
-  const [editingBooking, setEditingBooking] = useState<Booking | null>(null)
-  const [deletingBooking, setDeletingBooking] = useState<Booking | null>(null)
-  const [isCreatingBooking, setIsCreatingBooking] = useState(false)
+  const [showPhoneMenu, setShowPhoneMenu] = useState<{
+    phone: string;
+    customerName: string;
+  } | null>(null);
+  const [editingBooking, setEditingBooking] = useState<Booking | null>(null);
+  const [deletingBooking, setDeletingBooking] = useState<Booking | null>(null);
+  const [isCreatingBooking, setIsCreatingBooking] = useState(false);
 
-  const { viewMode, setViewMode } = useViewMode('week')
-  const router = useRouter()
+  const { viewMode, setViewMode } = useViewMode('week');
+  const router = useRouter();
 
   // استخدام Hook العرض اليومي
-  const { handleDateChange, blockSingleTime, unblockSingleTime } = useDayView({
+  const {
+    handleDateChange: _handleDateChange,
+    blockSingleTime,
+    unblockSingleTime,
+  } = useDayView({
     blockedTimes,
     fetchBlockedTimes,
     currentDateRange,
-    setCurrentDateRange
-  })
+    setCurrentDateRange,
+  });
 
   // ✅ دالة حساب النطاق حسب العرض - الحل الجذري
   const calculateDateRangeForView = useCallback((viewMode: string, selectedDate: string) => {
-    const date = new Date(selectedDate)
+    const date = new Date(selectedDate);
 
     switch (viewMode) {
       case 'day':
         return {
           startDate: selectedDate,
           endDate: selectedDate,
-          view: 'day' as const
-        }
+          view: 'day' as const,
+        };
 
       case 'week': {
         // حساب بداية الأسبوع (الأحد)
-        const startOfWeek = new Date(date)
-        startOfWeek.setDate(date.getDate() - date.getDay())
-        startOfWeek.setHours(0, 0, 0, 0)
+        const startOfWeek = new Date(date);
+        startOfWeek.setDate(date.getDate() - date.getDay());
+        startOfWeek.setHours(0, 0, 0, 0);
 
         // حساب نهاية الأسبوع (السبت)
-        const endOfWeek = new Date(startOfWeek)
-        endOfWeek.setDate(startOfWeek.getDate() + 6)
-        endOfWeek.setHours(23, 59, 59, 999)
+        const endOfWeek = new Date(startOfWeek);
+        endOfWeek.setDate(startOfWeek.getDate() + 6);
+        endOfWeek.setHours(23, 59, 59, 999);
 
         return {
           startDate: startOfWeek.toISOString().split('T')[0],
           endDate: endOfWeek.toISOString().split('T')[0],
-          view: 'week' as const
-        }
+          view: 'week' as const,
+        };
       }
 
       case 'month': {
         // حساب بداية الشهر
-        const startOfMonth = new Date(date.getFullYear(), date.getMonth(), 1)
+        const startOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
 
         // حساب نهاية الشهر
-        const endOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0)
+        const endOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0);
 
         return {
           startDate: startOfMonth.toISOString().split('T')[0],
           endDate: endOfMonth.toISOString().split('T')[0],
-          view: 'month' as const
-        }
+          view: 'month' as const,
+        };
       }
 
       default:
         // افتراضي: أسبوع
-        return calculateDateRangeForView('week', selectedDate)
+        return calculateDateRangeForView('week', selectedDate);
     }
-  }, [])
+  }, []);
 
   // ✅ useEffect للربط التلقائي بين viewMode و currentDateRange - الحل الجذري
   useEffect(() => {
     // حساب النطاق الجديد حسب العرض الحالي
-    const newRange = calculateDateRangeForView(viewMode, selectedDate)
+    const newRange = calculateDateRangeForView(viewMode, selectedDate);
 
     // تحديث فقط إذا كان مختلف
     if (
@@ -137,40 +140,42 @@ export default function AdminBookingsPage() {
       newRange.endDate !== currentDateRange.endDate ||
       newRange.view !== currentDateRange.view
     ) {
-      setCurrentDateRange(newRange)
+      setCurrentDateRange(newRange);
     }
-  }, [viewMode, selectedDate, calculateDateRangeForView, currentDateRange])
+  }, [viewMode, selectedDate, calculateDateRangeForView, currentDateRange]);
 
   // ✅ useEffect للتحميل عند تغيير currentDateRange
   useEffect(() => {
     if (Object.keys(services).length > 0) {
-      const { startDate, endDate, view } = currentDateRange
-      fetchBookings(startDate, endDate, view)
+      const { startDate, endDate, view } = currentDateRange;
+      fetchBookings(startDate, endDate, view);
     }
-  }, [currentDateRange, services, fetchBookings])
+  }, [currentDateRange, services, fetchBookings]);
 
   // ✅ دالة التنقل المحسنة
-  const navigateDate = useCallback((direction: 'prev' | 'next') => {
-    const currentDate = new Date(selectedDate)
+  const navigateDate = useCallback(
+    (direction: 'prev' | 'next') => {
+      const currentDate = new Date(selectedDate);
 
-    switch (viewMode) {
-      case 'day':
-        currentDate.setDate(currentDate.getDate() + (direction === 'next' ? 1 : -1))
-        break
-      case 'week':
-        currentDate.setDate(currentDate.getDate() + (direction === 'next' ? 7 : -7))
-        break
-      case 'month':
-        currentDate.setMonth(currentDate.getMonth() + (direction === 'next' ? 1 : -1))
-        break
-    }
+      switch (viewMode) {
+        case 'day':
+          currentDate.setDate(currentDate.getDate() + (direction === 'next' ? 1 : -1));
+          break;
+        case 'week':
+          currentDate.setDate(currentDate.getDate() + (direction === 'next' ? 7 : -7));
+          break;
+        case 'month':
+          currentDate.setMonth(currentDate.getMonth() + (direction === 'next' ? 1 : -1));
+          break;
+      }
 
-    const newDate = currentDate.toISOString().split('T')[0]
-    setSelectedDate(newDate)
+      const newDate = currentDate.toISOString().split('T')[0];
+      setSelectedDate(newDate);
 
-    // ✅ useEffect سيحدث currentDateRange تلقائياً
-
-  }, [selectedDate, viewMode])
+      // ✅ useEffect سيحدث currentDateRange تلقائياً
+    },
+    [selectedDate, viewMode],
+  );
 
   // تكوين الألوان والأوقات
   const categoryColors = {
@@ -178,168 +183,185 @@ export default function AdminBookingsPage() {
     makeup: 'bg-purple-100 text-purple-700',
     nails: 'bg-blue-100 text-blue-700',
     skincare: 'bg-yellow-100 text-yellow-700',
-    default: 'bg-gray-100 text-gray-700'
-  }
+    default: 'bg-gray-100 text-gray-700',
+  };
 
   const getServiceColor = (serviceId: string) => {
-    const service = servicesWithCategories[serviceId]
+    const service = servicesWithCategories[serviceId];
 
-    if (!service) return categoryColors.default
-    return categoryColors[service.category as keyof typeof categoryColors] || categoryColors.default
-  }
+    if (!service) return categoryColors.default;
+    return (
+      categoryColors[service.category as keyof typeof categoryColors] || categoryColors.default
+    );
+  };
 
   const generateAdminTimeSlots = () => {
-    const slots = []
+    const slots = [];
     for (let hour = 11; hour <= 19; hour++) {
       for (let minute = 0; minute < 60; minute += 30) {
-        if (hour === 19 && minute > 0) break
-        slots.push(`${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`)
+        if (hour === 19 && minute > 0) break;
+        slots.push(`${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`);
       }
     }
-    return slots
-  }
+    return slots;
+  };
 
-  const adminTimeSlots = generateAdminTimeSlots()
+  const adminTimeSlots = generateAdminTimeSlots();
 
   // حساب الإحصائيات حسب العرض الحالي
   const currentStats = useMemo(() => {
     if (viewMode === 'day' && selectedDate) {
       // إحصائيات اليوم المحدد
-      const dayBookings = bookings.filter(booking => {
+      const dayBookings = bookings.filter((booking) => {
         try {
-          const bookingDate = formatIstanbulDate(fromDatabaseTime(booking.date), 'date')
-          return bookingDate === selectedDate
+          const bookingDate = formatIstanbulDate(fromDatabaseTime(booking.date), 'date');
+          return bookingDate === selectedDate;
         } catch {
-          return false
+          return false;
         }
-      })
+      });
 
-      const dayBlockedTimes = blockedTimes.filter(blocked => blocked.date === selectedDate)
+      const dayBlockedTimes = blockedTimes.filter((blocked) => blocked.date === selectedDate);
 
       return {
         booked: dayBookings.length,
         blocked: dayBlockedTimes.length,
-        available: adminTimeSlots.length - dayBookings.length - dayBlockedTimes.length
-      }
+        available: adminTimeSlots.length - dayBookings.length - dayBlockedTimes.length,
+      };
     } else if (viewMode === 'week' && selectedDate) {
       // إحصائيات الأسبوع الحالي
-      const startDate = new Date(selectedDate)
-      const dayOfWeek = startDate.getDay()
-      const weekStart = new Date(startDate)
-      weekStart.setDate(startDate.getDate() - dayOfWeek)
+      const startDate = new Date(selectedDate);
+      const dayOfWeek = startDate.getDay();
+      const weekStart = new Date(startDate);
+      weekStart.setDate(startDate.getDate() - dayOfWeek);
 
-      const weekDates = []
+      const weekDates = [];
       for (let i = 0; i < 7; i++) {
-        const day = new Date(weekStart)
-        day.setDate(weekStart.getDate() + i)
-        weekDates.push(formatIstanbulDate(day, 'date'))
+        const day = new Date(weekStart);
+        day.setDate(weekStart.getDate() + i);
+        weekDates.push(formatIstanbulDate(day, 'date'));
       }
 
-      const weekBookings = bookings.filter(booking => {
+      const weekBookings = bookings.filter((booking) => {
         try {
-          const bookingDate = formatIstanbulDate(fromDatabaseTime(booking.date), 'date')
-          return weekDates.includes(bookingDate)
+          const bookingDate = formatIstanbulDate(fromDatabaseTime(booking.date), 'date');
+          return weekDates.includes(bookingDate);
         } catch {
-          return false
+          return false;
         }
-      })
+      });
 
-      const weekBlockedTimes = blockedTimes.filter(blocked => weekDates.includes(blocked.date))
-      const totalSlots = adminTimeSlots.length * 7
+      const weekBlockedTimes = blockedTimes.filter((blocked) => weekDates.includes(blocked.date));
+      const totalSlots = adminTimeSlots.length * 7;
 
       return {
         booked: weekBookings.length,
         blocked: weekBlockedTimes.length,
-        available: totalSlots - weekBookings.length - weekBlockedTimes.length
-      }
+        available: totalSlots - weekBookings.length - weekBlockedTimes.length,
+      };
     } else {
       // إحصائيات الشهر الحالي
-      const year = currentMonth.getFullYear()
-      const month = currentMonth.getMonth()
-      const monthStart = `${year}-${(month + 1).toString().padStart(2, '0')}-01`
-      const monthEnd = new Date(year, month + 1, 0).toISOString().split('T')[0]
+      const year = currentMonth.getFullYear();
+      const month = currentMonth.getMonth();
+      const monthStart = `${year}-${(month + 1).toString().padStart(2, '0')}-01`;
+      const monthEnd = new Date(year, month + 1, 0).toISOString().split('T')[0];
 
-      const monthBookings = bookings.filter(booking => {
+      const monthBookings = bookings.filter((booking) => {
         try {
-          const bookingDate = formatIstanbulDate(fromDatabaseTime(booking.date), 'date')
-          return bookingDate >= monthStart && bookingDate <= monthEnd
+          const bookingDate = formatIstanbulDate(fromDatabaseTime(booking.date), 'date');
+          return bookingDate >= monthStart && bookingDate <= monthEnd;
         } catch {
-          return false
+          return false;
         }
-      })
+      });
 
-      const monthBlockedTimes = blockedTimes.filter(blocked =>
-        blocked.date >= monthStart && blocked.date <= monthEnd
-      )
+      const monthBlockedTimes = blockedTimes.filter(
+        (blocked) => blocked.date >= monthStart && blocked.date <= monthEnd,
+      );
 
-      const daysInMonth = new Date(year, month + 1, 0).getDate()
-      const totalSlots = adminTimeSlots.length * daysInMonth
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const totalSlots = adminTimeSlots.length * daysInMonth;
 
       return {
         booked: monthBookings.length,
         blocked: monthBlockedTimes.length,
-        available: totalSlots - monthBookings.length - monthBlockedTimes.length
-      }
+        available: totalSlots - monthBookings.length - monthBlockedTimes.length,
+      };
     }
-  }, [viewMode, selectedDate, currentMonth, bookings, blockedTimes, adminTimeSlots])
+  }, [viewMode, selectedDate, currentMonth, bookings, blockedTimes, adminTimeSlots]);
 
   // حساب نطاق الأسبوع للعرض
   const currentWeekRange = useMemo(() => {
     if (viewMode === 'week' && selectedDate) {
-      const startDate = new Date(selectedDate)
-      const dayOfWeek = startDate.getDay()
-      const weekStart = new Date(startDate)
-      weekStart.setDate(startDate.getDate() - dayOfWeek)
+      const startDate = new Date(selectedDate);
+      const dayOfWeek = startDate.getDay();
+      const weekStart = new Date(startDate);
+      weekStart.setDate(startDate.getDate() - dayOfWeek);
 
-      const weekEnd = new Date(weekStart)
-      weekEnd.setDate(weekStart.getDate() + 6)
+      const weekEnd = new Date(weekStart);
+      weekEnd.setDate(weekStart.getDate() + 6);
 
       const formatDate = (date: Date) => {
-        const day = date.getDate()
-        const months = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر']
-        return `${day} ${months[date.getMonth()]} ${date.getFullYear()}`
-      }
+        const day = date.getDate();
+        const months = [
+          'يناير',
+          'فبراير',
+          'مارس',
+          'أبريل',
+          'مايو',
+          'يونيو',
+          'يوليو',
+          'أغسطس',
+          'سبتمبر',
+          'أكتوبر',
+          'نوفمبر',
+          'ديسمبر',
+        ];
+        return `${day} ${months[date.getMonth()]} ${date.getFullYear()}`;
+      };
 
-      return `${formatDate(weekStart)} - ${formatDate(weekEnd)}`
+      return `${formatDate(weekStart)} - ${formatDate(weekEnd)}`;
     }
-    return undefined
-  }, [viewMode, selectedDate])
+    return undefined;
+  }, [viewMode, selectedDate]);
 
   // ✅ دالة التنقل المحسنة (مستبدلة)
   const handleViewNavigation = (direction: 'prev' | 'next') => {
-    navigateDate(direction)
-  }
+    navigateDate(direction);
+  };
 
   // Hooks للمصادقة والبيانات
   useEffect(() => {
-    const token = localStorage.getItem('adminToken')
+    const token = localStorage.getItem('adminToken');
     if (!token) {
-      router.push('/admin/login')
-      return
+      router.push('/admin/login');
+      return;
     }
-  }, [router])
+  }, [router]);
 
   // دوال الحجوزات
-  const openNewBooking = () => setIsCreatingBooking(true)
-  const openEditBooking = (booking: Booking) => setEditingBooking(booking)
-  const openDeleteBooking = (booking: Booking) => setDeletingBooking(booking)
+  const openNewBooking = () => setIsCreatingBooking(true);
+  const openEditBooking = (booking: Booking) => setEditingBooking(booking);
+  const openDeleteBooking = (booking: Booking) => setDeletingBooking(booking);
   const handleLogout = () => {
-    localStorage.removeItem('adminToken')
-    router.push('/admin/login')
-  }
+    localStorage.removeItem('adminToken');
+    router.push('/admin/login');
+  };
 
   // ✅ دالة handleSwitchToDayView محسنة - الحل الجذري
-  const handleSwitchToDayView = useCallback((date: string) => {
-    // تحديث التاريخ المحدد أولاً
-    setSelectedDate(date)
+  const handleSwitchToDayView = useCallback(
+    (date: string) => {
+      // تحديث التاريخ المحدد أولاً
+      setSelectedDate(date);
 
-    // تغيير العرض إلى اليومي
-    setViewMode('day')
+      // تغيير العرض إلى اليومي
+      setViewMode('day');
 
-    // ✅ useEffect سيتولى تحديث currentDateRange تلقائياً
-    // لا نحتاج handleDateChange هنا لأن useEffect سيقوم بالعمل
-
-  }, [setSelectedDate, setViewMode])
+      // ✅ useEffect سيتولى تحديث currentDateRange تلقائياً
+      // لا نحتاج handleDateChange هنا لأن useEffect سيقوم بالعمل
+    },
+    [setSelectedDate, setViewMode],
+  );
 
   // دوال API للحجوزات (مبسطة)
   const saveNewBooking = async (bookingData: EditBookingData) => {
@@ -354,24 +376,24 @@ export default function AdminBookingsPage() {
           selectedTime: bookingData.selectedTime,
           selectedServices: bookingData.selectedServices,
           notes: bookingData.notes,
-          createdBy: 'admin'
+          createdBy: 'admin',
         }),
-      })
+      });
 
-      const data = await response.json()
+      const data = await response.json();
       if (data.success) {
-        setIsCreatingBooking(false)
-        fetchBookings(currentDateRange.startDate, currentDateRange.endDate, currentDateRange.view)
-        alert('تم إنشاء الحجز بنجاح!')
+        setIsCreatingBooking(false);
+        fetchBookings(currentDateRange.startDate, currentDateRange.endDate, currentDateRange.view);
+        alert('تم إنشاء الحجز بنجاح!');
       } else {
-        throw new Error(data.error)
+        throw new Error(data.error);
       }
     } catch (error) {
-      logError('خطأ في إنشاء الحجز:', error)
-      alert('خطأ في الاتصال بالخادم')
-      throw error
+      logError('خطأ في إنشاء الحجز:', error);
+      alert('خطأ في الاتصال بالخادم');
+      throw error;
     }
-  }
+  };
 
   const saveBookingChanges = async (bookingId: number, editData: EditBookingData) => {
     try {
@@ -384,94 +406,94 @@ export default function AdminBookingsPage() {
           selectedDate: editData.selectedDate,
           selectedTime: editData.selectedTime,
           selectedServices: editData.selectedServices,
-          notes: editData.notes
-        })
-      })
+          notes: editData.notes,
+        }),
+      });
 
-      const data = await response.json()
+      const data = await response.json();
       if (data.success) {
-        setEditingBooking(null)
-        fetchBookings(currentDateRange.startDate, currentDateRange.endDate, currentDateRange.view)
-        alert('تم تحديث الحجز بنجاح!')
+        setEditingBooking(null);
+        fetchBookings(currentDateRange.startDate, currentDateRange.endDate, currentDateRange.view);
+        alert('تم تحديث الحجز بنجاح!');
       } else {
-        throw new Error(data.error)
+        throw new Error(data.error);
       }
     } catch (error) {
-      logError('خطأ في حفظ التعديلات:', error)
-      alert('خطأ في الاتصال بالخادم')
-      throw error
+      logError('خطأ في حفظ التعديلات:', error);
+      alert('خطأ في الاتصال بالخادم');
+      throw error;
     }
-  }
+  };
 
   const deleteBooking = async (bookingId: number, reason: string) => {
     try {
       const response = await fetch(`/api/admin/bookings/${bookingId}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reason: reason })
-      })
+        body: JSON.stringify({ reason: reason }),
+      });
 
-      const data = await response.json()
+      const data = await response.json();
       if (data.success) {
-        setDeletingBooking(null)
-        fetchBookings(currentDateRange.startDate, currentDateRange.endDate, currentDateRange.view)
-        alert('تم حذف الحجز بنجاح!')
+        setDeletingBooking(null);
+        fetchBookings(currentDateRange.startDate, currentDateRange.endDate, currentDateRange.view);
+        alert('تم حذف الحجز بنجاح!');
       } else {
-        throw new Error(data.error)
+        throw new Error(data.error);
       }
     } catch (error) {
-      logError('خطأ في حذف الحجز:', error)
-      alert('خطأ في الاتصال بالخادم')
-      throw error
+      logError('خطأ في حذف الحجز:', error);
+      alert('خطأ في الاتصال بالخادم');
+      throw error;
     }
-  }
+  };
 
   // ✅ دوال التنقل والتواريخ محسنة
   const navigateMonth = (direction: 'prev' | 'next') => {
-    const currentDate = new Date(selectedDate)
-    currentDate.setMonth(currentDate.getMonth() + (direction === 'prev' ? -1 : 1))
+    const currentDate = new Date(selectedDate);
+    currentDate.setMonth(currentDate.getMonth() + (direction === 'prev' ? -1 : 1));
 
-    const newDate = currentDate.toISOString().split('T')[0]
-    setSelectedDate(newDate)
-    setCurrentMonth(currentDate)
+    const newDate = currentDate.toISOString().split('T')[0];
+    setSelectedDate(newDate);
+    setCurrentMonth(currentDate);
 
     // ✅ useEffect سيحدث currentDateRange تلقائياً
-  }
+  };
 
   const changeMonth = (monthIndex: number) => {
-    const year = currentMonth.getFullYear()
-    const newDate = new Date(year, monthIndex, 1)
-    const newDateString = newDate.toISOString().split('T')[0]
+    const year = currentMonth.getFullYear();
+    const newDate = new Date(year, monthIndex, 1);
+    const newDateString = newDate.toISOString().split('T')[0];
 
-    setSelectedDate(newDateString)
-    setCurrentMonth(newDate)
+    setSelectedDate(newDateString);
+    setCurrentMonth(newDate);
 
     // ✅ useEffect سيحدث currentDateRange تلقائياً
-  }
+  };
 
   const changeYear = (yearValue: number) => {
-    const month = currentMonth.getMonth()
-    const newDate = new Date(yearValue, month, 1)
-    const newDateString = newDate.toISOString().split('T')[0]
+    const month = currentMonth.getMonth();
+    const newDate = new Date(yearValue, month, 1);
+    const newDateString = newDate.toISOString().split('T')[0];
 
-    setSelectedDate(newDateString)
-    setCurrentMonth(newDate)
+    setSelectedDate(newDateString);
+    setCurrentMonth(newDate);
 
     // ✅ useEffect سيحدث currentDateRange تلقائياً
-  }
+  };
 
   // ✅ دالة goToToday محسنة
   const goToToday = () => {
-    const today = new Date()
-    const todayString = today.toISOString().split('T')[0]
+    const today = new Date();
+    const todayString = today.toISOString().split('T')[0];
 
-    setSelectedDate(todayString)
-    setCurrentMonth(today)
+    setSelectedDate(todayString);
+    setCurrentMonth(today);
 
     // ✅ useEffect سيحدث currentDateRange تلقائياً حسب viewMode
-  }
+  };
 
-  if (loading) return <LoadingSpinner />
+  if (loading) return <LoadingSpinner />;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50">
@@ -489,7 +511,10 @@ export default function AdminBookingsPage() {
               <Calendar className="w-6 h-6 text-purple-600" />
             </div>
 
-            <button onClick={handleLogout} className="flex items-center space-x-2 rtl:space-x-reverse text-red-600 hover:text-red-800 transition-colors duration-300">
+            <button
+              onClick={handleLogout}
+              className="flex items-center space-x-2 rtl:space-x-reverse text-red-600 hover:text-red-800 transition-colors duration-300"
+            >
               <LogOut className="w-4 h-4" />
               <span>خروج</span>
             </button>
@@ -525,7 +550,6 @@ export default function AdminBookingsPage() {
 
         {/* العروض */}
         <div className="space-y-6">
-
           {/* العرض الشهري */}
           {viewMode === 'month' && (
             <MonthView
@@ -547,16 +571,15 @@ export default function AdminBookingsPage() {
               blockedTimes={blockedTimes}
               getServiceColor={getServiceColor}
               onCreateNewBooking={(_date, _time) => {
-                openNewBooking()
+                openNewBooking();
               }}
               onEditBooking={openEditBooking}
               onDeleteBooking={openDeleteBooking}
               onShowPhoneMenu={(phone: string, customerName: string) =>
-                setShowPhoneMenu({phone, customerName})
+                setShowPhoneMenu({ phone, customerName })
               }
               onBlockTime={blockSingleTime}
               onUnblockTime={unblockSingleTime}
-              onDateChange={(newDate) => handleDateChange(newDate, setSelectedDate)}
             />
           )}
 
@@ -571,16 +594,15 @@ export default function AdminBookingsPage() {
               blockedTimes={blockedTimes}
               getServiceColor={getServiceColor}
               onCreateNewBooking={(_date, _time) => {
-                openNewBooking()
+                openNewBooking();
               }}
               onEditBooking={openEditBooking}
               onDeleteBooking={openDeleteBooking}
               onShowPhoneMenu={(phone: string, customerName: string) =>
-                setShowPhoneMenu({phone, customerName})
+                setShowPhoneMenu({ phone, customerName })
               }
               onBlockTime={blockSingleTime}
               onUnblockTime={unblockSingleTime}
-              onDateChange={(newDate) => handleDateChange(newDate, setSelectedDate)}
               onSwitchToDayView={handleSwitchToDayView}
             />
           )}
@@ -625,5 +647,5 @@ export default function AdminBookingsPage() {
         onClose={() => setShowPhoneMenu(null)}
       />
     </div>
-  )
+  );
 }

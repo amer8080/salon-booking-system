@@ -1,72 +1,71 @@
-'use client'
+'use client';
 import { logError } from '@/lib/logger-client';
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import { 
-  Calendar, 
-  Users, 
-  Sparkles, 
-  Settings, 
-  
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import {
+  Calendar,
+  Users,
+  Sparkles,
+  Settings,
   Clock,
   AlertCircle,
   LogOut,
   Shield,
   Plus,
-  TrendingUp
-} from 'lucide-react'
+  TrendingUp,
+} from 'lucide-react';
 
 interface DashboardStats {
-  totalBookings: number
-  todayBookings: number
-  pendingBookings: number
-  totalCustomers: number
-  totalServices: number
+  totalBookings: number;
+  todayBookings: number;
+  pendingBookings: number;
+  totalCustomers: number;
+  totalServices: number;
 }
 
 export default function AdminDashboard() {
-  const [stats, setStats] = useState<DashboardStats | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
-  const router = useRouter()
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const router = useRouter();
 
   useEffect(() => {
     // التحقق من تسجيل الدخول
-    const token = localStorage.getItem('adminToken')
+    const token = localStorage.getItem('adminToken');
     if (!token) {
-      router.push('/admin/login')
-      return
+      router.push('/admin/login');
+      return;
     }
 
     // تحميل إحصائيات لوحة التحكم
-    fetchDashboardStats()
-  }, [router])
+    fetchDashboardStats();
+  }, [router]);
 
   const fetchDashboardStats = async () => {
     try {
-      setLoading(true)
-      const response = await fetch('/api/admin/dashboard')
-      const data = await response.json()
+      setLoading(true);
+      const response = await fetch('/api/admin/dashboard');
+      const data = await response.json();
 
       if (data.success) {
-        setStats(data.stats)
+        setStats(data.stats);
       } else {
-        setError(data.error || 'فشل في تحميل الإحصائيات')
+        setError(data.error || 'فشل في تحميل الإحصائيات');
       }
     } catch (error) {
-      logError('خطأ في تحميل إحصائيات لوحة التحكم:', error)
-      setError('خطأ في الاتصال بالخادم')
+      logError('خطأ في تحميل إحصائيات لوحة التحكم:', error);
+      setError('خطأ في الاتصال بالخادم');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleLogout = () => {
-    localStorage.removeItem('adminToken')
-    router.push('/admin/login')
-  }
+    localStorage.removeItem('adminToken');
+    router.push('/admin/login');
+  };
 
   const menuItems = [
     {
@@ -75,7 +74,7 @@ export default function AdminDashboard() {
       icon: Calendar,
       description: 'إدارة جميع الحجوزات',
       color: 'from-blue-500 to-blue-600',
-      count: stats?.totalBookings
+      count: stats?.totalBookings,
     },
     {
       title: 'العملاء',
@@ -83,7 +82,7 @@ export default function AdminDashboard() {
       icon: Users,
       description: 'إدارة بيانات العملاء',
       color: 'from-green-500 to-green-600',
-      count: stats?.totalCustomers
+      count: stats?.totalCustomers,
     },
     {
       title: 'الخدمات',
@@ -91,16 +90,16 @@ export default function AdminDashboard() {
       icon: Sparkles,
       description: 'إدارة الخدمات والأسعار',
       color: 'from-purple-500 to-purple-600',
-      count: stats?.totalServices
+      count: stats?.totalServices,
     },
     {
       title: 'الإعدادات',
       href: '/admin/settings',
       icon: Settings,
       description: 'إعدادات النظام',
-      color: 'from-gray-500 to-gray-600'
-    }
-  ]
+      color: 'from-gray-500 to-gray-600',
+    },
+  ];
 
   if (loading) {
     return (
@@ -112,7 +111,7 @@ export default function AdminDashboard() {
           <p className="text-gray-600">جاري تحميل لوحة التحكم...</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -130,9 +129,9 @@ export default function AdminDashboard() {
                 <p className="text-sm text-gray-600">صالون ريم</p>
               </div>
             </div>
-            
+
             <div className="flex items-center space-x-4 rtl:space-x-reverse">
-              <Link 
+              <Link
                 href="/"
                 className="text-gray-600 hover:text-gray-800 transition-colors duration-300"
               >
@@ -153,12 +152,8 @@ export default function AdminDashboard() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Welcome Message */}
         <div className="mb-8">
-          <h2 className="text-3xl font-bold text-gray-800 mb-2">
-            مرحباً بك في لوحة التحكم! 👋
-          </h2>
-          <p className="text-gray-600">
-            إدارة شاملة لنظام حجوزات صالون ريم
-          </p>
+          <h2 className="text-3xl font-bold text-gray-800 mb-2">مرحباً بك في لوحة التحكم! 👋</h2>
+          <p className="text-gray-600">إدارة شاملة لنظام حجوزات صالون ريم</p>
         </div>
 
         {error && (
@@ -229,7 +224,9 @@ export default function AdminDashboard() {
             <Link key={index} href={item.href} className="group">
               <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-all duration-300 group-hover:scale-105">
                 <div className="flex items-center justify-between mb-4">
-                  <div className={`w-12 h-12 bg-gradient-to-r ${item.color} rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
+                  <div
+                    className={`w-12 h-12 bg-gradient-to-r ${item.color} rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}
+                  >
                     <item.icon className="w-6 h-6 text-white" />
                   </div>
                   {item.count !== undefined && (
@@ -249,9 +246,9 @@ export default function AdminDashboard() {
             <h3 className="text-xl font-bold text-gray-800">إجراءات سريعة</h3>
             <TrendingUp className="w-6 h-6 text-purple-600" />
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Link 
+            <Link
               href="/admin/bookings/new"
               className="flex items-center justify-center p-4 border-2 border-dashed border-purple-300 rounded-xl hover:border-purple-500 hover:bg-purple-50 transition-all duration-300 group"
             >
@@ -261,7 +258,7 @@ export default function AdminDashboard() {
               </div>
             </Link>
 
-            <Link 
+            <Link
               href="/admin/services/new"
               className="flex items-center justify-center p-4 border-2 border-dashed border-green-300 rounded-xl hover:border-green-500 hover:bg-green-50 transition-all duration-300 group"
             >
@@ -271,7 +268,7 @@ export default function AdminDashboard() {
               </div>
             </Link>
 
-            <Link 
+            <Link
               href="/admin/customers"
               className="flex items-center justify-center p-4 border-2 border-dashed border-blue-300 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-all duration-300 group"
             >
@@ -284,5 +281,5 @@ export default function AdminDashboard() {
         </div>
       </div>
     </div>
-  )
+  );
 }

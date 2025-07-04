@@ -3,13 +3,12 @@
 // ======================================
 
 // المكونات الأساسية
-export { default as LoadingSpinner } from './LoadingSpinner'
-export { default as PhoneMenu } from './PhoneMenu'
-export { default as CombinedHeader, useViewMode } from './CombinedHeader'
-
+export { default as LoadingSpinner } from './LoadingSpinner';
+export { default as PhoneMenu } from './PhoneMenu';
+export { default as CombinedHeader, useViewMode } from './CombinedHeader';
 
 // المكونات القديمة (للتوافق مع الكود الموجود)
-export { default as ViewToggleButtons } from './ViewToggleButtons'
+export { default as ViewToggleButtons } from './ViewToggleButtons';
 
 // ====== ملاحظات التطوير ======
 //

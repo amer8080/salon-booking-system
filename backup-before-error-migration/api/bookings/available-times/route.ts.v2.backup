@@ -1,0 +1,282 @@
+﻿import { NextRequest, NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
+import { AppSettings } from '@/lib/app-settings';
+import {
+  parseIstanbulDate,
+  getIstanbulStartOfDay,
+  getIstanbulEndOfDay,
+  createIstanbulDate,
+  formatIstanbulDate,
+  fromDatabaseTime,
+  getAppTimezone,
+  createAppTimezoneDate,
+} from '@/lib/timezone';
+
+// حذف WORKING_HOURS الثابت - سنقرأه من AppSettings
+// const WORKING_HOURS = { ... }
+
+async function generateTimeSlots() {
+  try {
+    // قراءة الإعدادات من قاعدة البيانات
+    const [businessHours, slotDuration, timezone] = await Promise.all([
+      AppSettings.getBusinessHours(),
+      AppSettings.getDefaultSlotDuration(),
+      AppSettings.getTimezone(),
+    ]);
+
+    console.log('📊 Dynamic Settings:', {
+      businessHours,
+      slotDuration,
+      timezone,
+    });
+
+    const slots = [];
+    const startTime = new Date();
+    const [startHour, startMinute] = businessHours.start.split(':').map(Number);
+    startTime.setHours(startHour, startMinute, 0, 0);
+
+    const endTime = new Date();
+    const [endHour, endMinute] = businessHours.end.split(':').map(Number);
+    endTime.setHours(endHour, endMinute, 0, 0);
+
+    const current = new Date(startTime);
+    while (current <= endTime) {
+      const timeString = current.toLocaleTimeString('en-US', {
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+      slots.push(timeString);
+      current.setMinutes(current.getMinutes() + slotDuration);
+    }
+
+    console.log(`⏰ Generated ${slots.length} time slots from ${businessHours.start} to ${businessHours.end}`);
+    return slots;
+  } catch (error) {
+    console.error('❌ Error generating time slots:', error);
+    // fallback إلى القيم الافتراضية في حالة الخطأ
+    const slots = [];
+    const startTime = new Date();
+    startTime.setHours(11, 30, 0, 0);
+    const endTime = new Date();
+    endTime.setHours(18, 30, 0, 0);
+
+    const current = new Date(startTime);
+    while (current <= endTime) {
+      const timeString = current.toLocaleTimeString('en-US', {
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+      slots.push(timeString);
+      current.setMinutes(current.getMinutes() + 30);
+    }
+    return slots;
+  }
+}
+
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const selectedDate = searchParams.get('date');
+    const userType = searchParams.get('userType') || 'customer';
+
+    if (!selectedDate) {
+      return NextResponse.json({ success: false, error: 'التاريخ مطلوب' }, { status: 400 });
+    }
+
+    console.log('🔥 Available Times API called with dynamic settings');
+    console.log('📅 Parameters:', { selectedDate, userType });
+
+    // استخدام الدوال الجديدة للـ timezone
+    const appTimezone = await getAppTimezone();
+    console.log('🌍 Using timezone:', appTimezone);
+
+    const allTimeSlots = await generateTimeSlots();
+    const today = formatIstanbulDate(await createAppTimezoneDate(), 'date');
+    const now = await createAppTimezoneDate();
+
+    let availableSlots = allTimeSlots;
+
+    // فلترة الأوقات المرحلة بناءً على الوقت الحالي
+    if (selectedDate === today) {
+      const currentHour = now.getHours();
+      const currentMinute = now.getMinutes();
+      
+      // قراءة minBookingGap خارج filter
+      const minBookingGap = await AppSettings.getDefaultSlotDuration().catch(() => 30);
+
+      availableSlots = allTimeSlots.filter((timeSlot) => {
+        const [hour, minute] = timeSlot.split(':').map(Number);
+        const slotTime = hour * 60 + minute;
+        const currentTime = currentHour * 60 + currentMinute;
+
+        // استخدام القيمة المُحملة مسبقاً
+        return slotTime > currentTime + Math.min(minBookingGap, 30);
+      });
+    }
+
+    // فحص الأوقات المقفلة
+    const blockedTimes = await prisma.blockedTime.findMany({
+      where: {
+        date: {
+          gte: getIstanbulStartOfDay(parseIstanbulDate(selectedDate)),
+          lte: getIstanbulEndOfDay(parseIstanbulDate(selectedDate)),
+        },
+      },
+    });
+
+    // فحص إذا كان اليوم مقفل كاملاً
+    const isDayBlocked = blockedTimes.some(
+      (blocked) =>
+        formatIstanbulDate(fromDatabaseTime(blocked.date), 'date') === selectedDate &&
+        blocked.startTime === null &&
+        blocked.endTime === null,
+    );
+
+    if (isDayBlocked && userType === 'customer') {
+      return NextResponse.json({
+        success: true,
+        availableSlots: [],
+        bookedSlots: [],
+        blockedSlots: allTimeSlots,
+        totalSlots: 0,
+        allSlots: allTimeSlots.length,
+        userType: 'customer',
+        message: 'هذا اليوم مقفل كاملاً',
+        timezone: appTimezone,
+        settings: {
+          businessHours: await AppSettings.getBusinessHours(),
+          slotDuration: await AppSettings.getDefaultSlotDuration(),
+        },
+        debug:
+          process.env.NODE_ENV === 'development'
+            ? {
+                selectedDate,
+                isDayBlocked: true,
+                blockedTimesFound: blockedTimes.length,
+                timezone: appTimezone,
+                dynamicSettings: true,
+              }
+            : undefined,
+      });
+    }
+
+    // فلترة الأوقات المقفلة للعملاء
+    const blockedTimeSlots = blockedTimes
+      .filter((blocked) => blocked.startTime !== null)
+      .map((blocked) => {
+        const blockedTime = fromDatabaseTime(blocked.startTime!);
+        return formatIstanbulDate(blockedTime, 'time');
+      });
+
+    if (userType === 'customer') {
+      availableSlots = availableSlots.filter((slot) => !blockedTimeSlots.includes(slot));
+    }
+
+    if (userType === 'admin') {
+      return NextResponse.json({
+        success: true,
+        availableSlots: availableSlots,
+        blockedSlots: blockedTimeSlots,
+        totalSlots: availableSlots.length,
+        userType: 'admin',
+        timezone: appTimezone,
+        settings: {
+          businessHours: await AppSettings.getBusinessHours(),
+          slotDuration: await AppSettings.getDefaultSlotDuration(),
+        },
+        note: 'الأدمن يمكنه الحجز في أي وقت (حتى المقفل)',
+        debug:
+          process.env.NODE_ENV === 'development'
+            ? {
+                selectedDate,
+                isDayBlocked,
+                blockedTimesFound: blockedTimes.length,
+                blockedTimeSlots,
+                timezone: appTimezone,
+                dynamicSettings: true,
+              }
+            : undefined,
+      });
+    }
+
+    const selectedDateObj = parseIstanbulDate(selectedDate);
+    const startOfDay = getIstanbulStartOfDay(selectedDateObj);
+    const endOfDay = getIstanbulEndOfDay(selectedDateObj);
+
+    const existingReservations = await prisma.reservation.findMany({
+      where: {
+        startTime: {
+          gte: startOfDay,
+          lte: endOfDay,
+        },
+        status: {
+          not: 'cancelled',
+        },
+      },
+      select: {
+        id: true,
+        startTime: true,
+        customerId: true,
+      },
+    });
+
+    const bookedTimes = existingReservations.map((reservation) => {
+      const reservationTime = new Date(reservation.startTime);
+      const timeString = reservationTime.toLocaleTimeString('en-US', {
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+
+      return timeString;
+    });
+
+    const finalAvailableSlots = availableSlots.filter((slot) => {
+      const isBooked = bookedTimes.includes(slot);
+      return !isBooked;
+    });
+
+    return NextResponse.json({
+      success: true,
+      availableSlots: finalAvailableSlots,
+      bookedSlots: bookedTimes,
+      blockedSlots: blockedTimeSlots,
+      totalSlots: finalAvailableSlots.length,
+      allSlots: allTimeSlots.length,
+      userType: 'customer',
+      timezone: appTimezone,
+      settings: {
+        businessHours: await AppSettings.getBusinessHours(),
+        slotDuration: await AppSettings.getDefaultSlotDuration(),
+        workingDays: await AppSettings.getWorkingDays(),
+      },
+      dynamicSettings: true, // مؤشر أن النظام يستخدم إعدادات ديناميكية
+      debug:
+        process.env.NODE_ENV === 'development'
+          ? {
+              selectedDate,
+              isDayBlocked,
+              reservationsFound: existingReservations.length,
+              bookedTimes,
+              blockedTimeSlots,
+              blockedTimesFound: blockedTimes.length,
+              filteredOut: availableSlots.length - finalAvailableSlots.length,
+              timezone: appTimezone,
+              dynamicSettingsUsed: true,
+            }
+          : undefined,
+    });
+  } catch (error) {
+    console.error('❌ Available Times API Error:', error);
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'حدث خطأ في جلب الأوقات المتاحة',
+        details: process.env.NODE_ENV === 'development' ? error : undefined,
+      },
+      { status: 500 },
+    );
+  }
+}

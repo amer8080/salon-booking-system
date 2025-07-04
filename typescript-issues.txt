@@ -1,0 +1,84 @@
+src/app/admin/bookings/components/Bookings/BookingCard.tsx(87,43): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Date'.
+src/app/admin/bookings/components/Bookings/BookingCard.tsx(91,41): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Date'.
+src/app/admin/bookings/components/Modals/DeleteBookingModal.tsx(83,40): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Date'.
+src/app/admin/bookings/components/Modals/DeleteBookingModal.tsx(94,40): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Date'.
+src/app/admin/bookings/components/Modals/EditBookingModal.tsx(53,48): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Date'.
+src/app/admin/bookings/components/Modals/EditBookingModal.tsx(54,46): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Date'.
+src/app/admin/bookings/components/Modals/NewBookingModal.tsx(31,3): error TS2339: Property '_services' does not exist on type 'NewBookingModalProps'.
+src/app/admin/bookings/components/Views/DayView.tsx(123,65): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Date'.
+src/app/admin/bookings/components/Views/DayView.tsx(334,22): error TS2304: Cannot find name 'services'.
+src/app/admin/bookings/components/Views/MonthView.tsx(5,30): error TS2305: Module '"@/lib/timezone"' has no exported member 'getDaysInMonth'.
+src/app/admin/bookings/components/Views/WeekView.tsx(58,3): error TS2339: Property 'onSwitchToDayView' does not exist on type 'WeekViewProps'.
+src/app/admin/bookings/components/Views/WeekView.tsx(119,65): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Date'.
+src/app/admin/bookings/components/Views/WeekView.tsx(120,65): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Date'.
+src/app/admin/bookings/components/Views/WeekView.tsx(321,11): error TS2322: Type '{ booking: any; date: string; time: string; services: Record<string, Service>; servicesWithCategories: Record<string, Service & { category: string; }>; ... 10 more ...; position: "center"; }' is not assignable to type 'IntrinsicAttributes & BookingCardProps'.
+  Property 'services' does not exist on type 'IntrinsicAttributes & BookingCardProps'. Did you mean '_services'?
+src/app/admin/bookings/hooks/useDayView.ts(44,29): error TS2345: Argument of type '{ startDate: string; endDate: string; view: "day"; }' is not assignable to parameter of type 'BlockedTime'.
+  Type '{ startDate: string; endDate: string; view: "day"; }' is missing the following properties from type 'BlockedTime': id, date, startTime, endTime, and 5 more.
+src/app/admin/bookings/hooks/useDayView.ts(68,9): error TS2552: Cannot find name 'logError'. Did you mean 'onerror'?
+src/app/admin/bookings/hooks/useDayView.ts(69,24): error TS2339: Property 'message' does not exist on type 'unknown'.
+src/app/admin/bookings/hooks/useDayView.ts(95,9): error TS2304: Cannot find name 'logError'.
+src/app/admin/bookings/hooks/useDayView.ts(96,24): error TS2339: Property 'message' does not exist on type 'unknown'.
+src/app/admin/bookings/page.tsx(79,5): error TS2322: Type 'Dispatch<SetStateAction<{ startDate: string; endDate: string; view: string; }>>' is not assignable to type '(range: BlockedTime) => void'.
+  Types of parameters 'value' and 'range' are incompatible.
+    Type 'BlockedTime' is not assignable to type 'SetStateAction<{ startDate: string; endDate: string; view: string; }>'.
+src/app/admin/bookings/page.tsx(217,67): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Date'.
+src/app/admin/bookings/page.tsx(247,67): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Date'.
+src/app/admin/bookings/page.tsx(271,67): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Date'.
+src/app/admin/bookings/page.tsx(606,15): error TS2322: Type '{ selectedDate: string; bookings: Booking[]; services: { [key: string]: Service; }; servicesWithCategories: { [key: string]: Service; }; adminTimeSlots: any[]; blockedTimes: BlockedTime[]; ... 7 more ...; onSwitchToDayView: (date: string) => void; }' is not assignable to type 'IntrinsicAttributes & WeekViewProps'.
+  Property 'onSwitchToDayView' does not exist on type 'IntrinsicAttributes & WeekViewProps'.
+src/app/admin/customers/hooks/useCustomerModals.ts(93,22): error TS2339: Property 'message' does not exist on type 'unknown'.
+src/app/admin/customers/hooks/useCustomerModals.ts(94,9): error TS2353: Object literal may only specify known properties, and 'operation' does not exist in type 'LogContext'.
+src/app/admin/customers/hooks/useCustomerModals.ts(99,17): error TS2339: Property 'response' does not exist on type 'unknown'.
+src/app/admin/customers/hooks/useCustomerModals.ts(101,24): error TS2339: Property 'response' does not exist on type 'unknown'.
+src/app/admin/customers/hooks/useCustomerModals.ts(140,22): error TS2339: Property 'message' does not exist on type 'unknown'.
+src/app/admin/customers/hooks/useCustomerModals.ts(141,9): error TS2353: Object literal may only specify known properties, and 'operation' does not exist in type 'LogContext'.
+src/app/admin/customers/hooks/useCustomerModals.ts(145,17): error TS2339: Property 'response' does not exist on type 'unknown'.
+src/app/admin/customers/hooks/useCustomerModals.ts(147,24): error TS2339: Property 'response' does not exist on type 'unknown'.
+src/app/admin/customers/hooks/useCustomerModals.ts(180,22): error TS2339: Property 'message' does not exist on type 'unknown'.
+src/app/admin/customers/hooks/useCustomerModals.ts(181,9): error TS2353: Object literal may only specify known properties, and 'operation' does not exist in type 'LogContext'.
+src/app/admin/customers/hooks/useCustomerModals.ts(185,17): error TS2339: Property 'response' does not exist on type 'unknown'.
+src/app/api/admin/customers/route.ts(7,38): error TS2552: Cannot find name 'request'. Did you mean '_request'?
+src/app/api/admin/customers/route.ts(214,24): error TS2552: Cannot find name 'request'. Did you mean '_request'?
+src/app/api/admin/customers/route.ts(256,20): error TS2339: Property 'message' does not exist on type 'unknown'.
+src/app/api/admin/customers/route.ts(257,7): error TS2353: Object literal may only specify known properties, and 'operation' does not exist in type 'LogContext'.
+src/app/api/admin/login/route.ts(16,42): error TS2552: Cannot find name 'request'. Did you mean '_request'?
+src/app/api/admin/services/route.ts(7,24): error TS2552: Cannot find name 'request'. Did you mean '_request'?
+src/app/api/admin/settings/app/route.ts(208,38): error TS2345: Argument of type 'number' is not assignable to parameter of type '60 | 30 | 15 | 45'.
+src/app/api/admin/settings/colors/route.ts(60,24): error TS2552: Cannot find name 'request'. Did you mean '_request'?
+src/app/api/bookings/route.ts(7,24): error TS2552: Cannot find name 'request'. Did you mean '_request'?
+src/app/api/logging/route.ts(7,24): error TS2552: Cannot find name 'request'. Did you mean '_request'?
+src/app/book/hooks/useBookingSteps.ts(45,41): error TS2304: Cannot find name 'useState'.
+src/app/book/hooks/useBookingSteps.ts(165,43): error TS2304: Cannot find name 'useState'.
+src/app/book/hooks/useBookingSteps.ts(182,37): error TS2304: Cannot find name 'useState'.
+src/app/book/hooks/useBookingSteps.ts(183,43): error TS2304: Cannot find name 'useState'.
+src/app/book/hooks/useBookingSteps.ts(247,41): error TS2304: Cannot find name 'useState'.
+src/app/book/hooks/useBookingSteps.ts(248,47): error TS2304: Cannot find name 'useState'.
+src/app/book/hooks/useBookingSteps.ts(270,37): error TS2304: Cannot find name 'useState'.
+src/app/book/hooks/useBookingSteps.ts(271,35): error TS2304: Cannot find name 'useState'.
+src/app/book/hooks/useBookingSubmit.ts(222,9): error TS2353: Object literal may only specify known properties, and 'error' does not exist in type 'ErrorContext'.
+src/app/book/hooks/useBookingSubmit.ts(222,22): error TS2339: Property 'message' does not exist on type 'unknown'.
+src/app/book/hooks/useTimeSlots.ts(71,29): error TS2304: Cannot find name 'useState'.
+src/app/book/hooks/useTimeSlots.ts(79,35): error TS2304: Cannot find name 'useState'.
+src/app/book/hooks/useTimeSlots.ts(80,51): error TS2304: Cannot find name 'useState'.
+src/app/book/hooks/useTimeSlots.ts(166,25): error TS2304: Cannot find name 'getTodayIstanbul'.
+src/app/book/hooks/useTimeSlots.ts(407,53): error TS2304: Cannot find name 'useState'.
+src/app/book/hooks/useTimeSlots.ts(408,37): error TS2304: Cannot find name 'useState'.
+src/app/book/utils/calendar-generator.ts(8,3): error TS2305: Module '"@/lib/timezone"' has no exported member 'getArabicDayName'.
+src/app/book/utils/calendar-generator.ts(9,3): error TS2305: Module '"@/lib/timezone"' has no exported member 'getArabicMonthName'.
+src/app/book/utils/calendar-generator.ts(10,3): error TS2724: '"@/lib/timezone"' has no exported member named '_toIstanbulTime'. Did you mean 'toIstanbulTime'?
+src/app/book/utils/error-handling.ts(187,24): error TS2345: Argument of type '{ timestamp: string; error: { name: any; message: any; stack: any; }; _context: { userAgent: string; url: string; viewport: { width: number; height: number; }; formData?: BookingFormData; services?: Service[]; networkQuality?: "fast" | "slow" | "offline"; retryCount?: number; timestamp?: number; stackTrace?: string;...' is not assignable to parameter of type 'LogContext'.
+  Types of property 'error' are incompatible.
+    Type '{ name: any; message: any; stack: any; }' is not assignable to type 'string'.
+src/app/book/utils/error-handling.ts(196,7): error TS2304: Cannot find name 'logWarn'.
+src/app/book/utils/form-validation.ts(184,20): error TS2339: Property 'message' does not exist on type 'unknown'.
+src/app/book/utils/form-validation.ts(185,7): error TS2353: Object literal may only specify known properties, and 'operation' does not exist in type 'LogContext'.
+src/lib/logger.ts(89,67): error TS2663: Cannot find name 'error'. Did you mean the instance member 'this.error'?
+src/lib/logger.ts(217,18): error TS2663: Cannot find name 'error'. Did you mean the instance member 'this.error'?
+src/lib/logger.ts(217,43): error TS2663: Cannot find name 'error'. Did you mean the instance member 'this.error'?
+src/lib/logger.ts(217,66): error TS2663: Cannot find name 'error'. Did you mean the instance member 'this.error'?
+src/lib/logger.ts(219,9): error TS2663: Cannot find name 'error'. Did you mean the instance member 'this.error'?
+src/lib/logger.ts(219,34): error TS2663: Cannot find name 'error'. Did you mean the instance member 'this.error'?
+src/lib/logger.ts(222,13): error TS2663: Cannot find name 'error'. Did you mean the instance member 'this.error'?
+src/lib/services-utils.ts(23,20): error TS2339: Property 'message' does not exist on type 'unknown'.
+src/lib/services-utils.ts(24,7): error TS2353: Object literal may only specify known properties, and 'inputServices' does not exist in type 'LogContext'.

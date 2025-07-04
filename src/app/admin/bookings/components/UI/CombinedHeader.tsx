@@ -1,36 +1,36 @@
-'use client'
+'use client';
 
-import React, { useState, useEffect } from 'react'
-import { Calendar, CalendarDays, Clock, ChevronLeft, ChevronRight, Home } from 'lucide-react'
-import { DatePicker, ConfigProvider } from 'antd'
-import dayjs from 'dayjs'
-import 'dayjs/locale/ar'
-import arEG from 'antd/locale/ar_EG'
+import React, { useState, useEffect } from 'react';
+import { Calendar, CalendarDays, Clock, ChevronLeft, ChevronRight, Home } from 'lucide-react';
+import { DatePicker, ConfigProvider } from 'antd';
+import dayjs from 'dayjs';
+import 'dayjs/locale/ar';
+import arEG from 'antd/locale/ar_EG';
 
-type ViewMode = 'month' | 'week' | 'day'
+type ViewMode = 'month' | 'week' | 'day';
 
 interface Stats {
-  booked: number
-  available: number
-  blocked: number
+  booked: number;
+  available: number;
+  blocked: number;
 }
 
 interface CombinedHeaderProps {
-  currentView: ViewMode
-  onViewChange: (view: ViewMode) => void
-  currentMonth: Date
-  onNavigateMonth: (direction: 'prev' | 'next') => void
-  onChangeMonth: (monthIndex: number) => void
-  onChangeYear: (year: number) => void
-  onGoToToday: () => void
-  
+  currentView: ViewMode;
+  onViewChange: (view: ViewMode) => void;
+  currentMonth: Date;
+  onNavigateMonth: (direction: 'prev' | 'next') => void;
+  onChangeMonth: (monthIndex: number) => void;
+  onChangeYear: (year: number) => void;
+  onGoToToday: () => void;
+
   // الجديد - الإحصائيات والتنقل السريع
-  stats?: Stats
-  onNavigateView?: (direction: 'prev' | 'next') => void
-  selectedDate?: string
-  currentWeekRange?: string
-  
-  className?: string
+  stats?: Stats;
+  onNavigateView?: (direction: 'prev' | 'next') => void;
+  selectedDate?: string;
+  currentWeekRange?: string;
+
+  className?: string;
 }
 
 export default function CombinedHeader({
@@ -45,112 +45,126 @@ export default function CombinedHeader({
   onNavigateView,
   selectedDate,
   currentWeekRange,
-  className = ""
+  className = '',
 }: CombinedHeaderProps) {
-
-  const [showMonthPicker, setShowMonthPicker] = useState(false)
+  const [showMonthPicker, setShowMonthPicker] = useState(false);
 
   // إصلاح تمييز الشهر الحالي
   useEffect(() => {
     if (showMonthPicker) {
       const timer = setTimeout(() => {
-        const currentRealMonth = new Date().getMonth()
-        const cells = document.querySelectorAll('.ant-picker-cell')
+        const currentRealMonth = new Date().getMonth();
+        const cells = document.querySelectorAll('.ant-picker-cell');
 
         cells.forEach((cell, index) => {
           if (index === currentRealMonth) {
-            cell.classList.add('force-current-month')
+            cell.classList.add('force-current-month');
           } else {
-            cell.classList.remove('force-current-month')
+            cell.classList.remove('force-current-month');
           }
-        })
-      }, 100)
+        });
+      }, 100);
 
-      return () => clearTimeout(timer)
+      return () => clearTimeout(timer);
     }
-  }, [showMonthPicker])
+  }, [showMonthPicker]);
 
   const views = [
     { key: 'month' as ViewMode, label: 'شهري', icon: Calendar },
     { key: 'week' as ViewMode, label: 'أسبوعي', icon: CalendarDays },
-    { key: 'day' as ViewMode, label: 'يومي', icon: Clock }
-  ]
+    { key: 'day' as ViewMode, label: 'يومي', icon: Clock },
+  ];
 
   // تنسيق التاريخ حسب العرض
   const getDisplayDate = () => {
     if (currentView === 'day' && selectedDate) {
-      const date = new Date(selectedDate)
-      const days = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت']
-      const months = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر']
-      return `${days[date.getDay()]}, ${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`
+      const date = new Date(selectedDate);
+      const days = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+      const months = [
+        'يناير',
+        'فبراير',
+        'مارس',
+        'أبريل',
+        'مايو',
+        'يونيو',
+        'يوليو',
+        'أغسطس',
+        'سبتمبر',
+        'أكتوبر',
+        'نوفمبر',
+        'ديسمبر',
+      ];
+      return `${days[date.getDay()]}, ${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
     } else if (currentView === 'week' && currentWeekRange) {
-      return currentWeekRange
+      return currentWeekRange;
     } else {
-      return dayjs(currentMonth).locale('ar').format('MMMM YYYY')
+      return dayjs(currentMonth).locale('ar').format('MMMM YYYY');
     }
-  }
+  };
 
   // اختصار التاريخ للجوال
   const getMobileDisplayDate = () => {
     if (currentView === 'day' && selectedDate) {
-      const date = new Date(selectedDate)
-      const days = ['أحد', 'اثن', 'ثلا', 'أرب', 'خمي', 'جمع', 'سبت']
-      return `${days[date.getDay()]}, ${date.getDate()}/${date.getMonth() + 1}`
+      const date = new Date(selectedDate);
+      const days = ['أحد', 'اثن', 'ثلا', 'أرب', 'خمي', 'جمع', 'سبت'];
+      return `${days[date.getDay()]}, ${date.getDate()}/${date.getMonth() + 1}`;
     } else if (currentView === 'week' && currentWeekRange) {
       // اختصار نطاق الأسبوع
-      const parts = currentWeekRange.split(' - ')
+      const parts = currentWeekRange.split(' - ');
       if (parts.length === 2) {
-        const start = parts[0].split(' ')[0] // أول رقم
-        const end = parts[1].split(' ')[0] // آخر رقم
-        return `${start}-${end}`
+        const start = parts[0].split(' ')[0]; // أول رقم
+        const end = parts[1].split(' ')[0]; // آخر رقم
+        return `${start}-${end}`;
       }
-      return currentWeekRange
+      return currentWeekRange;
     } else {
-      return dayjs(currentMonth).locale('ar').format('MMM YYYY')
+      return dayjs(currentMonth).locale('ar').format('MMM YYYY');
     }
-  }
+  };
 
-  const today = new Date()
+  const today = new Date();
   const isCurrentPeriod = () => {
     if (currentView === 'day' && selectedDate) {
-      return selectedDate === today.toISOString().split('T')[0]
+      return selectedDate === today.toISOString().split('T')[0];
     } else if (currentView === 'month') {
-      return today.getFullYear() === currentMonth.getFullYear() && today.getMonth() === currentMonth.getMonth()
+      return (
+        today.getFullYear() === currentMonth.getFullYear() &&
+        today.getMonth() === currentMonth.getMonth()
+      );
     }
-    return false
-  }
+    return false;
+  };
 
   const handleMonthChange = (date: any) => {
     if (date) {
-      onChangeYear(date.year())
-      onChangeMonth(date.month())
+      onChangeYear(date.year());
+      onChangeMonth(date.month());
     }
-    setShowMonthPicker(false)
-  }
+    setShowMonthPicker(false);
+  };
 
   // دالة التنقل الموحدة
   const handleNavigate = (direction: 'prev' | 'next') => {
     if (currentView === 'month') {
-      onNavigateMonth(direction)
+      onNavigateMonth(direction);
     } else if (onNavigateView) {
-      onNavigateView(direction)
+      onNavigateView(direction);
     }
-  }
+  };
 
   return (
-    <div className={`bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl shadow-lg border border-purple-200 p-4 mb-6 ${className}`}>
-      
+    <div
+      className={`bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl shadow-lg border border-purple-200 p-4 mb-6 ${className}`}
+    >
       {/* تخطيط متجاوب - صف واحد للديسكتوب، صفين للجوال */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 lg:gap-0">
-
         {/* الصف الأول: أزرار التبديل + التنقل + التاريخ */}
         <div className="flex items-center justify-between">
-          
           {/* أزرار التبديل */}
           <div className="flex items-center bg-white bg-opacity-20 backdrop-blur-sm rounded-xl p-1">
             {views.map((view) => {
-              const Icon = view.icon
-              const isActive = currentView === view.key
+              const Icon = view.icon;
+              const isActive = currentView === view.key;
 
               return (
                 <button
@@ -162,16 +176,17 @@ export default function CombinedHeader({
                       : 'text-white active:bg-white active:bg-opacity-30'
                   }`}
                 >
-                  <Icon className={`w-3 h-3 lg:w-4 lg:h-4 ${isActive ? 'text-purple-600' : 'text-white'}`} />
+                  <Icon
+                    className={`w-3 h-3 lg:w-4 lg:h-4 ${isActive ? 'text-purple-600' : 'text-white'}`}
+                  />
                   <span className="hidden sm:block lg:block">{view.label}</span>
                 </button>
-              )
+              );
             })}
           </div>
 
           {/* التنقل والتاريخ - مجمعين للجوال */}
           <div className="flex items-center space-x-2 rtl:space-x-reverse">
-            
             {/* أزرار التنقل */}
             <div className="flex items-center space-x-1 rtl:space-x-reverse">
               <button
@@ -194,7 +209,9 @@ export default function CombinedHeader({
               <button
                 onClick={() => currentView === 'month' && setShowMonthPicker(true)}
                 className={`flex items-center space-x-1 rtl:space-x-reverse px-2 lg:px-4 py-1.5 lg:py-2 rounded-lg font-bold text-white transition-colors duration-200 ${
-                  currentView === 'month' ? 'active:bg-white active:bg-opacity-30' : 'cursor-default'
+                  currentView === 'month'
+                    ? 'active:bg-white active:bg-opacity-30'
+                    : 'cursor-default'
                 }`}
               >
                 <Calendar className="w-3 h-3 lg:w-5 lg:h-5 text-white" />
@@ -233,7 +250,6 @@ export default function CombinedHeader({
 
         {/* الصف الثاني: الإحصائيات + زر اليوم */}
         <div className="flex items-center justify-between lg:justify-end lg:space-x-4 lg:rtl:space-x-reverse">
-          
           {/* الإحصائيات */}
           {stats && (
             <div className="flex items-center space-x-3 lg:space-x-4 rtl:space-x-reverse text-white">
@@ -260,7 +276,7 @@ export default function CombinedHeader({
                 {currentView === 'day' ? 'اليوم' : 'الحالي'}
               </span>
             )}
-            
+
             {!isCurrentPeriod() && (
               <button
                 onClick={onGoToToday}
@@ -274,19 +290,19 @@ export default function CombinedHeader({
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 // Hook مساعد للعروض
 export function useViewMode(initialView: ViewMode = 'week') {
-  const [viewMode, setViewMode] = React.useState<ViewMode>(initialView)
+  const [viewMode, setViewMode] = React.useState<ViewMode>(initialView);
 
   const handleViewChange = (newView: ViewMode) => {
-    setViewMode(newView)
-  }
+    setViewMode(newView);
+  };
 
   return {
     viewMode,
-    setViewMode: handleViewChange
-  }
+    setViewMode: handleViewChange,
+  };
 }

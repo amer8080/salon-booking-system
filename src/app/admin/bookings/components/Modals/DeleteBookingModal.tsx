@@ -1,31 +1,23 @@
-﻿'use client'
+﻿'use client';
 
-import { useState } from 'react'
-import { 
-  X, 
-  Trash2, 
-  AlertTriangle,
-  Calendar,
-  Clock,
-  User,
-  Phone
-} from 'lucide-react'
-import { Booking } from '../../types/booking.types'
-import { fromDatabaseTime, formatIstanbulDate, formatArabicDate } from '@/lib/timezone'
+import { useState } from 'react';
+import { X, Trash2, AlertTriangle, Calendar, Clock, User, Phone } from 'lucide-react';
+import { Booking } from '../../types/booking.types';
+import { fromDatabaseTime, formatIstanbulDate, formatArabicDate } from '@/lib/timezone';
 
 interface DeleteBookingModalProps {
   // Props للـ modal
-  isOpen: boolean
-  onClose: () => void
-  
+  isOpen: boolean;
+  onClose: () => void;
+
   // Props للحجز
-  booking: Booking | null
-  
+  booking: Booking | null;
+
   // Props للوظائف
-  onDelete: (bookingId: number, reason: string) => Promise<void>
-  
+  onDelete: (bookingId: number, reason: string) => Promise<void>;
+
   // Props للبيانات
-  services: { [key: string]: string }
+  services: { [key: string]: string };
 }
 
 const DeleteBookingModal: React.FC<DeleteBookingModalProps> = ({
@@ -33,82 +25,82 @@ const DeleteBookingModal: React.FC<DeleteBookingModalProps> = ({
   onClose,
   booking,
   onDelete,
-  services
+  services,
 }) => {
   // ✅ State محلي للـ modal
-  const [deleteReason, setDeleteReason] = useState('')
-  const [isDeleting, setIsDeleting] = useState(false)
-  const [validationError, setValidationError] = useState('')
+  const [deleteReason, setDeleteReason] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [validationError, setValidationError] = useState('');
 
   // ✅ تنظيف البيانات عند الإغلاق
   const handleClose = () => {
-    setDeleteReason('')
-    setValidationError('')
-    setIsDeleting(false)
-    onClose()
-  }
+    setDeleteReason('');
+    setValidationError('');
+    setIsDeleting(false);
+    onClose();
+  };
 
   // ✅ التحقق من صحة البيانات
   const validateReason = (): boolean => {
     if (!deleteReason.trim()) {
-      setValidationError('سبب الحذف مطلوب')
-      return false
+      setValidationError('سبب الحذف مطلوب');
+      return false;
     }
-    
+
     if (deleteReason.trim().length < 10) {
-      setValidationError('يرجى كتابة سبب مفصل (10 أحرف على الأقل)')
-      return false
+      setValidationError('يرجى كتابة سبب مفصل (10 أحرف على الأقل)');
+      return false;
     }
-    
-    setValidationError('')
-    return true
-  }
+
+    setValidationError('');
+    return true;
+  };
 
   // ✅ تنفيذ الحذف
   const handleDelete = async () => {
-    if (!booking) return
-    
+    if (!booking) return;
+
     // التحقق من صحة البيانات
     if (!validateReason()) {
-      return
+      return;
     }
-    
+
     try {
-      setIsDeleting(true)
-      await onDelete(booking.id, deleteReason.trim())
-      handleClose()
+      setIsDeleting(true);
+      await onDelete(booking.id, deleteReason.trim());
+      handleClose();
     } catch {
-      setValidationError('فشل في حذف الحجز. يرجى المحاولة مرة أخرى.')
+      setValidationError('فشل في حذف الحجز. يرجى المحاولة مرة أخرى.');
     } finally {
-      setIsDeleting(false)
+      setIsDeleting(false);
     }
-  }
+  };
 
   // ✅ تنسيق عرض التاريخ
   const formatDateDisplay = (dateString: string) => {
-    if (!dateString) return ''
+    if (!dateString) return '';
     try {
-      const dateObj = fromDatabaseTime(dateString)
-      return formatArabicDate(dateObj)
+      const dateObj = fromDatabaseTime(dateString);
+      return formatArabicDate(dateObj);
     } catch {
-      return dateString
+      return dateString;
     }
-  }
+  };
 
   // ✅ تنسيق عرض الوقت
   const formatTimeDisplay = (timeString: string) => {
-    if (!timeString) return ''
+    if (!timeString) return '';
     try {
-      const timeObj = fromDatabaseTime(timeString)
-      return formatIstanbulDate(timeObj, 'time')
+      const timeObj = fromDatabaseTime(timeString);
+      return formatIstanbulDate(timeObj, 'time');
     } catch {
-      return timeString
+      return timeString;
     }
-  }
+  };
 
   // ✅ لا نعرض شيئاً إذا لم يكن الـ modal مفتوح
   if (!isOpen || !booking) {
-    return null
+    return null;
   }
 
   return (
@@ -144,25 +136,25 @@ const DeleteBookingModal: React.FC<DeleteBookingModalProps> = ({
                     <span className="font-medium">العميلة:</span>
                     <span>{booking.customerName}</span>
                   </div>
-                  
+
                   <div className="flex items-center space-x-2 rtl:space-x-reverse">
                     <Phone className="w-4 h-4" />
                     <span className="font-medium">الهاتف:</span>
                     <span dir="ltr">{booking.customerPhone}</span>
                   </div>
-                  
+
                   <div className="flex items-center space-x-2 rtl:space-x-reverse">
                     <Calendar className="w-4 h-4" />
                     <span className="font-medium">التاريخ:</span>
                     <span>{formatDateDisplay(booking.date)}</span>
                   </div>
-                  
+
                   <div className="flex items-center space-x-2 rtl:space-x-reverse">
                     <Clock className="w-4 h-4" />
                     <span className="font-medium">الوقت:</span>
                     <span>{formatTimeDisplay(booking.startTime)}</span>
                   </div>
-                  
+
                   <div className="flex items-start space-x-2 rtl:space-x-reverse">
                     <span className="font-medium">الخدمات:</span>
                     <div className="flex flex-wrap gap-1">
@@ -183,41 +175,35 @@ const DeleteBookingModal: React.FC<DeleteBookingModalProps> = ({
 
           {/* 📝 سبب الحذف */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              سبب الحذف *
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">سبب الحذف *</label>
             <textarea
               value={deleteReason}
               onChange={(e) => {
-                setDeleteReason(e.target.value)
+                setDeleteReason(e.target.value);
                 // إزالة رسالة الخطأ عند البدء في الكتابة
                 if (validationError && e.target.value.trim()) {
-                  setValidationError('')
+                  setValidationError('');
                 }
               }}
               className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors resize-none ${
-                validationError 
-                  ? 'border-red-300 bg-red-50' 
-                  : 'border-gray-300'
+                validationError ? 'border-red-300 bg-red-50' : 'border-gray-300'
               }`}
               rows={3}
               placeholder="يرجى توضيح سبب حذف الحجز بالتفصيل..."
               disabled={isDeleting}
               maxLength={500}
             />
-            
+
             {/* عداد الأحرف */}
             <div className="flex justify-between items-center mt-1">
-              <div className="text-xs text-gray-500">
-                {deleteReason.length}/500 حرف
-              </div>
+              <div className="text-xs text-gray-500">{deleteReason.length}/500 حرف</div>
               {deleteReason.trim().length > 0 && deleteReason.trim().length < 10 && (
                 <div className="text-xs text-orange-600">
                   {10 - deleteReason.trim().length} أحرف إضافية مطلوبة
                 </div>
               )}
             </div>
-            
+
             {/* رسالة الخطأ */}
             {validationError && (
               <p className="text-red-500 text-xs mt-1 flex items-center space-x-1 rtl:space-x-reverse">
@@ -277,10 +263,7 @@ const DeleteBookingModal: React.FC<DeleteBookingModalProps> = ({
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default DeleteBookingModal
-
-
-
+export default DeleteBookingModal;

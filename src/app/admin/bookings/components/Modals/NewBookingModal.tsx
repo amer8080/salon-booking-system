@@ -1,38 +1,28 @@
-﻿'use client'
+﻿'use client';
 
-import { useState, useEffect } from 'react'
-import { 
-  X, 
-  Save, 
-  Check, 
-  Sparkles, 
-  Calendar,
-  Clock,
-  User,
-  Phone,
-  Plus
-} from 'lucide-react'
-import { Service, EditBookingData } from '../../types/booking.types'
-import { formatArabicDate } from '@/lib/timezone'
+import { useState, useEffect } from 'react';
+import { X, Save, Check, Sparkles, Calendar, Clock, User, Phone, Plus } from 'lucide-react';
+import { Service, EditBookingData } from '../../types/booking.types';
+import { formatArabicDate } from '@/lib/timezone';
 
 interface NewBookingModalProps {
   // Props للـ modal
-  isOpen: boolean
-  onClose: () => void
-  
+  isOpen: boolean;
+  onClose: () => void;
+
   // Props للبيانات المطلوبة
-  services: { [key: string]: string }
-  allServices: Service[]
-  adminTimeSlots: string[]
-  
+  services: { [key: string]: string };
+  allServices: Service[];
+  adminTimeSlots: string[];
+
   // Props للوظائف
-  onSave: (bookingData: EditBookingData) => Promise<void>
-  
+  onSave: (bookingData: EditBookingData) => Promise<void>;
+
   // Props للتصميم
-  getServiceColor: (serviceId: string) => string
-  
+  getServiceColor: (serviceId: string) => string;
+
   // Props للتاريخ المحدد مسبقاً (اختياري)
-  selectedDate?: string
+  selectedDate?: string;
 }
 
 const NewBookingModal: React.FC<NewBookingModalProps> = ({
@@ -43,7 +33,7 @@ const NewBookingModal: React.FC<NewBookingModalProps> = ({
   adminTimeSlots,
   onSave,
   getServiceColor,
-  selectedDate = ''
+  selectedDate = '',
 }) => {
   // ✅ State محلي للـ modal
   const [bookingData, setBookingData] = useState<EditBookingData>({
@@ -52,22 +42,22 @@ const NewBookingModal: React.FC<NewBookingModalProps> = ({
     selectedDate: selectedDate,
     selectedTime: '',
     selectedServices: [],
-    notes: ''
-  })
-  
-  const [isSaving, setIsSaving] = useState(false)
-  const [validationErrors, setValidationErrors] = useState<string[]>([])
+    notes: '',
+  });
+
+  const [isSaving, setIsSaving] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
   // ✅ تحديث التاريخ المحدد عند فتح الـ modal
   useEffect(() => {
     if (isOpen) {
-      setBookingData(prev => ({
+      setBookingData((prev) => ({
         ...prev,
-        selectedDate: selectedDate || ''
-      }))
-      setValidationErrors([])
+        selectedDate: selectedDate || '',
+      }));
+      setValidationErrors([]);
     }
-  }, [isOpen, selectedDate])
+  }, [isOpen, selectedDate]);
 
   // ✅ تنظيف البيانات عند الإغلاق
   const handleClose = () => {
@@ -77,125 +67,125 @@ const NewBookingModal: React.FC<NewBookingModalProps> = ({
       selectedDate: selectedDate,
       selectedTime: '',
       selectedServices: [],
-      notes: ''
-    })
-    setValidationErrors([])
-    setIsSaving(false)
-    onClose()
-  }
+      notes: '',
+    });
+    setValidationErrors([]);
+    setIsSaving(false);
+    onClose();
+  };
 
   // ✅ تحديث البيانات
   const updateBookingData = (updates: Partial<EditBookingData>) => {
-    setBookingData(prev => ({ ...prev, ...updates }))
-    
+    setBookingData((prev) => ({ ...prev, ...updates }));
+
     // إزالة أخطاء الحقول المحدثة
-    const updatedFields = Object.keys(updates)
+    const updatedFields = Object.keys(updates);
     if (updatedFields.includes('customerName') && validationErrors.includes('name')) {
-      setValidationErrors(prev => prev.filter(error => error !== 'name'))
+      setValidationErrors((prev) => prev.filter((error) => error !== 'name'));
     }
     if (updatedFields.includes('customerPhone') && validationErrors.includes('phone')) {
-      setValidationErrors(prev => prev.filter(error => error !== 'phone'))
+      setValidationErrors((prev) => prev.filter((error) => error !== 'phone'));
     }
     if (updatedFields.includes('selectedDate') && validationErrors.includes('date')) {
-      setValidationErrors(prev => prev.filter(error => error !== 'date'))
+      setValidationErrors((prev) => prev.filter((error) => error !== 'date'));
     }
     if (updatedFields.includes('selectedTime') && validationErrors.includes('time')) {
-      setValidationErrors(prev => prev.filter(error => error !== 'time'))
+      setValidationErrors((prev) => prev.filter((error) => error !== 'time'));
     }
-  }
+  };
 
   // ✅ تبديل اختيار الخدمة
   const toggleService = (serviceId: string) => {
     const newServices = bookingData.selectedServices.includes(serviceId)
-      ? bookingData.selectedServices.filter(id => id !== serviceId)
-      : [...bookingData.selectedServices, serviceId]
-    
-    updateBookingData({ selectedServices: newServices })
-    
+      ? bookingData.selectedServices.filter((id) => id !== serviceId)
+      : [...bookingData.selectedServices, serviceId];
+
+    updateBookingData({ selectedServices: newServices });
+
     // إزالة خطأ الخدمات إذا تم اختيار خدمة
     if (newServices.length > 0 && validationErrors.includes('services')) {
-      setValidationErrors(prev => prev.filter(error => error !== 'services'))
+      setValidationErrors((prev) => prev.filter((error) => error !== 'services'));
     }
-  }
+  };
 
   // ✅ التحقق من صحة البيانات
   const validateData = (): boolean => {
-    const errors: string[] = []
-    
+    const errors: string[] = [];
+
     if (!bookingData.customerName.trim()) {
-      errors.push('name')
+      errors.push('name');
     }
-    
+
     if (!bookingData.customerPhone.trim()) {
-      errors.push('phone')
+      errors.push('phone');
     }
-    
+
     if (!bookingData.selectedDate) {
-      errors.push('date')
+      errors.push('date');
     }
-    
+
     if (!bookingData.selectedTime) {
-      errors.push('time')
+      errors.push('time');
     }
-    
+
     if (bookingData.selectedServices.length === 0) {
-      errors.push('services')
+      errors.push('services');
     }
-    
+
     // التحقق من تنسيق رقم الهاتف (اختياري)
     if (bookingData.customerPhone.trim() && !isValidPhoneNumber(bookingData.customerPhone)) {
-      errors.push('phone-format')
+      errors.push('phone-format');
     }
-    
-    setValidationErrors(errors)
-    return errors.length === 0
-  }
+
+    setValidationErrors(errors);
+    return errors.length === 0;
+  };
 
   // ✅ التحقق من تنسيق رقم الهاتف
   const isValidPhoneNumber = (phone: string): boolean => {
     // أرقام تركية أو دولية بسيطة
-    const phoneRegex = /^(\+90|0)?[5][0-9]{9}$|^(\+\d{1,3})[0-9]{8,15}$/
-    return phoneRegex.test(phone.replace(/\s/g, ''))
-  }
+    const phoneRegex = /^(\+90|0)?[5][0-9]{9}$|^(\+\d{1,3})[0-9]{8,15}$/;
+    return phoneRegex.test(phone.replace(/\s/g, ''));
+  };
 
   // ✅ حفظ الحجز الجديد
   const handleSave = async () => {
     // التحقق من صحة البيانات
     if (!validateData()) {
-      return
+      return;
     }
-    
+
     try {
-      setIsSaving(true)
-      await onSave(bookingData)
-      handleClose()
+      setIsSaving(true);
+      await onSave(bookingData);
+      handleClose();
     } catch {
       // يمكن إضافة معالجة أخطاء أكثر تفصيلاً هنا
     } finally {
-      setIsSaving(false)
+      setIsSaving(false);
     }
-  }
+  };
 
   // ✅ تنسيق عرض التاريخ
   const formatDateDisplay = (dateString: string) => {
-    if (!dateString) return ''
+    if (!dateString) return '';
     try {
-      const dateObj = new Date(dateString + 'T00:00:00')
-      return formatArabicDate(dateObj)
+      const dateObj = new Date(dateString + 'T00:00:00');
+      return formatArabicDate(dateObj);
     } catch {
-      return dateString
+      return dateString;
     }
-  }
+  };
 
   // ✅ اقتراح أوقات متاحة (يمكن تحسينه لاحقاً)
   const getSuggestedTimes = () => {
     // للآن نعرض جميع الأوقات، يمكن تحسينه لإخفاء الأوقات المحجوزة
-    return adminTimeSlots.slice(0, 6) // أول 6 أوقات كاقتراحات
-  }
+    return adminTimeSlots.slice(0, 6); // أول 6 أوقات كاقتراحات
+  };
 
   // ✅ لا نعرض شيئاً إذا لم يكن الـ modal مفتوح
   if (!isOpen) {
-    return null
+    return null;
   }
 
   return (
@@ -221,9 +211,7 @@ const NewBookingModal: React.FC<NewBookingModalProps> = ({
           {/* 👤 معلومات العميلة */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                اسم العميلة *
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">اسم العميلة *</label>
               <div className="relative">
                 <User className="absolute right-3 top-3 w-4 h-4 text-gray-400" />
                 <input
@@ -231,8 +219,8 @@ const NewBookingModal: React.FC<NewBookingModalProps> = ({
                   value={bookingData.customerName}
                   onChange={(e) => updateBookingData({ customerName: e.target.value })}
                   className={`w-full pr-10 pl-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors ${
-                    validationErrors.includes('name') 
-                      ? 'border-red-300 bg-red-50' 
+                    validationErrors.includes('name')
+                      ? 'border-red-300 bg-red-50'
                       : 'border-gray-300'
                   }`}
                   placeholder="أدخل اسم العميلة"
@@ -245,9 +233,7 @@ const NewBookingModal: React.FC<NewBookingModalProps> = ({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                رقم الهاتف *
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">رقم الهاتف *</label>
               <div className="relative">
                 <Phone className="absolute right-3 top-3 w-4 h-4 text-gray-400" />
                 <input
@@ -256,7 +242,7 @@ const NewBookingModal: React.FC<NewBookingModalProps> = ({
                   onChange={(e) => updateBookingData({ customerPhone: e.target.value })}
                   className={`w-full pr-10 pl-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors ${
                     validationErrors.includes('phone') || validationErrors.includes('phone-format')
-                      ? 'border-red-300 bg-red-50' 
+                      ? 'border-red-300 bg-red-50'
                       : 'border-gray-300'
                   }`}
                   placeholder="+90 5XX XXX XX XX"
@@ -283,15 +269,16 @@ const NewBookingModal: React.FC<NewBookingModalProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  التاريخ * {bookingData.selectedDate && `- ${formatDateDisplay(bookingData.selectedDate)}`}
+                  التاريخ *{' '}
+                  {bookingData.selectedDate && `- ${formatDateDisplay(bookingData.selectedDate)}`}
                 </label>
                 <input
                   type="date"
                   value={bookingData.selectedDate}
                   onChange={(e) => updateBookingData({ selectedDate: e.target.value })}
                   className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors ${
-                    validationErrors.includes('date') 
-                      ? 'border-red-300 bg-red-50' 
+                    validationErrors.includes('date')
+                      ? 'border-red-300 bg-red-50'
                       : 'border-gray-300'
                   }`}
                   disabled={isSaving}
@@ -303,17 +290,15 @@ const NewBookingModal: React.FC<NewBookingModalProps> = ({
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  الوقت *
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">الوقت *</label>
                 <div className="relative">
                   <Clock className="absolute right-3 top-3 w-4 h-4 text-gray-400" />
                   <select
                     value={bookingData.selectedTime}
                     onChange={(e) => updateBookingData({ selectedTime: e.target.value })}
                     className={`w-full pr-10 pl-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors ${
-                      validationErrors.includes('time') 
-                        ? 'border-red-300 bg-red-50' 
+                      validationErrors.includes('time')
+                        ? 'border-red-300 bg-red-50'
                         : 'border-gray-300'
                     }`}
                     disabled={isSaving}
@@ -362,11 +347,13 @@ const NewBookingModal: React.FC<NewBookingModalProps> = ({
               الخدمات المطلوبة * ({bookingData.selectedServices.length} خدمة مختارة)
             </label>
 
-            <div className={`bg-gray-50 p-4 rounded-lg border max-h-60 overflow-y-auto transition-colors ${
-              validationErrors.includes('services') 
-                ? 'border-red-300 bg-red-50' 
-                : 'border-gray-200'
-            }`}>
+            <div
+              className={`bg-gray-50 p-4 rounded-lg border max-h-60 overflow-y-auto transition-colors ${
+                validationErrors.includes('services')
+                  ? 'border-red-300 bg-red-50'
+                  : 'border-gray-200'
+              }`}
+            >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {allServices.map((service) => (
                   <div
@@ -379,20 +366,20 @@ const NewBookingModal: React.FC<NewBookingModalProps> = ({
                     onClick={() => !isSaving && toggleService(service.id)}
                   >
                     <div className="flex items-center w-full">
-                      <div className={`w-5 h-5 rounded border-2 flex items-center justify-center mr-3 transition-colors ${
-                        bookingData.selectedServices.includes(service.id)
-                          ? 'border-green-500 bg-green-500'
-                          : 'border-gray-300'
-                      }`}>
+                      <div
+                        className={`w-5 h-5 rounded border-2 flex items-center justify-center mr-3 transition-colors ${
+                          bookingData.selectedServices.includes(service.id)
+                            ? 'border-green-500 bg-green-500'
+                            : 'border-gray-300'
+                        }`}
+                      >
                         {bookingData.selectedServices.includes(service.id) && (
                           <Check className="w-3 h-3 text-white" />
                         )}
                       </div>
 
                       <div className="flex-1">
-                        <div className="font-medium text-gray-800">
-                          {service.nameAr}
-                        </div>
+                        <div className="font-medium text-gray-800">{service.nameAr}</div>
                         <div className="text-xs text-gray-500">
                           {service.category} • {service.duration} دقيقة • {service.price} ليرة
                         </div>
@@ -424,8 +411,8 @@ const NewBookingModal: React.FC<NewBookingModalProps> = ({
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {bookingData.selectedServices.map((serviceId, serviceIndex) => {
-                    const service = allServices.find(s => s.id === serviceId)
-                    const serviceColor = getServiceColor(serviceId)
+                    const service = allServices.find((s) => s.id === serviceId);
+                    const serviceColor = getServiceColor(serviceId);
 
                     return (
                       <span
@@ -442,7 +429,7 @@ const NewBookingModal: React.FC<NewBookingModalProps> = ({
                           <X className="w-3 h-3" />
                         </button>
                       </span>
-                    )
+                    );
                   })}
                 </div>
               </div>
@@ -451,9 +438,7 @@ const NewBookingModal: React.FC<NewBookingModalProps> = ({
 
           {/* 📝 ملاحظات */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              ملاحظات إضافية
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">ملاحظات إضافية</label>
             <textarea
               value={bookingData.notes}
               onChange={(e) => updateBookingData({ notes: e.target.value })}
@@ -464,7 +449,7 @@ const NewBookingModal: React.FC<NewBookingModalProps> = ({
               maxLength={500}
             />
             <div className="text-xs text-gray-500 mt-1">
-              {(bookingData.notes || "").length}/500 حرف
+              {(bookingData.notes || '').length}/500 حرف
             </div>
           </div>
         </div>
@@ -481,7 +466,9 @@ const NewBookingModal: React.FC<NewBookingModalProps> = ({
           <button
             onClick={handleSave}
             className={`px-4 py-2 bg-green-600 text-white rounded-lg active:bg--green-700 flex items-center space-x-2 rtl:space-x-reverse transition-all ${
-              isSaving || bookingData.selectedServices.length === 0 ? 'opacity-50 cursor-not-allowed' : ''
+              isSaving || bookingData.selectedServices.length === 0
+                ? 'opacity-50 cursor-not-allowed'
+                : ''
             }`}
             disabled={isSaving || bookingData.selectedServices.length === 0}
           >
@@ -515,10 +502,7 @@ const NewBookingModal: React.FC<NewBookingModalProps> = ({
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default NewBookingModal
-
-
-
+export default NewBookingModal;

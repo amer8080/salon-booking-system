@@ -1,14 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // ✅ تفعيل ESLint والـ TypeScript validation
-  eslint: {
-    ignoreDuringBuilds: false, // ← تفعيل ESLint
-    dirs: ['src'] // فقط src للتركيز
-  },
-  typescript: {
-    ignoreBuildErrors: false, // ← تفعيل TypeScript checking
-  },
-  
+
   // ✅ تحسينات آمنة ومجربة
   reactStrictMode: true,
   compress: true,

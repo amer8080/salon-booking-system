@@ -1,15 +1,15 @@
 ﻿// src/app/admin/bookings/components/UI/PhoneMenu.tsx
-'use client'
+'use client';
 
-import React from 'react'
-import { Phone, Copy, MessageCircle, X } from 'lucide-react'
+import React from 'react';
+import { Phone, Copy, MessageCircle, X } from 'lucide-react';
 
 interface PhoneMenuProps {
-  isOpen: boolean
-  phone: string
-  customerName: string
-  onClose: () => void
-  position?: { x: number; y: number }
+  isOpen: boolean;
+  phone: string;
+  customerName: string;
+  onClose: () => void;
+  position?: { x: number; y: number };
 }
 
 export default function PhoneMenu({
@@ -17,43 +17,42 @@ export default function PhoneMenu({
   phone,
   customerName,
   onClose,
-  position
+  position,
 }: PhoneMenuProps) {
-
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   // دالة نسخ رقم الهاتف
   const copyPhoneNumber = async () => {
     try {
-      await navigator.clipboard.writeText(phone)
+      await navigator.clipboard.writeText(phone);
       // يمكن إضافة toast notification هنا
-      onClose()
+      onClose();
     } catch {
       // fallback للمتصفحات القديمة
-      const textArea = document.createElement('textarea')
-      textArea.value = phone
-      document.body.appendChild(textArea)
-      textArea.select()
-      document.execCommand('copy')
-      document.body.removeChild(textArea)
-      onClose()
+      const textArea = document.createElement('textarea');
+      textArea.value = phone;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      onClose();
     }
-  }
+  };
 
   // دالة فتح واتساب
   const openWhatsApp = () => {
-    const cleanPhone = phone.replace(/[^\d+]/g, '')
-    const message = `مرحباً ${customerName}، بخصوص موعدك في صالون ريم...`
-    const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`
-    window.open(whatsappUrl, '_blank')
-    onClose()
-  }
+    const cleanPhone = phone.replace(/[^\d+]/g, '');
+    const message = `مرحباً ${customerName}، بخصوص موعدك في صالون ريم...`;
+    const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+    onClose();
+  };
 
   // دالة الاتصال المباشر
   const makeCall = () => {
-    window.open(`tel:${phone}`, '_self')
-    onClose()
-  }
+    window.open(`tel:${phone}`, '_self');
+    onClose();
+  };
 
   // تحديد موضع القائمة
   const menuStyle = position
@@ -61,23 +60,20 @@ export default function PhoneMenu({
         position: 'absolute' as const,
         top: position.y + 10,
         left: position.x - 100,
-        zIndex: 1000
+        zIndex: 1000,
       }
     : {
         position: 'fixed' as const,
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-        zIndex: 1000
-      }
+        zIndex: 1000,
+      };
 
   return (
     <>
       {/* Overlay للإغلاق عند الضغط خارج القائمة */}
-      <div
-        className="fixed inset-0 bg-black bg-opacity-20 z-[999]"
-        onClick={onClose}
-      />
+      <div className="fixed inset-0 bg-black bg-opacity-20 z-[999]" onClick={onClose} />
 
       {/* القائمة الأساسية */}
       <div
@@ -156,8 +152,5 @@ export default function PhoneMenu({
         </div>
       </div>
     </>
-  )
+  );
 }
-
-
-

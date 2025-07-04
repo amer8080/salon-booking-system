@@ -1,0 +1,55 @@
+--- a/src/app/api/test-settings/route.ts
++++ b/src/app/api/test-settings/route.ts
+@@ -71,9 +71,13 @@ export async function GET(request: NextRequest) {
+     return NextResponse.json(testResults);
+-  } catch (error: any) {
+-    console.error('❌ AppSettings Test Failed:', error);
++  } catch (error: unknown) {
++    if (error instanceof Error) {
++      console.error('❌ AppSettings Test Failed:', error.message);
++    } else {
++      console.error('❌ AppSettings Test Failed (unexpected):', error);
++    }
+     return NextResponse.json({
+       success: false,
+       error: 'فشل في اختبار AppSettings',
+@@ -159,7 +163,13 @@ export async function GET(request: NextRequest) {
+     console.log('✅ Verification successful:', verificationResult);
+-      } catch (verificationError) {
+-        console.warn('⚠️ Verification failed but update succeeded:', verificationError);
++      } catch (verificationError: unknown) {
++        if (verificationError instanceof Error) {
++          console.warn('⚠️ Verification failed but update succeeded:', verificationError.message);
++        } else {
++          console.warn('⚠️ Verification failed but update succeeded (unexpected):', verificationError);
++        }
+     }
+
+     return NextResponse.json({
+@@ -178,9 +188,15 @@ export async function GET(request: NextRequest) {
+   // … كود تنفيذ الاختبار النهائي
+-    } catch (prismaError: any) {
+-      console.error('❌ Prisma Test Failed:', prismaError);
++    } catch (prismaError: unknown) {
++      if (prismaError instanceof Error) {
++        console.error('❌ Prisma Test Failed:', prismaError.message);
++      } else {
++        console.error('❌ Prisma Test Failed (unexpected):', prismaError);
++      }
+
+     return NextResponse.json({
+       success: false,
+@@ -192,7 +208,15 @@ export async function GET(request: NextRequest) {
+      });
+-  } catch (error: any) {
+-    console.error('❌ Setting Update Test Failed:', error);
++  } catch (error: unknown) {
++    if (error instanceof Error) {
++      console.error('❌ Setting Update Test Failed:', error.message);
++    } else {
++      console.error('❌ Setting Update Test Failed (unexpected):', error);
++    }
+
+     return NextResponse.json({
+       success: false,
+       error: 'فشل في اختبار تحديث الإعداد',

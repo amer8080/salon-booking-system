@@ -1,29 +1,28 @@
 // components/modals/CustomerDeleteModal.tsx
-'use client'
+'use client';
 
-import { X, Trash2, Loader2, AlertTriangle } from 'lucide-react'
-import { Customer } from '../../types/customer.types'
+import { X, Trash2, Loader2, AlertTriangle } from 'lucide-react';
+import { Customer } from '../../types/customer.types';
 
 interface CustomerDeleteModalProps {
-  customer: Customer
-  onDelete: () => Promise<boolean>
-  onClose: () => void
-  deleting: boolean
+  customer: Customer;
+  onDelete: () => Promise<boolean>;
+  onClose: () => void;
+  deleting: boolean;
 }
 
 export default function CustomerDeleteModal({
   customer,
   onDelete,
   onClose,
-  deleting
+  deleting,
 }: CustomerDeleteModalProps) {
-
   const handleDelete = async () => {
-    const success = await onDelete()
+    const success = await onDelete();
     if (success) {
-      alert('تم حذف العميل بنجاح!')
+      alert('تم حذف العميل بنجاح!');
     }
-  }
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -75,10 +74,9 @@ export default function CustomerDeleteModal({
               <div>
                 <span className="font-medium">آخر زيارة:</span>
                 <span className="mr-1">
-                  {customer.daysSinceLastVisit > 0 
+                  {customer.daysSinceLastVisit > 0
                     ? `منذ ${customer.daysSinceLastVisit} يوم`
-                    : 'اليوم'
-                  }
+                    : 'اليوم'}
                 </span>
               </div>
               <div>
@@ -121,5 +119,5 @@ export default function CustomerDeleteModal({
         </div>
       </div>
     </div>
-  )
+  );
 }

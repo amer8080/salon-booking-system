@@ -1,12 +1,29 @@
 ﻿// src/app/book/components/BookingConfirmationStep.tsx
 // خطوة التأكيد النهائي للحجز
 
-import React, { useEffect } from 'react'
-import { CheckCircle, Edit, ArrowRight, Loader2, Calendar, Clock, User, Phone, Sparkles, Download, MessageCircle, X } from 'lucide-react'
-import { BookingConfirmationStepProps } from '../types/booking-form.types'
-import { createBookingSummary, formatTimeForDisplay, createWhatsAppURL } from '../utils/booking-helpers'
+import React, { useState, useEffect } from 'react';
+import {
+  CheckCircle,
+  Edit,
+  ArrowRight,
+  Loader2,
+  Calendar,
+  Clock,
+  User,
+  Phone,
+  Sparkles,
+  Download,
+  MessageCircle,
+  X,
+} from 'lucide-react';
+import { BookingConfirmationStepProps } from '../types/booking-form.types';
+import {
+  createBookingSummary,
+  formatTimeForDisplay,
+  createWhatsAppURL,
+} from '../utils/booking-helpers';
 
-import { logError } from "@/lib/logger-client";
+import { logError } from '@/lib/logger-client';
 
 export default function BookingConfirmationStep({
   formData,
@@ -15,39 +32,41 @@ export default function BookingConfirmationStep({
   onBack,
   onEdit,
   isSubmitting,
-  errors
+  errors,
 }: BookingConfirmationStepProps) {
+  const [showDetails, setShowDetails] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
-  const [showDetails, setShowDetails] = useState(false)
-  const [agreedToTerms, setAgreedToTerms] = useState(false)
-
-  const summary = createBookingSummary(formData, services)
+  const summary = createBookingSummary(formData, services);
 
   // Auto-expand details on mobile
   useEffect(() => {
-    const isMobile = window.innerWidth < 768
+    const isMobile = window.innerWidth < 768;
     if (isMobile) {
-      setShowDetails(true)
+      setShowDetails(true);
     }
-  }, [])
+  }, []);
 
   const handleConfirm = async () => {
     if (!agreedToTerms) {
-      alert('يرجى الموافقة على الشروط والأحكام')
-      return
+      alert('يرجى الموافقة على الشروط والأحكام');
+      return;
     }
-    
+
     try {
-      await onConfirm()
+      await onConfirm();
     } catch (error) {
-      logError('Confirmation failed:', error)
+      logError('Confirmation failed:', error);
     }
-  }
+  };
 
   const handleWhatsAppContact = () => {
-    const whatsappUrl = createWhatsAppURL(summary.customerInfo.phone, summary.additionalInfo.whatsappMessage || "")
-    window.open(whatsappUrl, '_blank')
-  }
+    const whatsappUrl = createWhatsAppURL(
+      summary.customerInfo.phone,
+      summary.additionalInfo.whatsappMessage || '',
+    );
+    window.open(whatsappUrl, '_blank');
+  };
 
   return (
     <div className="w-full max-w-4xl mx-auto">
@@ -56,14 +75,10 @@ export default function BookingConfirmationStep({
         <div className="w-20 h-20 bg-gradient-to-r from-green-500 to-teal-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
           <CheckCircle className="w-10 h-10 text-white" />
         </div>
-        
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-3">
-          تأكيد الحجز
-        </h2>
-        
-        <p className="text-gray-600 text-lg">
-          راجعي تفاصيل حجزك قبل التأكيد النهائي
-        </p>
+
+        <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-3">تأكيد الحجز</h2>
+
+        <p className="text-gray-600 text-lg">راجعي تفاصيل حجزك قبل التأكيد النهائي</p>
       </div>
 
       {/* Booking Summary Card */}
@@ -90,9 +105,7 @@ export default function BookingConfirmationStep({
               </div>
               <div>
                 <p className="text-sm text-gray-600">اسم العميلة</p>
-                <p className="text-lg font-semibold text-gray-800">
-                  {summary.customerInfo.name}
-                </p>
+                <p className="text-lg font-semibold text-gray-800">{summary.customerInfo.name}</p>
               </div>
             </div>
 
@@ -144,9 +157,7 @@ export default function BookingConfirmationStep({
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-2 rtl:space-x-reverse">
               <Sparkles className="w-5 h-5 text-pink-600" />
-              <h4 className="text-lg font-semibold text-gray-800">
-                الخدمات المختارة
-              </h4>
+              <h4 className="text-lg font-semibold text-gray-800">الخدمات المختارة</h4>
             </div>
             <button
               onClick={() => onEdit(2)}
@@ -159,7 +170,10 @@ export default function BookingConfirmationStep({
 
           <div className="space-y-3">
             {summary.servicesInfo.services.map((service, index) => (
-              <div key={service.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              <div
+                key={service.id}
+                className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+              >
                 <div className="flex items-center space-x-3 rtl:space-x-reverse">
                   <div className="w-8 h-8 bg-pink-100 rounded-full flex items-center justify-center text-sm font-bold text-pink-600">
                     {index + 1}
@@ -225,10 +239,8 @@ export default function BookingConfirmationStep({
 
       {/* Terms and Conditions */}
       <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">
-          الشروط والأحكام
-        </h3>
-        
+        <h3 className="text-lg font-semibold text-gray-800 mb-4">الشروط والأحكام</h3>
+
         <div className="space-y-3 text-sm text-gray-600 mb-4">
           <div className="flex items-start space-x-2 rtl:space-x-reverse">
             <div className="w-2 h-2 bg-purple-500 rounded-full mt-2 flex-shrink-0"></div>
@@ -319,12 +331,10 @@ export default function BookingConfirmationStep({
         <p className="text-sm text-gray-500">
           بتأكيد الحجز، سيتم إرسال رسالة تأكيد إلى رقم هاتفك المسجل
         </p>
-        <p className="text-xs text-gray-400 mt-1">
-          لأي استفسارات، تواصل معنا عبر واتساب
-        </p>
+        <p className="text-xs text-gray-400 mt-1">لأي استفسارات، تواصل معنا عبر واتساب</p>
       </div>
     </div>
-  )
+  );
 }
 
 // Success Modal Component
@@ -333,15 +343,15 @@ export function BookingSuccessModal({
   onClose,
   bookingData,
   onDownloadCalendar,
-  onShareWhatsApp
+  onShareWhatsApp,
 }: {
-  isOpen: boolean
-  onClose: () => void
-  bookingData: any
-  onDownloadCalendar?: () => void
-  onShareWhatsApp?: () => void
+  isOpen: boolean;
+  onClose: () => void;
+  bookingData: any;
+  onDownloadCalendar?: () => void;
+  onShareWhatsApp?: () => void;
 }) {
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -359,11 +369,9 @@ export function BookingSuccessModal({
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <CheckCircle className="w-8 h-8 text-green-600" />
           </div>
-          
-          <h2 className="text-xl font-bold text-gray-800 mb-2">
-            تم تأكيد حجزك بنجاح! 🎉
-          </h2>
-          
+
+          <h2 className="text-xl font-bold text-gray-800 mb-2">تم تأكيد حجزك بنجاح! 🎉</h2>
+
           <p className="text-gray-600 mb-6">
             رقم الحجز: <span className="font-semibold">{bookingData?.reservationId}</span>
           </p>
@@ -379,7 +387,7 @@ export function BookingSuccessModal({
                 <span>حفظ في التقويم</span>
               </button>
             )}
-            
+
             {onShareWhatsApp && (
               <button
                 onClick={onShareWhatsApp}
@@ -389,7 +397,7 @@ export function BookingSuccessModal({
                 <span>مشاركة عبر واتساب</span>
               </button>
             )}
-            
+
             <button
               onClick={onClose}
               className="w-full bg-gray-100 text-gray-800 py-3 px-4 rounded-lg hover:bg-gray-200 transition-colors duration-200"
@@ -400,6 +408,5 @@ export function BookingSuccessModal({
         </div>
       </div>
     </div>
-  )
+  );
 }
-

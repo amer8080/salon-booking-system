@@ -1,16 +1,16 @@
 // components/modals/CustomerAddModal.tsx
-'use client'
+'use client';
 
-import { X, Plus, Loader2 } from 'lucide-react'
-import { CustomerFormData } from '../../types/customer.types'
+import { X, Plus, Loader2 } from 'lucide-react';
+import { CustomerFormData } from '../../types/customer.types';
 
 interface CustomerAddModalProps {
-  form: CustomerFormData
-  onFormChange: (updates: Partial<CustomerFormData>) => void
-  onAdd: () => Promise<boolean>
-  onClose: () => void
-  saving: boolean
-  isValid: boolean
+  form: CustomerFormData;
+  onFormChange: (updates: Partial<CustomerFormData>) => void;
+  onAdd: () => Promise<boolean>;
+  onClose: () => void;
+  saving: boolean;
+  isValid: boolean;
 }
 
 export default function CustomerAddModal({
@@ -19,15 +19,14 @@ export default function CustomerAddModal({
   onAdd,
   onClose,
   saving,
-  isValid
+  isValid,
 }: CustomerAddModalProps) {
-
   const handleAdd = async () => {
-    const success = await onAdd()
+    const success = await onAdd();
     if (success) {
-      alert('تم إضافة العميل بنجاح!')
+      alert('تم إضافة العميل بنجاح!');
     }
-  }
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -96,9 +95,7 @@ export default function CustomerAddModal({
           </div>
         </div>
 
-        <div className="mt-4 text-xs text-gray-500">
-          * الحقول المطلوبة
-        </div>
+        <div className="mt-4 text-xs text-gray-500">* الحقول المطلوبة</div>
 
         <div className="flex items-center justify-end space-x-3 rtl:space-x-reverse mt-6">
           <button
@@ -128,5 +125,5 @@ export default function CustomerAddModal({
         </div>
       </div>
     </div>
-  )
+  );
 }

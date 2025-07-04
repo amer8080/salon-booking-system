@@ -1,34 +1,34 @@
 // page.tsx - الصفحة الرئيسية المبسطة
-'use client'
+'use client';
 
-import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import { Users, ArrowLeft, LogOut, X } from 'lucide-react'
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { Users, ArrowLeft, LogOut, X } from 'lucide-react';
 
 // Components
-import CustomerFilters from './components/CustomerFilters'
-import CustomerList from './components/CustomerList'
-import CustomerViewModal from './components/modals/CustomerViewModal'
-import CustomerEditModal from './components/modals/CustomerEditModal'
-import CustomerAddModal from './components/modals/CustomerAddModal'
-import CustomerDeleteModal from './components/modals/CustomerDeleteModal'
+import CustomerFilters from './components/CustomerFilters';
+import CustomerList from './components/CustomerList';
+import CustomerViewModal from './components/modals/CustomerViewModal';
+import CustomerEditModal from './components/modals/CustomerEditModal';
+import CustomerAddModal from './components/modals/CustomerAddModal';
+import CustomerDeleteModal from './components/modals/CustomerDeleteModal';
 
 // Hooks
-import { useCustomers } from './hooks/useCustomers'
-import { useCustomerModals } from './hooks/useCustomerModals'
+import { useCustomers } from './hooks/useCustomers';
+import { useCustomerModals } from './hooks/useCustomerModals';
 
 export default function AdminCustomersPage() {
-  const router = useRouter()
+  const router = useRouter();
 
   // Authentication check
   useEffect(() => {
-    const token = localStorage.getItem('adminToken')
+    const token = localStorage.getItem('adminToken');
     if (!token) {
-      router.push('/admin/login')
-      return
+      router.push('/admin/login');
+      return;
     }
-  }, [router])
+  }, [router]);
 
   // Customer management
   const {
@@ -46,12 +46,12 @@ export default function AdminCustomersPage() {
     changePageSize,
     changePage,
     updateFilters,
-    resetFilters
+    resetFilters,
   } = useCustomers({
     initialPageSize: 100,
     autoRefresh: true,
-    refreshInterval: 60000 // 1 minute
-  })
+    refreshInterval: 60000, // 1 minute
+  });
 
   // Modal management
   const {
@@ -74,13 +74,13 @@ export default function AdminCustomersPage() {
     updateEditForm,
     updateAddForm,
     isEditFormValid,
-    isAddFormValid
-  } = useCustomerModals(fetchCustomers)
+    isAddFormValid,
+  } = useCustomerModals(fetchCustomers);
 
   const handleLogout = () => {
-    localStorage.removeItem('adminToken')
-    router.push('/admin/login')
-  }
+    localStorage.removeItem('adminToken');
+    router.push('/admin/login');
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50">
@@ -92,7 +92,7 @@ export default function AdminCustomersPage() {
               <ArrowLeft className="w-5 h-5 ml-2" />
               العودة للوحة التحكم
             </Link>
-            
+
             <div className="flex items-center space-x-4 rtl:space-x-reverse">
               <h1 className="text-xl font-bold text-gray-800">إدارة العملاء</h1>
               <Users className="w-6 h-6 text-purple-600" />
@@ -149,12 +149,7 @@ export default function AdminCustomersPage() {
       </div>
 
       {/* Modals */}
-      {viewingCustomer && (
-        <CustomerViewModal
-          customer={viewingCustomer}
-          onClose={closeAllModals}
-        />
-      )}
+      {viewingCustomer && <CustomerViewModal customer={viewingCustomer} onClose={closeAllModals} />}
 
       {editingCustomer && (
         <CustomerEditModal
@@ -188,5 +183,5 @@ export default function AdminCustomersPage() {
         />
       )}
     </div>
-  )
+  );
 }

@@ -1,0 +1,13 @@
+{
+  "files": ["src/**/*.ts"],
+
+  "extensions": [".ts", ".tsx"],
+
+  "skipDirectories": [
+    "/node_modules",
+    "/complexity-report",
+    "/src/generated"
+  ],
+
+  "minimumThreshold": 0
+}

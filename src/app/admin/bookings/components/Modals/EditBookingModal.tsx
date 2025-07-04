@@ -1,38 +1,28 @@
-﻿'use client'
+﻿'use client';
 
-import { useState, useEffect } from 'react'
-import { 
-  X, 
-  Save, 
-  Check, 
-  Sparkles, 
-  Calendar,
-  Clock,
-  User,
-  Phone,
-  Edit
-} from 'lucide-react'
-import { Booking, Service, EditBookingData } from '../../types/booking.types'
-import { fromDatabaseTime, formatIstanbulDate, formatArabicDate } from '@/lib/timezone'
+import { useState, useEffect } from 'react';
+import { X, Save, Check, Sparkles, Calendar, Clock, User, Phone, Edit } from 'lucide-react';
+import { Booking, Service, EditBookingData } from '../../types/booking.types';
+import { fromDatabaseTime, formatIstanbulDate, formatArabicDate } from '@/lib/timezone';
 
 interface EditBookingModalProps {
   // Props للـ modal
-  isOpen: boolean
-  onClose: () => void
-  
+  isOpen: boolean;
+  onClose: () => void;
+
   // Props للحجز
-  booking: Booking | null
-  
+  booking: Booking | null;
+
   // Props للبيانات المطلوبة
-  services: { [key: string]: string }
-  allServices: Service[]
-  adminTimeSlots: string[]
-  
+  services: { [key: string]: string };
+  allServices: Service[];
+  adminTimeSlots: string[];
+
   // Props للوظائف
-  onSave: (bookingId: number, editData: EditBookingData) => Promise<void>
-  
+  onSave: (bookingId: number, editData: EditBookingData) => Promise<void>;
+
   // Props للتصميم
-  getServiceColor: (serviceId: string) => string
+  getServiceColor: (serviceId: string) => string;
 }
 
 const EditBookingModal: React.FC<EditBookingModalProps> = ({
@@ -42,7 +32,7 @@ const EditBookingModal: React.FC<EditBookingModalProps> = ({
   allServices,
   adminTimeSlots,
   onSave,
-  getServiceColor
+  getServiceColor,
 }) => {
   // ✅ State محلي للـ modal
   const [editData, setEditData] = useState<EditBookingData>({
@@ -51,33 +41,33 @@ const EditBookingModal: React.FC<EditBookingModalProps> = ({
     selectedDate: '',
     selectedTime: '',
     selectedServices: [],
-    notes: ''
-  })
-  
-  const [isSaving, setIsSaving] = useState(false)
-  const [validationErrors, setValidationErrors] = useState<string[]>([])
+    notes: '',
+  });
+
+  const [isSaving, setIsSaving] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
   // ✅ تحديث البيانات عند فتح الـ modal
   useEffect(() => {
     if (booking && isOpen) {
-      const bookingDateTime = fromDatabaseTime(booking.date)
-      const startDateTime = fromDatabaseTime(booking.startTime)
-      
-      const dateString = formatIstanbulDate(bookingDateTime, 'date')
-      const timeString = formatIstanbulDate(startDateTime, 'time')
-      
+      const bookingDateTime = fromDatabaseTime(booking.date);
+      const startDateTime = fromDatabaseTime(booking.startTime);
+
+      const dateString = formatIstanbulDate(bookingDateTime, 'date');
+      const timeString = formatIstanbulDate(startDateTime, 'time');
+
       setEditData({
         customerName: booking.customerName,
         customerPhone: booking.customerPhone,
         selectedDate: dateString,
         selectedTime: timeString,
         selectedServices: booking.serviceIds,
-        notes: ''
-      })
-      
-      setValidationErrors([])
+        notes: '',
+      });
+
+      setValidationErrors([]);
     }
-  }, [booking, isOpen])
+  }, [booking, isOpen]);
 
   // ✅ تنظيف البيانات عند الإغلاق
   const handleClose = () => {
@@ -87,90 +77,90 @@ const EditBookingModal: React.FC<EditBookingModalProps> = ({
       selectedDate: '',
       selectedTime: '',
       selectedServices: [],
-      notes: ''
-    })
-    setValidationErrors([])
-    setIsSaving(false)
-    onClose()
-  }
+      notes: '',
+    });
+    setValidationErrors([]);
+    setIsSaving(false);
+    onClose();
+  };
 
   // ✅ تبديل اختيار الخدمة
   const toggleService = (serviceId: string) => {
-    setEditData(prev => ({
+    setEditData((prev) => ({
       ...prev,
       selectedServices: prev.selectedServices.includes(serviceId)
-        ? prev.selectedServices.filter(id => id !== serviceId)
-        : [...prev.selectedServices, serviceId]
-    }))
-    
+        ? prev.selectedServices.filter((id) => id !== serviceId)
+        : [...prev.selectedServices, serviceId],
+    }));
+
     // إزالة خطأ الخدمات إذا تم اختيار خدمة
     if (validationErrors.includes('services')) {
-      setValidationErrors(prev => prev.filter(error => error !== 'services'))
+      setValidationErrors((prev) => prev.filter((error) => error !== 'services'));
     }
-  }
+  };
 
   // ✅ التحقق من صحة البيانات
   const validateData = (): boolean => {
-    const errors: string[] = []
-    
+    const errors: string[] = [];
+
     if (!editData.customerName.trim()) {
-      errors.push('name')
+      errors.push('name');
     }
-    
+
     if (!editData.customerPhone.trim()) {
-      errors.push('phone')
+      errors.push('phone');
     }
-    
+
     if (!editData.selectedDate) {
-      errors.push('date')
+      errors.push('date');
     }
-    
+
     if (!editData.selectedTime) {
-      errors.push('time')
+      errors.push('time');
     }
-    
+
     if (editData.selectedServices.length === 0) {
-      errors.push('services')
+      errors.push('services');
     }
-    
-    setValidationErrors(errors)
-    return errors.length === 0
-  }
+
+    setValidationErrors(errors);
+    return errors.length === 0;
+  };
 
   // ✅ حفظ التعديلات
   const handleSave = async () => {
-    if (!booking) return
-    
+    if (!booking) return;
+
     // التحقق من صحة البيانات
     if (!validateData()) {
-      return
+      return;
     }
-    
+
     try {
-      setIsSaving(true)
-      await onSave(booking.id, editData)
-      handleClose()
+      setIsSaving(true);
+      await onSave(booking.id, editData);
+      handleClose();
     } catch {
       // يمكن إضافة معالجة أخطاء أكثر تفصيلاً هنا
     } finally {
-      setIsSaving(false)
+      setIsSaving(false);
     }
-  }
+  };
 
   // ✅ تنسيق عرض التاريخ
   const formatDateDisplay = (dateString: string) => {
-    if (!dateString) return ''
+    if (!dateString) return '';
     try {
-      const dateObj = new Date(dateString + 'T00:00:00')
-      return formatArabicDate(dateObj)
+      const dateObj = new Date(dateString + 'T00:00:00');
+      return formatArabicDate(dateObj);
     } catch {
-      return dateString
+      return dateString;
     }
-  }
+  };
 
   // ✅ لا نعرض شيئاً إذا لم يكن الـ modal مفتوح
   if (!isOpen || !booking) {
-    return null
+    return null;
   }
 
   return (
@@ -196,23 +186,21 @@ const EditBookingModal: React.FC<EditBookingModalProps> = ({
           {/* 👤 معلومات العميلة */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                اسم العميلة *
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">اسم العميلة *</label>
               <div className="relative">
                 <User className="absolute right-3 top-3 w-4 h-4 text-gray-400" />
                 <input
                   type="text"
                   value={editData.customerName}
                   onChange={(e) => {
-                    setEditData({ ...editData, customerName: e.target.value })
+                    setEditData({ ...editData, customerName: e.target.value });
                     if (validationErrors.includes('name')) {
-                      setValidationErrors(prev => prev.filter(error => error !== 'name'))
+                      setValidationErrors((prev) => prev.filter((error) => error !== 'name'));
                     }
                   }}
                   className={`w-full pr-10 pl-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors ${
-                    validationErrors.includes('name') 
-                      ? 'border-red-300 bg-red-50' 
+                    validationErrors.includes('name')
+                      ? 'border-red-300 bg-red-50'
                       : 'border-gray-300'
                   }`}
                   placeholder="أدخل اسم العميلة"
@@ -225,23 +213,21 @@ const EditBookingModal: React.FC<EditBookingModalProps> = ({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                رقم الهاتف *
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">رقم الهاتف *</label>
               <div className="relative">
                 <Phone className="absolute right-3 top-3 w-4 h-4 text-gray-400" />
                 <input
                   type="text"
                   value={editData.customerPhone}
                   onChange={(e) => {
-                    setEditData({ ...editData, customerPhone: e.target.value })
+                    setEditData({ ...editData, customerPhone: e.target.value });
                     if (validationErrors.includes('phone')) {
-                      setValidationErrors(prev => prev.filter(error => error !== 'phone'))
+                      setValidationErrors((prev) => prev.filter((error) => error !== 'phone'));
                     }
                   }}
                   className={`w-full pr-10 pl-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors ${
-                    validationErrors.includes('phone') 
-                      ? 'border-red-300 bg-red-50' 
+                    validationErrors.includes('phone')
+                      ? 'border-red-300 bg-red-50'
                       : 'border-gray-300'
                   }`}
                   placeholder="+90 5XX XXX XX XX"
@@ -271,14 +257,14 @@ const EditBookingModal: React.FC<EditBookingModalProps> = ({
                   type="date"
                   value={editData.selectedDate}
                   onChange={(e) => {
-                    setEditData({ ...editData, selectedDate: e.target.value })
+                    setEditData({ ...editData, selectedDate: e.target.value });
                     if (validationErrors.includes('date')) {
-                      setValidationErrors(prev => prev.filter(error => error !== 'date'))
+                      setValidationErrors((prev) => prev.filter((error) => error !== 'date'));
                     }
                   }}
                   className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors ${
-                    validationErrors.includes('date') 
-                      ? 'border-red-300 bg-red-50' 
+                    validationErrors.includes('date')
+                      ? 'border-red-300 bg-red-50'
                       : 'border-gray-300'
                   }`}
                   disabled={isSaving}
@@ -289,22 +275,20 @@ const EditBookingModal: React.FC<EditBookingModalProps> = ({
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  الوقت *
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">الوقت *</label>
                 <div className="relative">
                   <Clock className="absolute right-3 top-3 w-4 h-4 text-gray-400" />
                   <select
                     value={editData.selectedTime}
                     onChange={(e) => {
-                      setEditData({ ...editData, selectedTime: e.target.value })
+                      setEditData({ ...editData, selectedTime: e.target.value });
                       if (validationErrors.includes('time')) {
-                        setValidationErrors(prev => prev.filter(error => error !== 'time'))
+                        setValidationErrors((prev) => prev.filter((error) => error !== 'time'));
                       }
                     }}
                     className={`w-full pr-10 pl-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors ${
-                      validationErrors.includes('time') 
-                        ? 'border-red-300 bg-red-50' 
+                      validationErrors.includes('time')
+                        ? 'border-red-300 bg-red-50'
                         : 'border-gray-300'
                     }`}
                     disabled={isSaving}
@@ -334,11 +318,13 @@ const EditBookingModal: React.FC<EditBookingModalProps> = ({
               الخدمات المطلوبة * ({editData.selectedServices.length} خدمة مختارة)
             </label>
 
-            <div className={`bg-gray-50 p-4 rounded-lg border max-h-60 overflow-y-auto transition-colors ${
-              validationErrors.includes('services') 
-                ? 'border-red-300 bg-red-50' 
-                : 'border-gray-200'
-            }`}>
+            <div
+              className={`bg-gray-50 p-4 rounded-lg border max-h-60 overflow-y-auto transition-colors ${
+                validationErrors.includes('services')
+                  ? 'border-red-300 bg-red-50'
+                  : 'border-gray-200'
+              }`}
+            >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {allServices.map((service) => (
                   <div
@@ -351,20 +337,20 @@ const EditBookingModal: React.FC<EditBookingModalProps> = ({
                     onClick={() => !isSaving && toggleService(service.id)}
                   >
                     <div className="flex items-center w-full">
-                      <div className={`w-5 h-5 rounded border-2 flex items-center justify-center mr-3 transition-colors ${
-                        editData.selectedServices.includes(service.id)
-                          ? 'border-purple-500 bg-purple-500'
-                          : 'border-gray-300'
-                      }`}>
+                      <div
+                        className={`w-5 h-5 rounded border-2 flex items-center justify-center mr-3 transition-colors ${
+                          editData.selectedServices.includes(service.id)
+                            ? 'border-purple-500 bg-purple-500'
+                            : 'border-gray-300'
+                        }`}
+                      >
                         {editData.selectedServices.includes(service.id) && (
                           <Check className="w-3 h-3 text-white" />
                         )}
                       </div>
 
                       <div className="flex-1">
-                        <div className="font-medium text-gray-800">
-                          {service.nameAr}
-                        </div>
+                        <div className="font-medium text-gray-800">{service.nameAr}</div>
                         <div className="text-xs text-gray-500">
                           {service.category} • {service.duration} دقيقة
                         </div>
@@ -396,8 +382,8 @@ const EditBookingModal: React.FC<EditBookingModalProps> = ({
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {editData.selectedServices.map((serviceId, serviceIndex) => {
-                    const service = allServices.find(s => s.id === serviceId)
-                    const serviceColor = getServiceColor(serviceId)
+                    const service = allServices.find((s) => s.id === serviceId);
+                    const serviceColor = getServiceColor(serviceId);
 
                     return (
                       <span
@@ -414,7 +400,7 @@ const EditBookingModal: React.FC<EditBookingModalProps> = ({
                           <X className="w-3 h-3" />
                         </button>
                       </span>
-                    )
+                    );
                   })}
                 </div>
               </div>
@@ -423,9 +409,7 @@ const EditBookingModal: React.FC<EditBookingModalProps> = ({
 
           {/* 📝 ملاحظات */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              ملاحظات إضافية
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">ملاحظات إضافية</label>
             <textarea
               value={editData.notes}
               onChange={(e) => setEditData({ ...editData, notes: e.target.value })}
@@ -482,10 +466,7 @@ const EditBookingModal: React.FC<EditBookingModalProps> = ({
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default EditBookingModal
-
-
-
+export default EditBookingModal;

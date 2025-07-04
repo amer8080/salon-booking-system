@@ -1,24 +1,32 @@
 ﻿// src/app/book/components/BookingSelectionStep.tsx
 // نسخ المنطق الممتاز من الملف الطويل + إصلاح infinite loop
 
-'use client'
+'use client';
 import { logError } from '@/lib/logger-client';
 
-import React, { useEffect } from 'react'
-import { Calendar, Clock, Sparkles, ArrowLeft, ArrowRight, CheckCircle, Loader2 } from 'lucide-react'
-import { BookingSelectionStepProps } from '../types/booking-form.types'
-import { formatArabicDate, createIstanbulDate, formatIstanbulDate, isToday } from '@/lib/timezone'
+import React, { useState, useEffect } from 'react';
+import {
+  Calendar,
+  Clock,
+  Sparkles,
+  ArrowLeft,
+  ArrowRight,
+  CheckCircle,
+  Loader2,
+} from 'lucide-react';
+import { BookingSelectionStepProps } from '../types/booking-form.types';
+import { formatArabicDate, createIstanbulDate,  parseIstanbulDate, formatIstanbulDate, isToday } from '@/lib/timezone';
 
 interface Service {
-  id: string
-  name: string
-  nameAr: string
-  nameEn: string
-  nameTr: string
-  category: string
-  price: number
-  duration: number
-  description?: string
+  id: string;
+  name: string;
+  nameAr: string;
+  nameEn: string;
+  nameTr: string;
+  category: string;
+  price: number;
+  duration: number;
+  description?: string;
 }
 
 export default function BookingSelectionStep({
@@ -29,129 +37,139 @@ export default function BookingSelectionStep({
   onTimeSelect,
   onBack,
   onNext,
-  _errors
 }: BookingSelectionStepProps) {
-
   // ✅ إصلاح infinite loop - إزالة activeTab من dependencies
-  const [_activeTab, setActiveTab] = useState<'services' | 'date' | 'time'>('services')
-  const [_completedTabs, setCompletedTabs] = useState<Set<string>>(new Set())
+  const [_activeTab, setActiveTab] = useState<'services' | 'date' | 'time'>('services');
+  const [_completedTabs, setCompletedTabs] = useState<Set<string>>(new Set());
 
   // ✅ منطق التقويم من الملف الطويل
-  const [currentMonthIndex, setCurrentMonthIndex] = useState(0)
-  const [availableTimeSlots, setAvailableTimeSlots] = useState<string[]>([])
-  const [timeSlotsLoading, setTimeSlotsLoading] = useState(false)
-  const [timeSlotsError, setTimeSlotsError] = useState('')
-  const [blockedDays, setBlockedDays] = useState<string[]>([])
+  const [currentMonthIndex, setCurrentMonthIndex] = useState(0);
+  const [availableTimeSlots, setAvailableTimeSlots] = useState<string[]>([]);
+  const [timeSlotsLoading, setTimeSlotsLoading] = useState(false);
+  const [timeSlotsError, setTimeSlotsError] = useState('');
+  const [blockedDays, setBlockedDays] = useState<string[]>([]);
 
   // ✅ تحميل الأيام المقفلة
   useEffect(() => {
     const fetchBlockedDays = async () => {
       try {
-        const response = await fetch('/api/admin/blocked-times')
-        const data = await response.json()
+        const response = await fetch('/api/admin/blocked-times');
+        const data = await response.json();
 
         if (data.success) {
           const blockedDaysList = data.blockedTimes
             .filter((blocked: any) => blocked.startTime === null && blocked.endTime === null)
-            .map((blocked: any) => blocked.date)
-          setBlockedDays(blockedDaysList)
+            .map((blocked: any) => blocked.date);
+          setBlockedDays(blockedDaysList);
         }
       } catch (error) {
-        logError('خطأ في تحميل الأيام المقفلة:', error)
+        logError('خطأ في تحميل الأيام المقفلة:', error);
       }
-    }
+    };
 
-    fetchBlockedDays()
-  }, [])
+    fetchBlockedDays();
+  }, []);
 
   // ✅ جلب الأوقات المتاحة (من الملف الطويل)
   useEffect(() => {
     if (selectionState.selectedDate) {
-      fetchAvailableTimeSlots(selectionState.selectedDate)
+      fetchAvailableTimeSlots(selectionState.selectedDate);
     }
-  }, [selectionState.selectedDate])
+  }, [selectionState.selectedDate]);
 
   const fetchAvailableTimeSlots = async (date: string) => {
     try {
-      setTimeSlotsLoading(true)
-      setTimeSlotsError('')
+      setTimeSlotsLoading(true);
+      setTimeSlotsError('');
 
-      const response = await fetch(`/api/bookings/available-times?date=${date}&userType=customer`)
-      const data = await response.json()
-
+      const response = await fetch(`/api/bookings/available-times?date=${date}&userType=customer`);
+      const data = await response.json();
 
       if (data.success) {
-        setAvailableTimeSlots(data.availableSlots)
+        setAvailableTimeSlots(data.availableSlots);
 
-        if (selectionState.selectedTime && !data.availableSlots.includes(selectionState.selectedTime)) {
-          onTimeSelect('')
+        if (
+          selectionState.selectedTime &&
+          !data.availableSlots.includes(selectionState.selectedTime)
+        ) {
+          onTimeSelect('');
         }
 
-        if (data.debug) {
-        }
-
+        if (data.debug) { /* empty */ }
       } else {
-        logError('فشل في تحميل الأوقات:', data.error)
-        setTimeSlotsError(data.error || 'فشل في تحميل الأوقات')
-        setAvailableTimeSlots([])
+        logError('فشل في تحميل الأوقات:', data.error);
+        setTimeSlotsError(data.error || 'فشل في تحميل الأوقات');
+        setAvailableTimeSlots([]);
       }
     } catch (error) {
-      logError('خطأ في تحميل الأوقات:', error)
-      setTimeSlotsError('خطأ في الاتصال بالخادم')
-      setAvailableTimeSlots([])
+      logError('خطأ في تحميل الأوقات:', error);
+      setTimeSlotsError('خطأ في الاتصال بالخادم');
+      setAvailableTimeSlots([]);
     } finally {
-      setTimeSlotsLoading(false)
+      setTimeSlotsLoading(false);
     }
-  }
+  };
 
   // ✅ تحديث completed tabs (بدون infinite loop)
   useEffect(() => {
-    const completed = new Set<string>()
+    const completed = new Set<string>();
 
     if (selectionState.selectedServices.length > 0) {
-      completed.add('services')
+      completed.add('services');
     }
 
     if (selectionState.selectedDate) {
-      completed.add('date')
+      completed.add('date');
     }
 
     if (selectionState.selectedTime) {
-      completed.add('time')
+      completed.add('time');
     }
 
-    setCompletedTabs(completed)
-  }, [selectionState.selectedServices.length, selectionState.selectedDate, selectionState.selectedTime])
+    setCompletedTabs(completed);
+  }, [
+    selectionState.selectedServices.length,
+    selectionState.selectedDate,
+    selectionState.selectedTime,
+  ]);
 
   // ✅ منطق التقويم من الملف الطويل
   const generateCalendarMonths = () => {
-    const months = []
-    const today = createIstanbulDate()
+    const months = [];
+    const today = createIstanbulDate();
 
     for (let monthOffset = 0; monthOffset < 3; monthOffset++) {
-      const currentMonth = new Date(today.getFullYear(), today.getMonth() + monthOffset, 1)
+      const currentMonth = new Date(today.getFullYear(), today.getMonth() + monthOffset, 1);
       const monthData = {
         year: currentMonth.getFullYear(),
         month: currentMonth.getMonth(),
         monthName: currentMonth.toLocaleDateString('ar', { month: 'long', year: 'numeric' }),
-        days: []
-      }
+        days: [],
+      };
 
-      const daysInMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate()
-      const firstDayOfWeek = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1).getDay()
+      const daysInMonth = new Date(
+        currentMonth.getFullYear(),
+        currentMonth.getMonth() + 1,
+        0,
+      ).getDate();
+      const firstDayOfWeek = new Date(
+        currentMonth.getFullYear(),
+        currentMonth.getMonth(),
+        1,
+      ).getDay();
 
       // أيام فارغة في بداية الشهر
       for (let i = 0; i < firstDayOfWeek; i++) {
-        monthData.days.push(null)
+        monthData.days.push(null);
       }
 
       // أيام الشهر
       for (let day = 1; day <= daysInMonth; day++) {
-        const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day)
-        const dateString = formatIstanbulDate(date, 'date')
-        const isTodayDate = isToday(date)
-        const isPast = date < today && !isTodayDate
-        const isBlocked = blockedDays.includes(dateString)
+        const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day);
+        const dateString = formatIstanbulDate(date, 'date');
+        const isTodayDate = isToday(date);
+        const isPast = date < today && !isTodayDate;
+        const isBlocked = blockedDays.includes(dateString);
 
         monthData.days.push({
           day,
@@ -159,49 +177,50 @@ export default function BookingSelectionStep({
           isToday: isTodayDate,
           isPast,
           isBlocked,
-          dayName: date.toLocaleDateString('ar', { weekday: 'short' })
-        })
+          dayName: date.toLocaleDateString('ar', { weekday: 'short' }),
+        });
       }
 
-      months.push(monthData)
+      months.push(monthData);
     }
 
-    return months
-  }
+    return months;
+  };
 
-  const calendarMonths = generateCalendarMonths()
+  const calendarMonths = generateCalendarMonths();
 
   // ✅ معالجات الأحداث
   const handleServiceToggle = (serviceId: string) => {
     // ✅ منطق الاختيار المتعدد من الملف الطويل
-    const currentServices = selectionState.selectedServices
+    const currentServices = selectionState.selectedServices;
     if (currentServices.includes(serviceId)) {
       // إزالة الخدمة
-      const newServices = currentServices.filter(id => id !== serviceId)
+      const newServices = currentServices.filter((id) => id !== serviceId);
       // نحتاج تمرير array of IDs بدلاً من ID واحد
-      newServices.forEach(id => onServiceToggle(id))
+      newServices.forEach((id) => onServiceToggle(id));
       if (newServices.length === 0) {
-        onServiceToggle('') // مسح الكل
+        onServiceToggle(''); // مسح الكل
       }
     } else {
       // إضافة الخدمة
-      onServiceToggle(serviceId)
+      onServiceToggle(serviceId);
     }
-  }
+  };
 
   const handleDateSelect = (date: string) => {
-    onDateSelect(date)
+    onDateSelect(date);
     // الانتقال للوقت تلقائياً
-    setActiveTab('time')
-  }
+    setActiveTab('time');
+  };
 
   const handleTimeSelect = (time: string) => {
-    onTimeSelect(time)
-  }
+    onTimeSelect(time);
+  };
 
-  const canProceed = selectionState.selectedServices.length > 0 &&
-                    selectionState.selectedDate &&
-                    selectionState.selectedTime
+  const canProceed =
+    selectionState.selectedServices.length > 0 &&
+    selectionState.selectedDate &&
+    selectionState.selectedTime;
 
   return (
     <div className="w-full max-w-6xl mx-auto">
@@ -211,18 +230,13 @@ export default function BookingSelectionStep({
           <Calendar className="w-10 h-10 text-white" />
         </div>
 
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-3">
-          اختاري موعدك وخدماتك
-        </h2>
+        <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-3">اختاري موعدك وخدماتك</h2>
 
-        <p className="text-gray-600 text-lg">
-          حددي الخدمات المطلوبة والوقت المناسب لك
-        </p>
+        <p className="text-gray-600 text-lg">حددي الخدمات المطلوبة والوقت المناسب لك</p>
       </div>
 
       {/* Grid Layout مثل الملف الطويل */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-
         {/* ✅ التقويم والأوقات (من الملف الطويل) */}
         <div className="order-2 lg:order-1">
           <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
@@ -266,27 +280,26 @@ export default function BookingSelectionStep({
                   <div key={index} className="aspect-square">
                     {dayData ? (
                       <button
-                        onClick={() => !dayData.isPast && !dayData.isBlocked && handleDateSelect(dayData.date)}
+                        onClick={() =>
+                          !dayData.isPast && !dayData.isBlocked && handleDateSelect(dayData.date)
+                        }
                         disabled={dayData.isPast || dayData.isBlocked}
                         className={`
                           w-full h-full rounded-lg text-sm font-medium transition-all duration-200
-                          ${dayData.isPast || dayData.isBlocked
-                            ? 'text-gray-300 cursor-not-allowed bg-gray-100'
-                            : selectionState.selectedDate === dayData.date
-                              ? 'bg-purple-500 text-white'
-                              : dayData.isToday
-                                ? 'bg-blue-100 text-blue-600 hover:bg-blue-200'
-                                : 'text-gray-700 hover:bg-purple-100'
+                          ${
+                            dayData.isPast || dayData.isBlocked
+                              ? 'text-gray-300 cursor-not-allowed bg-gray-100'
+                              : selectionState.selectedDate === dayData.date
+                                ? 'bg-purple-500 text-white'
+                                : dayData.isToday
+                                  ? 'bg-blue-100 text-blue-600 hover:bg-blue-200'
+                                  : 'text-gray-700 hover:bg-purple-100'
                           }
                         `}
                       >
                         {dayData.day}
-                        {dayData.isToday && (
-                          <div className="text-xs">اليوم</div>
-                        )}
-                        {dayData.isBlocked && (
-                          <div className="text-xs text-red-500">🔒</div>
-                        )}
+                        {dayData.isToday && <div className="text-xs">اليوم</div>}
+                        {dayData.isBlocked && <div className="text-xs text-red-500">🔒</div>}
                       </button>
                     ) : (
                       <div></div>
@@ -330,9 +343,10 @@ export default function BookingSelectionStep({
                       onClick={() => handleTimeSelect(time)}
                       className={`
                         p-3 rounded-lg font-medium transition-all duration-300 text-sm
-                        ${selectionState.selectedTime === time
-                          ? 'bg-gradient-to-r from-purple-500 to-indigo-600 text-white'
-                          : 'bg-gray-100 text-gray-700 hover:bg-purple-100'
+                        ${
+                          selectionState.selectedTime === time
+                            ? 'bg-gradient-to-r from-purple-500 to-indigo-600 text-white'
+                            : 'bg-gray-100 text-gray-700 hover:bg-purple-100'
                         }
                       `}
                     >
@@ -394,9 +408,10 @@ export default function BookingSelectionStep({
                   onClick={() => handleServiceToggle(service.id)}
                   className={`
                     border-2 rounded-xl p-4 cursor-pointer transition-all duration-300
-                    ${selectionState.selectedServices.includes(service.id)
-                      ? 'border-purple-500 bg-purple-50'
-                      : 'border-gray-200 hover:border-purple-300'
+                    ${
+                      selectionState.selectedServices.includes(service.id)
+                        ? 'border-purple-500 bg-purple-50'
+                        : 'border-gray-200 hover:border-purple-300'
                     }
                   `}
                 >
@@ -406,13 +421,16 @@ export default function BookingSelectionStep({
                       {/* ✅ إزالة الأسعار كما طلبت */}
                     </div>
                     <div className="text-center ml-4">
-                      <div className={`
+                      <div
+                        className={`
                         w-6 h-6 rounded-full border-2 flex items-center justify-center
-                        ${selectionState.selectedServices.includes(service.id)
-                          ? 'border-purple-500 bg-purple-500'
-                          : 'border-gray-300'
+                        ${
+                          selectionState.selectedServices.includes(service.id)
+                            ? 'border-purple-500 bg-purple-500'
+                            : 'border-gray-300'
                         }
-                      `}>
+                      `}
+                      >
                         {selectionState.selectedServices.includes(service.id) && (
                           <CheckCircle className="w-4 h-4 text-white" />
                         )}
@@ -456,9 +474,5 @@ export default function BookingSelectionStep({
         </button>
       </div>
     </div>
-  )
+  );
 }
-
-
-
-

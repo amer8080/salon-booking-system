@@ -1,34 +1,34 @@
 // components/CustomerList.tsx
-'use client'
+'use client';
 
-import { Users, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react'
-import { Customer, PageSize } from '../types/customer.types'
-import CustomerCard from './CustomerCard'
+import { Users, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import { Customer, PageSize } from '../types/customer.types';
+import CustomerCard from './CustomerCard';
 
 interface CustomerListProps {
-  customers: Customer[]
-  loading: boolean
-  
+  customers: Customer[];
+  loading: boolean;
+
   // Pagination
   pagination: {
-    page: number
-    totalPages: number
-    hasNext: boolean
-    hasPrev: boolean
-  }
-  pageSize: PageSize
-  onPageChange: (page: number) => void
+    page: number;
+    totalPages: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  };
+  pageSize: PageSize;
+  onPageChange: (page: number) => void;
   currentPageInfo: {
-    start: number
-    end: number
-    total: number
-    showing: number
-  }
-  
+    start: number;
+    end: number;
+    total: number;
+    showing: number;
+  };
+
   // Actions
-  onViewCustomer: (customer: Customer) => void
-  onEditCustomer: (customer: Customer) => void
-  onDeleteCustomer: (customer: Customer) => void
+  onViewCustomer: (customer: Customer) => void;
+  onEditCustomer: (customer: Customer) => void;
+  onDeleteCustomer: (customer: Customer) => void;
 }
 
 export default function CustomerList({
@@ -40,42 +40,41 @@ export default function CustomerList({
   currentPageInfo,
   onViewCustomer,
   onEditCustomer,
-  onDeleteCustomer
+  onDeleteCustomer,
 }: CustomerListProps) {
-
   const renderPaginationNumbers = () => {
-    const { page, totalPages } = pagination
-    const delta = 2
-    const range = []
-    const rangeWithDots = []
+    const { page, totalPages } = pagination;
+    const delta = 2;
+    const range = [];
+    const rangeWithDots = [];
 
     // Calculate range around current page
-    const rangeStart = Math.max(2, page - delta)
-    const rangeEnd = Math.min(totalPages - 1, page + delta)
+    const rangeStart = Math.max(2, page - delta);
+    const rangeEnd = Math.min(totalPages - 1, page + delta);
 
     for (let i = rangeStart; i <= rangeEnd; i++) {
-      range.push(i)
+      range.push(i);
     }
 
     // Add first page
     if (page - delta > 2) {
-      rangeWithDots.push(1, '...')
+      rangeWithDots.push(1, '...');
     } else {
-      rangeWithDots.push(1)
+      rangeWithDots.push(1);
     }
 
     // Add middle pages
-    rangeWithDots.push(...range)
+    rangeWithDots.push(...range);
 
     // Add last page
     if (page + delta < totalPages - 1) {
-      rangeWithDots.push('...', totalPages)
+      rangeWithDots.push('...', totalPages);
     } else if (totalPages > 1) {
-      rangeWithDots.push(totalPages)
+      rangeWithDots.push(totalPages);
     }
 
-    return rangeWithDots
-  }
+    return rangeWithDots;
+  };
 
   if (loading) {
     return (
@@ -90,7 +89,7 @@ export default function CustomerList({
           <p className="text-gray-600">جاري تحميل العملاء...</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -101,7 +100,7 @@ export default function CustomerList({
           <h3 className="text-lg font-semibold text-gray-800">
             قائمة العملاء ({currentPageInfo.total.toLocaleString()})
           </h3>
-          
+
           {pageSize !== 'all' && (
             <div className="text-sm text-gray-600">
               صفحة {pagination.page} من {pagination.totalPages}
@@ -136,7 +135,9 @@ export default function CustomerList({
             <div className="px-6 py-4 bg-gray-50 border-t">
               <div className="flex items-center justify-between">
                 <div className="text-sm text-gray-600">
-                  عرض {currentPageInfo.start.toLocaleString()}-{currentPageInfo.end.toLocaleString()} من {currentPageInfo.total.toLocaleString()} عميل
+                  عرض {currentPageInfo.start.toLocaleString()}-
+                  {currentPageInfo.end.toLocaleString()} من {currentPageInfo.total.toLocaleString()}{' '}
+                  عميل
                 </div>
 
                 <div className="flex items-center space-x-2 rtl:space-x-reverse">
@@ -165,14 +166,16 @@ export default function CustomerList({
                     {renderPaginationNumbers().map((pageNum, index) => (
                       <button
                         key={index}
-                        onClick={() => typeof pageNum === 'number' ? onPageChange(pageNum) : undefined}
+                        onClick={() =>
+                          typeof pageNum === 'number' ? onPageChange(pageNum) : undefined
+                        }
                         disabled={pageNum === '...'}
                         className={`px-3 py-1 text-sm rounded-lg ${
                           pageNum === pagination.page
                             ? 'bg-purple-600 text-white'
                             : pageNum === '...'
-                            ? 'text-gray-400 cursor-default'
-                            : 'text-gray-600 hover:bg-gray-100'
+                              ? 'text-gray-400 cursor-default'
+                              : 'text-gray-600 hover:bg-gray-100'
                         }`}
                       >
                         {pageNum}
@@ -213,9 +216,9 @@ export default function CustomerList({
                       max={pagination.totalPages}
                       value={pagination.page}
                       onChange={(e) => {
-                        const page = parseInt(e.target.value)
+                        const page = parseInt(e.target.value);
                         if (page >= 1 && page <= pagination.totalPages) {
-                          onPageChange(page)
+                          onPageChange(page);
                         }
                       }}
                       className="w-16 px-2 py-1 border border-gray-300 rounded text-center focus:ring-2 focus:ring-purple-500 focus:border-transparent"
@@ -229,5 +232,5 @@ export default function CustomerList({
         </>
       )}
     </div>
-  )
+  );
 }

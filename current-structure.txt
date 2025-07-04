@@ -1,0 +1,198 @@
+src/
+├── app
+│   ├── admin
+│   │   ├── bookings
+│   │   │   ├── components
+│   │   │   │   ├── Bookings
+│   │   │   │   │   ├── BookingCard.tsx
+│   │   │   │   │   └── index.ts
+│   │   │   │   ├── Modals
+│   │   │   │   │   ├── DeleteBookingModal.tsx
+│   │   │   │   │   ├── EditBookingModal.tsx
+│   │   │   │   │   └── NewBookingModal.tsx
+│   │   │   │   ├── UI
+│   │   │   │   │   ├── CombinedHeader.tsx
+│   │   │   │   │   ├── CombinedHeader.tsx.save
+│   │   │   │   │   ├── LoadingSpinner.tsx
+│   │   │   │   │   ├── PhoneMenu.tsx
+│   │   │   │   │   ├── ViewToggleButtons.tsx
+│   │   │   │   │   └── index.ts
+│   │   │   │   └── Views
+│   │   │   │       ├── DayView.tsx
+│   │   │   │       ├── MonthView.tsx
+│   │   │   │       ├── WeekView.tsx
+│   │   │   │       └── index.ts
+│   │   │   ├── hooks
+│   │   │   │   ├── useBookings.ts
+│   │   │   │   └── useDayView.ts
+│   │   │   ├── page.tsx
+│   │   │   ├── page.tsx.fault
+│   │   │   ├── page.tsx.original-1749299391
+│   │   │   ├── page.tsx.working
+│   │   │   ├── project-roadmap.md
+│   │   │   └── types
+│   │   │       └── booking.types.ts
+│   │   ├── customers
+│   │   │   ├── components
+│   │   │   │   ├── CustomerCard.tsx
+│   │   │   │   ├── CustomerFilters.tsx
+│   │   │   │   ├── CustomerList.tsx
+│   │   │   │   └── modals
+│   │   │   │       ├── CustomerAddModal.tsx
+│   │   │   │       ├── CustomerDeleteModal.tsx
+│   │   │   │       ├── CustomerEditModal.tsx
+│   │   │   │       ├── CustomerViewModal.tsx
+│   │   │   │       └── index.ts
+│   │   │   ├── hooks
+│   │   │   │   ├── useCustomerModals.ts
+│   │   │   │   └── useCustomers.ts
+│   │   │   ├── page.tsx
+│   │   │   └── types
+│   │   │       └── customer.types.ts
+│   │   ├── login
+│   │   │   └── page.tsx
+│   │   ├── page.tsx
+│   │   ├── services
+│   │   │   ├── new
+│   │   │   │   └── page.tsx
+│   │   │   └── page.tsx
+│   │   └── settings
+│   │       ├── components
+│   │       │   ├── AdvancedTab.tsx
+│   │       │   ├── BusinessTab.tsx
+│   │       │   ├── ColorsTab.tsx
+│   │       │   └── WeekTab.tsx
+│   │       ├── page.tsx
+│   │       └── page.tsx.backup
+│   ├── api
+│   │   ├── admin
+│   │   │   ├── blocked-times
+│   │   │   │   ├── [id]
+│   │   │   │   │   └── route.ts
+│   │   │   │   └── route.ts
+│   │   │   ├── bookings
+│   │   │   │   ├── [id]
+│   │   │   │   │   └── route.ts
+│   │   │   │   ├── route.ts
+│   │   │   │   ├── route.ts.backup
+│   │   │   │   └── route.ts.old
+│   │   │   ├── customers
+│   │   │   │   └── route.ts
+│   │   │   ├── dashboard
+│   │   │   │   └── route.ts
+│   │   │   ├── login
+│   │   │   │   └── route.ts
+│   │   │   ├── services
+│   │   │   │   ├── [id]
+│   │   │   │   │   └── route.ts
+│   │   │   │   └── route.ts
+│   │   │   └── settings
+│   │   │       ├── app
+│   │   │       │   ├── route.ts
+│   │   │       │   └── route.ts.backup
+│   │   │       └── colors
+│   │   │           └── route.ts
+│   │   ├── bookings
+│   │   │   ├── available-times
+│   │   │   │   ├── route.ts
+│   │   │   │   ├── route.ts.backup
+│   │   │   │   └── route.ts.v2.backup
+│   │   │   └── route.ts
+│   │   ├── logging
+│   │   │   └── route.ts
+│   │   ├── mysql-timezone
+│   │   │   └── route.ts
+│   │   ├── services
+│   │   │   └── route.ts
+│   │   └── test-settings
+│   │       └── route.ts
+│   ├── book
+│   │   ├── components
+│   │   │   ├── BookingCalendar.tsx
+│   │   │   ├── BookingConfirmationStep.tsx
+│   │   │   ├── BookingSelectionStep.tsx
+│   │   │   ├── BookingStepIndicator.tsx
+│   │   │   ├── PhoneVerificationStep.tsx
+│   │   │   ├── ServicesList.tsx
+│   │   │   ├── TimeSlotsPicker.tsx
+│   │   │   ├── ToastNotifications.tsx
+│   │   │   ├── index.ts
+│   │   │   └── modals
+│   │   │       ├── BookingErrorModal.tsx
+│   │   │       ├── BookingSuccessModal.tsx
+│   │   │       └── index.ts
+│   │   ├── hooks
+│   │   │   ├── useBookingSteps.ts
+│   │   │   ├── useBookingSubmit.ts
+│   │   │   ├── useCalendar.ts
+│   │   │   ├── usePhoneVerification.ts
+│   │   │   ├── useServices.ts
+│   │   │   └── useTimeSlots.ts
+│   │   ├── index.ts
+│   │   ├── page.tsx
+│   │   ├── types
+│   │   │   ├── api-responses.types.ts
+│   │   │   ├── booking-form.types.ts
+│   │   │   └── calendar.types.ts
+│   │   └── utils
+│   │       ├── booking-helpers.ts
+│   │       ├── calendar-generator.ts
+│   │       ├── error-handling.ts
+│   │       └── form-validation.ts
+│   ├── favicon.ico
+│   ├── globals.css
+│   ├── layout.tsx
+│   └── page.tsx
+├── contexts
+│   ├── ColorThemeContext.tsx
+│   └── ColorThemeContext.tsx.backup
+├── generated
+│   └── prisma
+│       ├── client.d.ts
+│       ├── client.js
+│       ├── default.d.ts
+│       ├── default.js
+│       ├── edge.d.ts
+│       ├── edge.js
+│       ├── index-browser.js
+│       ├── index.d.ts
+│       ├── index.js
+│       ├── libquery_engine-debian-openssl-3.0.x.so.node
+│       ├── package.json
+│       ├── query_engine-windows.dll.node
+│       ├── query_engine-windows.dll.node.tmp17376
+│       ├── runtime
+│       │   ├── edge-esm.js
+│       │   ├── edge.js
+│       │   ├── index-browser.d.ts
+│       │   ├── index-browser.js
+│       │   ├── library.d.ts
+│       │   ├── library.js
+│       │   ├── react-native.js
+│       │   ├── wasm-compiler-edge.js
+│       │   └── wasm-engine-edge.js
+│       ├── schema.prisma
+│       ├── wasm.d.ts
+│       └── wasm.js
+├── hooks
+│   ├── useColorTheme.ts
+│   └── useColorTheme.ts.backup
+├── lib
+│   ├── app-settings.ts
+│   ├── date-helpers.ts
+│   ├── error-handler.ts
+│   ├── logger-client.ts
+│   ├── logger.ts
+│   ├── prisma.ts
+│   ├── services-parser.ts
+│   ├── services-utils.ts
+│   ├── timezone.ts
+│   ├── timezone.ts.v1.backup
+│   └── timezone.ts.v2.backup
+├── types
+│   ├── theme.types.ts
+│   └── theme.types.ts.backup
+└── utils
+    └── months.ts
+
+55 directories, 141 files

@@ -1,35 +1,33 @@
 ﻿// components/modals/CustomerEditModal.tsx
-'use client'
+'use client';
 
-import { X, Save, Loader2 } from 'lucide-react'
-import { Customer, CustomerFormData } from '../../types/customer.types'
+import { X, Save, Loader2 } from 'lucide-react';
+import { Customer, CustomerFormData } from '../../types/customer.types';
 
 interface CustomerEditModalProps {
-  customer: Customer
-  form: CustomerFormData
-  onFormChange: (updates: Partial<CustomerFormData>) => void
-  onSave: () => Promise<boolean>
-  onClose: () => void
-  saving: boolean
-  isValid: boolean
+  customer: Customer;
+  form: CustomerFormData;
+  onFormChange: (updates: Partial<CustomerFormData>) => void;
+  onSave: () => Promise<boolean>;
+  onClose: () => void;
+  saving: boolean;
+  isValid: boolean;
 }
 
 export default function CustomerEditModal({
-  customer,
   form,
   onFormChange,
   onSave,
   onClose,
   saving,
-  isValid
+  isValid,
 }: CustomerEditModalProps) {
-
   const handleSave = async () => {
-    const success = await onSave()
+    const success = await onSave();
     if (success) {
-      alert('تم تحديث بيانات العميل بنجاح!')
+      alert('تم تحديث بيانات العميل بنجاح!');
     }
-  }
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -125,5 +123,5 @@ export default function CustomerEditModal({
         </div>
       </div>
     </div>
-  )
+  );
 }

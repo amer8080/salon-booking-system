@@ -1,36 +1,36 @@
 // components/CustomerFilters.tsx
-'use client'
+'use client';
 
-import { Search, Filter, Plus, RefreshCw, BarChart3 } from 'lucide-react'
-import type { CustomerFilters, PageSize } from '../types/customer.types'
+import { Search, Filter, Plus, RefreshCw, BarChart3 } from 'lucide-react';
+import type { CustomerFilters, PageSize } from '../types/customer.types';
 
 interface CustomerFiltersProps {
-  filters: CustomerFilters
-  onFiltersChange: (filters: Partial<CustomerFilters>) => void
-  onResetFilters: () => void
-  onAddCustomer: () => void
-  onRefresh: () => void
-  
+  filters: CustomerFilters;
+  onFiltersChange: (filters: Partial<CustomerFilters>) => void;
+  onResetFilters: () => void;
+  onAddCustomer: () => void;
+  onRefresh: () => void;
+
   // Pagination props
-  pageSize: PageSize
-  onPageSizeChange: (size: PageSize) => void
+  pageSize: PageSize;
+  onPageSizeChange: (size: PageSize) => void;
   currentPageInfo: {
-    start: number
-    end: number
-    total: number
-    showing: number
-  }
-  
+    start: number;
+    end: number;
+    total: number;
+    showing: number;
+  };
+
   // Stats
   stats: {
-    totalCustomers: number
-    activeCustomers: number
-    vipCustomers: number
-    newCustomersThisMonth: number
-  }
-  
+    totalCustomers: number;
+    activeCustomers: number;
+    vipCustomers: number;
+    newCustomersThisMonth: number;
+  };
+
   // Loading state
-  refreshing?: boolean
+  refreshing?: boolean;
 }
 
 export default function CustomerFilters({
@@ -43,14 +43,13 @@ export default function CustomerFilters({
   onPageSizeChange,
   currentPageInfo,
   stats,
-  refreshing = false
+  refreshing = false,
 }: CustomerFiltersProps) {
-  
-  const hasActiveFilters = 
+  const hasActiveFilters =
     filters.searchTerm !== '' ||
     filters.statusFilter !== 'all' ||
     filters.visitsFilter !== '0' ||
-    filters.lastVisitFilter !== 'all'
+    filters.lastVisitFilter !== 'all';
 
   return (
     <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
@@ -101,7 +100,9 @@ export default function CustomerFilters({
             <BarChart3 className="w-4 h-4 text-green-600" />
             <span className="text-sm font-medium text-green-800">عملاء نشطين</span>
           </div>
-          <p className="text-xl font-bold text-green-600">{stats.activeCustomers.toLocaleString()}</p>
+          <p className="text-xl font-bold text-green-600">
+            {stats.activeCustomers.toLocaleString()}
+          </p>
         </div>
 
         <div className="bg-purple-50 p-4 rounded-lg">
@@ -117,7 +118,9 @@ export default function CustomerFilters({
             <BarChart3 className="w-4 h-4 text-orange-600" />
             <span className="text-sm font-medium text-orange-800">عملاء جدد</span>
           </div>
-          <p className="text-xl font-bold text-orange-600">{stats.newCustomersThisMonth.toLocaleString()}</p>
+          <p className="text-xl font-bold text-orange-600">
+            {stats.newCustomersThisMonth.toLocaleString()}
+          </p>
         </div>
       </div>
 
@@ -238,15 +241,19 @@ export default function CustomerFilters({
 
           <div className="text-gray-600">
             {pageSize === 'all' ? (
-              <span>{currentPageInfo.showing.toLocaleString()} من {currentPageInfo.total.toLocaleString()}</span>
+              <span>
+                {currentPageInfo.showing.toLocaleString()} من{' '}
+                {currentPageInfo.total.toLocaleString()}
+              </span>
             ) : (
               <span>
-                {currentPageInfo.start.toLocaleString()}-{currentPageInfo.end.toLocaleString()} من {currentPageInfo.total.toLocaleString()}
+                {currentPageInfo.start.toLocaleString()}-{currentPageInfo.end.toLocaleString()} من{' '}
+                {currentPageInfo.total.toLocaleString()}
               </span>
             )}
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }

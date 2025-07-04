@@ -5,10 +5,10 @@
 /* CSS Variables للألوان المخصصة */
 :root {
   /* ألوان الحجوزات - قيم افتراضية */
-  --booking-color-booked: #f97316;    /* orange-500 */
-  --booking-color-blocked: #ef4444;   /* red-500 */
+  --booking-color-booked: #f97316; /* orange-500 */
+  --booking-color-blocked: #ef4444; /* red-500 */
   --booking-color-available: #f9fafb; /* gray-50 */
-  --booking-color-today: #4f46e5;     /* indigo-600 */
+  --booking-color-today: #4f46e5; /* indigo-600 */
 }
 
 /* فئات CSS للألوان المخصصة */
@@ -105,7 +105,7 @@
 }
 
 /* إعدادات RTL */
-[dir="rtl"] {
+[dir='rtl'] {
   text-align: right;
 }
 
@@ -143,7 +143,7 @@ body {
   .no-print {
     display: none;
   }
-  
+
   .print-friendly {
     background: white !important;
     color: black !important;
@@ -155,7 +155,7 @@ body {
   .mobile-hidden {
     display: none;
   }
-  
+
   .mobile-full-width {
     width: 100%;
   }
@@ -189,7 +189,10 @@ body {
   font-family: 'system';
   font-style: normal;
   font-weight: 300;
-  src: local('.SFNSText-Light'), local('.HelveticaNeueDeskInterface-Light'), local('.LucidaGrandeUI'), local('Ubuntu Light'), local('Segoe UI Light'), local('Roboto-Light'), local('DroidSans'), local('Tahoma');
+  src:
+    local('.SFNSText-Light'), local('.HelveticaNeueDeskInterface-Light'), local('.LucidaGrandeUI'),
+    local('Ubuntu Light'), local('Segoe UI Light'), local('Roboto-Light'), local('DroidSans'),
+    local('Tahoma');
 }
 
 /* تحسين عرض التواريخ والأرقام */
@@ -264,13 +267,13 @@ body {
   .mobile-table-compact {
     font-size: 11px;
   }
-  
+
   .mobile-table-compact th,
   .mobile-table-compact td {
     padding: 2px 1px !important;
     height: 24px !important;
   }
-  
+
   .mobile-table-compact .time-column {
     width: 64px !important;
     min-width: 64px !important;
@@ -279,7 +282,7 @@ body {
 }
 
 /* ضمان الاتجاه الصحيح للنص */
-.mobile-table-compact [dir="rtl"] {
+.mobile-table-compact [dir='rtl'] {
   direction: rtl !important;
 }
 
@@ -296,11 +299,11 @@ body {
 /* ضمان أن CSS Variables تعمل في جميع المتصفحات */
 :root {
   /* الألوان الافتراضية (fallback) */
-  --booking-color-booked: #f97316;    /* orange-500 */
-  --booking-color-blocked: #ef4444;   /* red-500 */
+  --booking-color-booked: #f97316; /* orange-500 */
+  --booking-color-blocked: #ef4444; /* red-500 */
   --booking-color-available: #f9fafb; /* gray-50 */
-  --booking-color-today: #4f46e5;     /* indigo-600 */
-  
+  --booking-color-today: #4f46e5; /* indigo-600 */
+
   /* متغيرات إضافية للتحسين */
   --booking-transition: all 0.2s ease-in-out;
   --booking-border-radius: 0.5rem;
@@ -357,11 +360,11 @@ body {
 }
 
 /* تحسينات إضافية للـ RTL */
-[dir="rtl"] .booking-container {
+[dir='rtl'] .booking-container {
   text-align: right;
 }
 
-[dir="rtl"] .booking-icon {
+[dir='rtl'] .booking-icon {
   margin-left: 0.5rem;
   margin-right: 0;
 }
@@ -406,18 +409,18 @@ body {
     background-color: #f97316 !important;
     color: white !important;
   }
-  
+
   .booking-color-blocked {
     background-color: #ef4444 !important;
     color: white !important;
   }
-  
+
   .booking-color-available {
     background-color: #ffffff !important;
     color: #000000 !important;
     border: 1px solid #000000 !important;
   }
-  
+
   .booking-color-today {
     background-color: #4f46e5 !important;
     color: white !important;

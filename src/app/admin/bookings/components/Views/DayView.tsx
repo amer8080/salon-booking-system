@@ -1,48 +1,56 @@
-﻿'use client'
+﻿interface BlockedTime {
+  id: number;
+  date: string;
+  startTime: string | null;
+  endTime: string | null;
+  isRecurring: boolean;
+  recurringType: string | null;
+  reason: string | null;
+  createdBy: string;
+  createdAt: string;
+  }
+'use client'
 import { parseServices, getServiceNames } from '@/lib/services-parser';
 import { useErrorHandler } from '@/lib/error-handler';
-import { useState, useRef, useMemo, useCallback } from 'react'
-import { Booking, Service } from '../../types/booking.types'
-import BookingCard from '../Bookings/BookingCard'
-import { fromDatabaseTime, formatIstanbulDate } from '@/lib/timezone'
-import React from 'react'
+import { useState, useRef, useMemo, useCallback } from 'react';
+import { Booking, Service } from '../../types/booking.types';
+import BookingCard from '../Bookings/BookingCard';
+import { fromDatabaseTime, formatIstanbulDate } from '@/lib/timezone';
+import React from 'react';
 
 interface TimeSlot {
-  time: string
-  booking?: Booking
-  isBlocked: boolean
-  isAvailable: boolean
+  time: string;
+  booking?: Booking;
+  isBlocked: boolean;
+  isAvailable: boolean;
 }
 
 interface DayViewProps {
   // البيانات
-  selectedDate: string
-  bookings: Booking[]
-  services: Record<string, Service>
-  servicesWithCategories: Record<string, Service & { category: string }>
-  adminTimeSlots: string[]
-  blockedTimes: any[]
+  selectedDate: string;
+  bookings: Booking[];
+  services: Record<string, Service>;
+  servicesWithCategories: Record<string, Service & { category: string }>;
+  adminTimeSlots: string[];
+  blockedTimes: BlockedTime[];
 
   // دوال الألوان
-  getServiceColor: (serviceId: string) => string
+  getServiceColor: (serviceId: string) => string;
 
   // دوال التفاعل مع الحجوزات
-  onCreateNewBooking: (date: string, time: string) => void
-  onEditBooking: (booking: Booking) => void
-  onDeleteBooking: (booking: Booking) => void
-  onShowPhoneMenu?: (phone: string, customerName: string) => void
+  onCreateNewBooking: (date: string, time: string) => void;
+  onEditBooking: (booking: Booking) => void;
+  onDeleteBooking: (booking: Booking) => void;
+  onShowPhoneMenu?: (phone: string, customerName: string) => void;
 
   // دوال إدارة الأوقات المقفلة
-  onBlockTime?: (date: string, time: string) => void
-  onUnblockTime?: (date: string, time: string) => void
-
- 
-
+  onBlockTime?: (date: string, time: string) => void;
+  onUnblockTime?: (date: string, time: string) => void;
+}
 // 🚀 تحسين المكون بـ React.memo لمنع إعادة العرض غير الضرورية
 function DayView({
   selectedDate,
   bookings,
-  services,
   servicesWithCategories,
   adminTimeSlots,
   blockedTimes,
@@ -54,61 +62,67 @@ function DayView({
   onBlockTime,
   onUnblockTime,
 }: DayViewProps) {
-  const [selectedTimeSlot, setSelectedTimeSlot] = useState<TimeSlot | null>(null)
-  const [draggedBooking, setDraggedBooking] = useState<Booking | null>(null)
-  const [dragOverTime, setDragOverTime] = useState<string | null>(null)
-  const containerRef = useRef<HTMLDivElement>(null)
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState<TimeSlot | null>(null);
+  const [draggedBooking, setDraggedBooking] = useState<Booking | null>(null);
+  const [dragOverTime, setDragOverTime] = useState<string | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // 🔧 معالج الأخطاء المحسن - بدون logError
   const { autoFixBooking } = useErrorHandler();
 
   // 🚀 دالة معالجة البيانات المحسنة مع useCallback
-  const processBookingData = useCallback((booking: any) => {
-    // إصلاح البيانات تلقائياً
-    const fixedBooking = autoFixBooking(booking);
+  const processBookingData = useCallback(
+    (booking: any) => {
+      // إصلاح البيانات تلقائياً
+      const fixedBooking = autoFixBooking(booking);
 
-    // معالجة الخدمات بأمان
-    const serviceIds = parseServices(fixedBooking.services);
-    const serviceNames = getServiceNames(serviceIds, servicesWithCategories);
+      // معالجة الخدمات بأمان
+      const serviceIds = parseServices(fixedBooking.services);
+      const serviceNames = getServiceNames(serviceIds, servicesWithCategories);
 
-    return {
-      ...fixedBooking,
-      serviceIds,
-      serviceNames
-    };
-  }, [autoFixBooking, servicesWithCategories]);
+      return {
+        ...fixedBooking,
+        serviceIds,
+        serviceNames,
+      };
+    },
+    [autoFixBooking, servicesWithCategories],
+  );
 
   // 🚀 دالة استخراج أول كلمة من الاسم مع useCallback
   const getFirstName = useCallback((fullName: string): string => {
-    return fullName ? fullName.split(' ')[0] : 'عميل'
+    return fullName ? fullName.split(' ')[0] : 'عميل';
   }, []);
 
   // 🚀 دالة تنسيق قائمة الخدمات المحسنة مع useCallback
-  const formatServicesText = useCallback((serviceIds: string[]): string => {
-    if (!serviceIds || serviceIds.length === 0) return 'لا توجد خدمات'
+  const formatServicesText = useCallback(
+    (serviceIds: string[]): string => {
+      if (!serviceIds || serviceIds.length === 0) return 'لا توجد خدمات';
 
-    const serviceNames = serviceIds
-      .map(id => servicesWithCategories[id]?.name)
-      .filter(Boolean)
-      .slice(0, 3) // أول 3 خدمات فقط
+      const serviceNames = serviceIds
+        .map((id) => servicesWithCategories[id]?.name)
+        .filter(Boolean)
+        .slice(0, 3); // أول 3 خدمات فقط
 
-    let result = serviceNames.join('، ')
+      let result = serviceNames.join('، ');
 
-    if (serviceIds.length > 3) {
-      result += ` +${serviceIds.length - 3}`
-    }
+      if (serviceIds.length > 3) {
+        result += ` +${serviceIds.length - 3}`;
+      }
 
-    return result || 'خدمات غير محددة'
-  }, [servicesWithCategories]);
+      return result || 'خدمات غير محددة';
+    },
+    [servicesWithCategories],
+  );
 
   // 🚀 بناء قائمة الأوقات مع useMemo - بدون try/catch (fail-fast)
   const timeSlots: TimeSlot[] = useMemo(() => {
-    return adminTimeSlots.map(time => {
+    return adminTimeSlots.map((time) => {
       // البحث عن حجز في هذا الوقت - بدون try/catch
-      const booking = bookings.find(b => {
-        const bookingTime = formatIstanbulDate(fromDatabaseTime(b.startTime), 'time')
-        return bookingTime === time
-      })
+      const booking = bookings.find((b) => {
+        const bookingTime = formatIstanbulDate(fromDatabaseTime(b.startTime), 'time');
+        return bookingTime === time;
+      });
 
       // 🚀 معالجة الحجز إذا وُجد
       let processedBooking = null;
@@ -117,99 +131,116 @@ function DayView({
       }
 
       // التحقق من الإقفال
-      const isBlocked = blockedTimes.some(blocked =>
-        blocked.date === selectedDate &&
-        blocked.startTime === time
-      )
+      const isBlocked = blockedTimes.some(
+        (blocked) => blocked.date === selectedDate && blocked.startTime === time,
+      );
 
       return {
         time,
         booking: processedBooking,
         isBlocked,
-        isAvailable: !processedBooking && !isBlocked
-      }
-    })
+        isAvailable: !processedBooking && !isBlocked,
+      };
+    });
   }, [adminTimeSlots, bookings, selectedDate, blockedTimes, processBookingData]);
 
   // 🚀 إحصائيات محسنة مع useMemo
   const dayStats = useMemo(() => {
-    const bookedCount = timeSlots.filter(s => s.booking).length;
-    const blockedCount = timeSlots.filter(s => s.isBlocked).length;
-    const availableCount = timeSlots.filter(s => s.isAvailable).length;
+    const bookedCount = timeSlots.filter((s) => s.booking).length;
+    const blockedCount = timeSlots.filter((s) => s.isBlocked).length;
+    const availableCount = timeSlots.filter((s) => s.isAvailable).length;
 
     return { bookedCount, blockedCount, availableCount, total: timeSlots.length };
   }, [timeSlots]);
 
   // دوال السحب والإفلات مع useCallback
   const handleDragStart = useCallback((booking: Booking) => {
-    setDraggedBooking(booking)
+    setDraggedBooking(booking);
   }, []);
 
   const handleDragOver = useCallback((e: React.DragEvent, time: string) => {
-    e.preventDefault()
-    setDragOverTime(time)
+    e.preventDefault();
+    setDragOverTime(time);
   }, []);
 
   const handleDragLeave = useCallback(() => {
-    setDragOverTime(null)
+    setDragOverTime(null);
   }, []);
 
-  const handleDrop = useCallback(async (e: React.DragEvent, targetTime: string) => {
-    e.preventDefault()
-    setDragOverTime(null)
+  const handleDrop = useCallback(
+    async (e: React.DragEvent, targetTime: string) => {
+      e.preventDefault();
+      setDragOverTime(null);
 
-    if (!draggedBooking) return
+      if (!draggedBooking) return;
 
-    // التحقق من إمكانية النقل
-    const targetSlot = timeSlots.find(slot => slot.time === targetTime)
-    if (!targetSlot?.isAvailable) {
-      alert('لا يمكن نقل الحجز إلى هذا الوقت!')
-      return
-    }
+      // التحقق من إمكانية النقل
+      const targetSlot = timeSlots.find((slot) => slot.time === targetTime);
+      if (!targetSlot?.isAvailable) {
+        alert('لا يمكن نقل الحجز إلى هذا الوقت!');
+        return;
+      }
 
-    // تنفيذ النقل (سيتم تطبيقه لاحقاً)
-    setDraggedBooking(null)
-  }, [draggedBooking, timeSlots]);
+      // تنفيذ النقل (سيتم تطبيقه لاحقاً)
+      setDraggedBooking(null);
+    },
+    [draggedBooking, timeSlots],
+  );
 
   // دالة النقر على الوقت مع useCallback
   const handleTimeSlotClick = useCallback((slot: TimeSlot) => {
-    setSelectedTimeSlot(slot)
+    setSelectedTimeSlot(slot);
   }, []);
 
   // دالة إغلاق الكرت مع useCallback
   const closeBookingCard = useCallback(() => {
-    setSelectedTimeSlot(null)
+    setSelectedTimeSlot(null);
   }, []);
 
   // دوال معالجة الكرت مع useCallback
-  const handleCardCreateNew = useCallback((date: string, time: string) => {
-    onCreateNewBooking(date, time)
-    closeBookingCard()
-  }, [onCreateNewBooking, closeBookingCard]);
+  const handleCardCreateNew = useCallback(
+    (date: string, time: string) => {
+      onCreateNewBooking(date, time);
+      closeBookingCard();
+    },
+    [onCreateNewBooking, closeBookingCard],
+  );
 
-  const handleCardEdit = useCallback((booking: Booking) => {
-    onEditBooking(booking)
-    closeBookingCard()
-  }, [onEditBooking, closeBookingCard]);
+  const handleCardEdit = useCallback(
+    (booking: Booking) => {
+      onEditBooking(booking);
+      closeBookingCard();
+    },
+    [onEditBooking, closeBookingCard],
+  );
 
-  const handleCardDelete = useCallback((booking: Booking) => {
-    onDeleteBooking(booking)
-    closeBookingCard()
-  }, [onDeleteBooking, closeBookingCard]);
+  const handleCardDelete = useCallback(
+    (booking: Booking) => {
+      onDeleteBooking(booking);
+      closeBookingCard();
+    },
+    [onDeleteBooking, closeBookingCard],
+  );
 
-  const handleCardBlockTime = useCallback((date: string, time: string) => {
-    if (onBlockTime) {
-      onBlockTime(date, time)
-      closeBookingCard()
-    }
-  }, [onBlockTime, closeBookingCard]);
+  const handleCardBlockTime = useCallback(
+    (date: string, time: string) => {
+      if (onBlockTime) {
+        onBlockTime(date, time);
+        closeBookingCard();
+      }
+    },
+    [onBlockTime, closeBookingCard],
+  );
 
-  const handleCardUnblockTime = useCallback((date: string, time: string) => {
-    if (onUnblockTime) {
-      onUnblockTime(date, time)
-      closeBookingCard()
-    }
-  }, [onUnblockTime, closeBookingCard]);
+  const handleCardUnblockTime = useCallback(
+    (date: string, time: string) => {
+      if (onUnblockTime) {
+        onUnblockTime(date, time);
+        closeBookingCard();
+      }
+    },
+    [onUnblockTime, closeBookingCard],
+  );
 
   return (
     <div className="bg-white rounded-xl shadow-lg overflow-hidden" dir="rtl">
@@ -217,20 +248,18 @@ function DayView({
       {process.env.NODE_ENV === 'development' && (
         <div className="p-3 bg-blue-50 border-b border-blue-200">
           <div className="text-blue-800 text-sm">
-            📊 إحصائيات اليوم: {dayStats.bookedCount} حجز، {dayStats.blockedCount} مقفل، {dayStats.availableCount} متاح من أصل {dayStats.total} فترة
+            📊 إحصائيات اليوم: {dayStats.bookedCount} حجز، {dayStats.blockedCount} مقفل،{' '}
+            {dayStats.availableCount} متاح من أصل {dayStats.total} فترة
           </div>
         </div>
       )}
 
       {/* الجدول الزمني المضغوط - بدون هيدر فرعي مع RTL */}
       <div className="p-3">
-        <div
-          ref={containerRef}
-          className="space-y-0.5 max-h-[600px] overflow-y-auto"
-        >
+        <div ref={containerRef} className="space-y-0.5 max-h-[600px] overflow-y-auto">
           {timeSlots.map((slot, index) => {
-            const isEven = index % 2 === 0
-            const isDragOver = dragOverTime === slot.time
+            const isEven = index % 2 === 0;
+            const isDragOver = dragOverTime === slot.time;
 
             return (
               <div
@@ -248,9 +277,7 @@ function DayView({
                 <div className="flex items-center py-1 px-2">
                   {/* عمود الوقت - الآن في اليمين بسبب RTL */}
                   <div className="w-12 flex-shrink-0">
-                    <span className="font-mono text-xs font-medium text-gray-600">
-                      {slot.time}
-                    </span>
+                    <span className="font-mono text-xs font-medium text-gray-600">{slot.time}</span>
                   </div>
 
                   {/* الخط الفاصل */}
@@ -284,13 +311,16 @@ function DayView({
                     ) : (
                       /* الوقت المتاح - دائرة مخصصة منقطة مع RTL */
                       <div className="flex items-center">
-                        <div className="w-3 h-3 booking-border-available border border-dashed rounded-full" style={{borderWidth: '1px'}}></div>
+                        <div
+                          className="w-3 h-3 booking-border-available border border-dashed rounded-full"
+                          style={{ borderWidth: '1px' }}
+                        ></div>
                       </div>
                     )}
                   </div>
                 </div>
               </div>
-            )
+            );
           })}
         </div>
       </div>
@@ -301,7 +331,7 @@ function DayView({
           booking={selectedTimeSlot.booking}
           date={selectedDate}
           time={selectedTimeSlot.time}
-          services={services}
+          _services={services}
           servicesWithCategories={servicesWithCategories}
           getServiceColor={getServiceColor}
           onEdit={handleCardEdit}
@@ -317,7 +347,7 @@ function DayView({
         />
       )}
     </div>
-  )
+  );
 }
 
 // 🚀 تصدير المكون مع React.memo لتحسين الأداء

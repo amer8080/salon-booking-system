@@ -1,42 +1,49 @@
-﻿// eslint.config.mjs - التركيز على src/ فقط مع auto-fix
-import js from '@eslint/js'
-import tseslint from '@typescript-eslint/eslint-plugin'
-import tsparser from '@typescript-eslint/parser'
+﻿import js from "@eslint/js";
+import globals from "globals";
+import tseslint from "typescript-eslint";
+
 export default [
+  // Base JavaScript config
+  js.configs.recommended,
+  
+  // TypeScript config
+  ...tseslint.configs.recommended,
+  
+  // Global settings
   {
-    ignores: [
-      '.next/**',
-      'node_modules/**',
-      'out/**',
-      'dist/**',
-      'build/**',
-      '**/*.d.ts',
-      'package-lock.json',
-      '*.config.*'
-    ]
-  },
-  {
-    files: ['src/**/*.{ts,tsx}'],
+    files: ["**/*.{js,mjs,cjs,ts,tsx}"],
     languageOptions: {
-      parser: tsparser,
-      parserOptions: {
-        ecmaVersion: 'latest',
-        sourceType: 'module',
-        ecmaFeatures: { jsx: true }
+      globals: {
+        ...globals.browser,
+        ...globals.node
       }
     },
-    plugins: { '@typescript-eslint': tseslint },
     rules: {
-      '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/no-unused-vars': ['error', { 
-        "args": "all",
+      // TypeScript specific
+      "@typescript-eslint/no-explicit-any": "warn",
+      "@typescript-eslint/no-unused-vars": ["error", { 
         "argsIgnorePattern": "^_",
-        "varsIgnorePattern": "^_",
-        "ignoreRestSiblings": true
+        "varsIgnorePattern": "^_"
       }],
-      'no-console': ['warn', { allow: ['warn', 'error'] }],
-      'no-var': 'error',
-      'prefer-const': 'error'
+      
+      // General rules
+      "no-console": "off",
+      "prefer-const": "error",
+      "no-var": "error"
     }
+  },
+  
+  // Ignore patterns
+  {
+    ignores: [
+      "node_modules/**",
+      ".next/**",
+      "out/**",
+      "dist/**",
+      "build/**",
+      "coverage/**",
+      ".git/**",
+      "src/generated/**"
+    ]
   }
-]
+];

@@ -1,44 +1,44 @@
-'use client'
+'use client';
 import { logError } from '@/lib/logger-client';
 
-import { useState, useEffect } from 'react'
-import { 
-  Sparkles, 
-  Plus, 
-  Edit2, 
-  Trash2, 
-  Search, 
+import { useState, useEffect } from 'react';
+import {
+  Sparkles,
+  Plus,
+  Edit2,
+  Trash2,
+  Search,
   Eye,
   EyeOff,
   ArrowLeft,
   Save,
   X,
-  AlertTriangle
-} from 'lucide-react'
+  AlertTriangle,
+} from 'lucide-react';
 
 interface Service {
-  id: string
-  name: string
-  nameAr: string
-  nameEn: string
-  nameTr: string
-  category: string
-  price: number
-  duration: number
-  description: string | null
-  isActive: boolean
-  displayOrder: number
+  id: string;
+  name: string;
+  nameAr: string;
+  nameEn: string;
+  nameTr: string;
+  category: string;
+  price: number;
+  duration: number;
+  description: string | null;
+  isActive: boolean;
+  displayOrder: number;
 }
 
 export default function AdminServicesPage() {
-  const [services, setServices] = useState<Service[]>([])
-  const [filteredServices, setFilteredServices] = useState<Service[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
-  const [searchTerm, setSearchTerm] = useState('')
-  const [categoryFilter, setCategoryFilter] = useState('all')
-  const [editingService, setEditingService] = useState<Service | null>(null)
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null)
+  const [services, setServices] = useState<Service[]>([]);
+  const [filteredServices, setFilteredServices] = useState<Service[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [editingService, setEditingService] = useState<Service | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
 
   // فئات الخدمات
   const categories = [
@@ -46,50 +46,51 @@ export default function AdminServicesPage() {
     { value: 'hair', label: 'الشعر' },
     { value: 'makeup', label: 'المكياج' },
     { value: 'nails', label: 'الأظافر' },
-    { value: 'skincare', label: 'العناية بالبشرة' }
-  ]
+    { value: 'skincare', label: 'العناية بالبشرة' },
+  ];
 
   useEffect(() => {
-    fetchServices()
-  }, [])
+    fetchServices();
+  }, []);
 
   useEffect(() => {
     // فلترة الخدمات
-    let filtered = services
+    let filtered = services;
 
     if (searchTerm) {
-      filtered = filtered.filter(service => 
-        service.nameAr.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        service.nameEn.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        service.nameTr.toLowerCase().includes(searchTerm.toLowerCase())
-      )
+      filtered = filtered.filter(
+        (service) =>
+          service.nameAr.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          service.nameEn.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          service.nameTr.toLowerCase().includes(searchTerm.toLowerCase()),
+      );
     }
 
     if (categoryFilter !== 'all') {
-      filtered = filtered.filter(service => service.category === categoryFilter)
+      filtered = filtered.filter((service) => service.category === categoryFilter);
     }
 
-    setFilteredServices(filtered)
-  }, [services, searchTerm, categoryFilter])
+    setFilteredServices(filtered);
+  }, [services, searchTerm, categoryFilter]);
 
   const fetchServices = async () => {
     try {
-      setLoading(true)
-      const response = await fetch('/api/services')
-      const data = await response.json()
+      setLoading(true);
+      const response = await fetch('/api/services');
+      const data = await response.json();
 
       if (data.success) {
-        setServices(data.services)
+        setServices(data.services);
       } else {
-        setError(data.error || 'فشل في تحميل الخدمات')
+        setError(data.error || 'فشل في تحميل الخدمات');
       }
     } catch (error) {
-      logError('خطأ في تحميل الخدمات:', error)
-      setError('خطأ في الاتصال بالخادم')
+      logError('خطأ في تحميل الخدمات:', error);
+      setError('خطأ في الاتصال بالخادم');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const toggleServiceStatus = async (serviceId: string, newStatus: boolean) => {
     try {
@@ -99,44 +100,44 @@ export default function AdminServicesPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ isActive: newStatus }),
-      })
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (data.success) {
-        setServices(services.map(service => 
-          service.id === serviceId 
-            ? { ...service, isActive: newStatus }
-            : service
-        ))
+        setServices(
+          services.map((service) =>
+            service.id === serviceId ? { ...service, isActive: newStatus } : service,
+          ),
+        );
       } else {
-        alert('فشل في تحديث حالة الخدمة')
+        alert('فشل في تحديث حالة الخدمة');
       }
     } catch (error) {
-      logError('خطأ في تحديث حالة الخدمة:', error)
-      alert('خطأ في الاتصال بالخادم')
+      logError('خطأ في تحديث حالة الخدمة:', error);
+      alert('خطأ في الاتصال بالخادم');
     }
-  }
+  };
 
   const deleteService = async (serviceId: string) => {
     try {
       const response = await fetch(`/api/admin/services/${serviceId}`, {
         method: 'DELETE',
-      })
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (data.success) {
-        setServices(services.filter(service => service.id !== serviceId))
-        setShowDeleteConfirm(null)
+        setServices(services.filter((service) => service.id !== serviceId));
+        setShowDeleteConfirm(null);
       } else {
-        alert('فشل في حذف الخدمة')
+        alert('فشل في حذف الخدمة');
       }
     } catch (error) {
-      logError('خطأ في حذف الخدمة:', error)
-      alert('خطأ في الاتصال بالخادم')
+      logError('خطأ في حذف الخدمة:', error);
+      alert('خطأ في الاتصال بالخادم');
     }
-  }
+  };
 
   const updateService = async (updatedService: Service) => {
     try {
@@ -146,23 +147,23 @@ export default function AdminServicesPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(updatedService),
-      })
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (data.success) {
-        setServices(services.map(service => 
-          service.id === updatedService.id ? updatedService : service
-        ))
-        setEditingService(null)
+        setServices(
+          services.map((service) => (service.id === updatedService.id ? updatedService : service)),
+        );
+        setEditingService(null);
       } else {
-        alert('فشل في تحديث الخدمة')
+        alert('فشل في تحديث الخدمة');
       }
     } catch (error) {
-      logError('خطأ في تحديث الخدمة:', error)
-      alert('خطأ في الاتصال بالخادم')
+      logError('خطأ في تحديث الخدمة:', error);
+      alert('خطأ في الاتصال بالخادم');
     }
-  }
+  };
 
   if (loading) {
     return (
@@ -174,7 +175,7 @@ export default function AdminServicesPage() {
           <p className="text-gray-600">جاري تحميل الخدمات...</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -184,8 +185,8 @@ export default function AdminServicesPage() {
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4 rtl:space-x-reverse">
-              <button 
-                onClick={() => window.location.href = '/admin'}
+              <button
+                onClick={() => (window.location.href = '/admin')}
                 className="flex items-center text-gray-600 hover:text-gray-800 transition-colors duration-300"
               >
                 <ArrowLeft className="w-5 h-5 ml-2" />
@@ -202,9 +203,9 @@ export default function AdminServicesPage() {
                 </div>
               </div>
             </div>
-            
-            <button 
-              onClick={() => window.location.href = '/admin/services/new'}
+
+            <button
+              onClick={() => (window.location.href = '/admin/services/new')}
               className="flex items-center space-x-2 rtl:space-x-reverse px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg hover:from-pink-600 hover:to-purple-700 transition-all duration-300 hover:scale-105"
             >
               <Plus className="w-5 h-5" />
@@ -239,14 +240,14 @@ export default function AdminServicesPage() {
                 />
               </div>
             </div>
-            
+
             <div className="md:w-48">
               <select
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
               >
-                {categories.map(category => (
+                {categories.map((category) => (
                   <option key={category.value} value={category.value}>
                     {category.label}
                   </option>
@@ -254,7 +255,7 @@ export default function AdminServicesPage() {
               </select>
             </div>
           </div>
-          
+
           <div className="mt-4 text-sm text-gray-600">
             عرض {filteredServices.length} من {services.length} خدمة
           </div>
@@ -263,22 +264,29 @@ export default function AdminServicesPage() {
         {/* Services Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredServices.map((service) => (
-            <div key={service.id} className="bg-white rounded-xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-all duration-300">
+            <div
+              key={service.id}
+              className="bg-white rounded-xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-all duration-300"
+            >
               {/* Service Header */}
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
                   <h3 className="text-lg font-bold text-gray-800 mb-2">{service.nameAr}</h3>
                   <div className="space-y-1 text-sm text-gray-600">
-                    <p><span className="font-medium">EN:</span> {service.nameEn}</p>
-                    <p><span className="font-medium">TR:</span> {service.nameTr}</p>
+                    <p>
+                      <span className="font-medium">EN:</span> {service.nameEn}
+                    </p>
+                    <p>
+                      <span className="font-medium">TR:</span> {service.nameTr}
+                    </p>
                   </div>
                 </div>
-                
+
                 <button
                   onClick={() => toggleServiceStatus(service.id, !service.isActive)}
                   className={`p-2 rounded-lg transition-colors duration-300 ${
-                    service.isActive 
-                      ? 'bg-green-100 text-green-600 hover:bg-green-200' 
+                    service.isActive
+                      ? 'bg-green-100 text-green-600 hover:bg-green-200'
                       : 'bg-red-100 text-red-600 hover:bg-red-200'
                   }`}
                 >
@@ -292,26 +300,27 @@ export default function AdminServicesPage() {
                   <span className="text-sm text-gray-600">السعر:</span>
                   <span className="font-bold text-purple-600">{service.price} ليرة</span>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-600">المدة:</span>
                   <span className="text-gray-800">{service.duration} دقيقة</span>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-600">الفئة:</span>
                   <span className="px-2 py-1 bg-purple-100 text-purple-600 text-xs rounded-full">
-                    {categories.find(cat => cat.value === service.category)?.label || service.category}
+                    {categories.find((cat) => cat.value === service.category)?.label ||
+                      service.category}
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-600">الحالة:</span>
-                  <span className={`px-2 py-1 text-xs rounded-full ${
-                    service.isActive 
-                      ? 'bg-green-100 text-green-600' 
-                      : 'bg-red-100 text-red-600'
-                  }`}>
+                  <span
+                    className={`px-2 py-1 text-xs rounded-full ${
+                      service.isActive ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'
+                    }`}
+                  >
                     {service.isActive ? 'مفعل' : 'معطل'}
                   </span>
                 </div>
@@ -335,7 +344,7 @@ export default function AdminServicesPage() {
                   <Edit2 className="w-4 h-4" />
                   <span>تعديل</span>
                 </button>
-                
+
                 <button
                   onClick={() => setShowDeleteConfirm(service.id)}
                   className="flex-1 flex items-center justify-center space-x-2 rtl:space-x-reverse px-3 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors duration-300"
@@ -380,10 +389,12 @@ export default function AdminServicesPage() {
                     <input
                       type="text"
                       value={editingService.nameAr}
-                      onChange={(e) => setEditingService({
-                        ...editingService,
-                        nameAr: e.target.value
-                      })}
+                      onChange={(e) =>
+                        setEditingService({
+                          ...editingService,
+                          nameAr: e.target.value,
+                        })
+                      }
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                       required
                     />
@@ -396,10 +407,12 @@ export default function AdminServicesPage() {
                     <input
                       type="text"
                       value={editingService.nameEn}
-                      onChange={(e) => setEditingService({
-                        ...editingService,
-                        nameEn: e.target.value
-                      })}
+                      onChange={(e) =>
+                        setEditingService({
+                          ...editingService,
+                          nameEn: e.target.value,
+                        })
+                      }
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                       required
                     />
@@ -412,10 +425,12 @@ export default function AdminServicesPage() {
                     <input
                       type="text"
                       value={editingService.nameTr}
-                      onChange={(e) => setEditingService({
-                        ...editingService,
-                        nameTr: e.target.value
-                      })}
+                      onChange={(e) =>
+                        setEditingService({
+                          ...editingService,
+                          nameTr: e.target.value,
+                        })
+                      }
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                       required
                     />
@@ -430,10 +445,12 @@ export default function AdminServicesPage() {
                     <input
                       type="number"
                       value={editingService.price}
-                      onChange={(e) => setEditingService({
-                        ...editingService,
-                        price: parseFloat(e.target.value) || 0
-                      })}
+                      onChange={(e) =>
+                        setEditingService({
+                          ...editingService,
+                          price: parseFloat(e.target.value) || 0,
+                        })
+                      }
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                       required
                       min="0"
@@ -448,10 +465,12 @@ export default function AdminServicesPage() {
                     <input
                       type="number"
                       value={editingService.duration}
-                      onChange={(e) => setEditingService({
-                        ...editingService,
-                        duration: parseInt(e.target.value) || 0
-                      })}
+                      onChange={(e) =>
+                        setEditingService({
+                          ...editingService,
+                          duration: parseInt(e.target.value) || 0,
+                        })
+                      }
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                       required
                       min="1"
@@ -459,19 +478,19 @@ export default function AdminServicesPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      الفئة
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">الفئة</label>
                     <select
                       value={editingService.category}
-                      onChange={(e) => setEditingService({
-                        ...editingService,
-                        category: e.target.value
-                      })}
+                      onChange={(e) =>
+                        setEditingService({
+                          ...editingService,
+                          category: e.target.value,
+                        })
+                      }
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                       required
                     >
-                      {categories.slice(1).map(category => (
+                      {categories.slice(1).map((category) => (
                         <option key={category.value} value={category.value}>
                           {category.label}
                         </option>
@@ -486,10 +505,12 @@ export default function AdminServicesPage() {
                   </label>
                   <textarea
                     value={editingService.description || ''}
-                    onChange={(e) => setEditingService({
-                      ...editingService,
-                      description: e.target.value
-                    })}
+                    onChange={(e) =>
+                      setEditingService({
+                        ...editingService,
+                        description: e.target.value,
+                      })
+                    }
                     rows={3}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     placeholder="وصف مختصر للخدمة..."
@@ -505,7 +526,7 @@ export default function AdminServicesPage() {
                   <Save className="w-4 h-4" />
                   <span>حفظ التغييرات</span>
                 </button>
-                
+
                 <button
                   onClick={() => setEditingService(null)}
                   className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-300"
@@ -526,12 +547,12 @@ export default function AdminServicesPage() {
               <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <AlertTriangle className="w-8 h-8 text-red-500" />
               </div>
-              
+
               <h3 className="text-lg font-bold text-gray-800 mb-2">تأكيد الحذف</h3>
               <p className="text-gray-600 mb-6">
                 هل أنت متأكد من حذف هذه الخدمة؟ لا يمكن التراجع عن هذا الإجراء.
               </p>
-              
+
               <div className="flex space-x-3 rtl:space-x-reverse">
                 <button
                   onClick={() => deleteService(showDeleteConfirm)}
@@ -540,7 +561,7 @@ export default function AdminServicesPage() {
                   <Trash2 className="w-4 h-4" />
                   <span>حذف</span>
                 </button>
-                
+
                 <button
                   onClick={() => setShowDeleteConfirm(null)}
                   className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-300"
@@ -553,5 +574,5 @@ export default function AdminServicesPage() {
         </div>
       )}
     </div>
-  )
+  );
 }

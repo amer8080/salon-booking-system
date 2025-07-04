@@ -1,5 +1,5 @@
-import Link from 'next/link'
-import { Calendar, Clock, Sparkles, Star, Users, Award } from 'lucide-react'
+import Link from 'next/link';
+import { Calendar, Clock, Sparkles, Star, Users, Award } from 'lucide-react';
 
 export default function HomePage() {
   return (
@@ -19,7 +19,7 @@ export default function HomePage() {
                 <p className="text-sm text-gray-500">جمالك هو اهتمامنا</p>
               </div>
             </div>
-            
+
             <div className="flex items-center space-x-4 rtl:space-x-reverse">
               <button className="text-gray-600 hover:text-gray-800 transition-colors">
                 العربية
@@ -35,20 +35,21 @@ export default function HomePage() {
         <div className="max-w-6xl mx-auto text-center">
           <div className="mb-8">
             <h2 className="text-5xl md:text-6xl font-bold text-gray-800 mb-6">
-              مرحباً بك في 
+              مرحباً بك في
               <span className="bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent block mt-2">
                 صالون ريم للتجميل
               </span>
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              اكتشفي عالماً من الجمال والأناقة مع خدماتنا المتميزة. احجزي موعدك الآن واستمتعي بتجربة فريدة من نوعها
+              اكتشفي عالماً من الجمال والأناقة مع خدماتنا المتميزة. احجزي موعدك الآن واستمتعي بتجربة
+              فريدة من نوعها
             </p>
           </div>
 
           {/* Main CTA */}
           <div className="mb-16">
-            <Link 
-              href="/book" 
+            <Link
+              href="/book"
               className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-pink-500 to-purple-600 text-white text-lg font-semibold rounded-full hover:from-pink-600 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
             >
               <Calendar className="w-6 h-6 ml-2" />
@@ -101,47 +102,54 @@ export default function HomePage() {
                 title: 'قص وتصفيف الشعر',
                 desc: 'احدث القصات العالمية مع خبراء التصفيف',
                 price: 'من 150 ليرة',
-                gradient: 'from-pink-400 to-rose-500'
+                gradient: 'from-pink-400 to-rose-500',
               },
               {
                 title: 'صبغ وتلوين',
                 desc: 'ألوان عصرية وطبيعية بأجود الصبغات',
-                price: 'من 350 ليرة', 
-                gradient: 'from-purple-400 to-indigo-500'
+                price: 'من 350 ليرة',
+                gradient: 'from-purple-400 to-indigo-500',
               },
               {
                 title: 'مكياج ومناسبات',
                 desc: 'مكياج احترافي لجميع المناسبات',
                 price: 'من 200 ليرة',
-                gradient: 'from-indigo-400 to-purple-500'
+                gradient: 'from-indigo-400 to-purple-500',
               },
               {
                 title: 'تسريحات العرائس',
                 desc: 'تسريحات فخمة ليوم العمر',
                 price: 'من 500 ليرة',
-                gradient: 'from-rose-400 to-pink-500'
+                gradient: 'from-rose-400 to-pink-500',
               },
               {
                 title: 'العناية بالأظافر',
                 desc: 'مانيكير وبديكير بمنتجات عالمية',
                 price: 'من 100 ليرة',
-                gradient: 'from-purple-400 to-pink-500'
+                gradient: 'from-purple-400 to-pink-500',
               },
               {
                 title: 'علاجات البشرة',
                 desc: 'عناية متكاملة لإشراق البشرة',
                 price: 'من 250 ليرة',
-                gradient: 'from-indigo-400 to-rose-500'
-              }
+                gradient: 'from-indigo-400 to-rose-500',
+              },
             ].map((service, index) => (
-              <div key={index} className="group bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:transform hover:scale-105">
-                <div className={`w-16 h-16 bg-gradient-to-r ${service.gradient} rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
+              <div
+                key={index}
+                className="group bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:transform hover:scale-105"
+              >
+                <div
+                  className={`w-16 h-16 bg-gradient-to-r ${service.gradient} rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}
+                >
                   <Sparkles className="w-8 h-8 text-white" />
                 </div>
                 <h4 className="text-xl font-bold text-gray-800 mb-2">{service.title}</h4>
                 <p className="text-gray-600 mb-4">{service.desc}</p>
                 <div className="flex items-center justify-between">
-                  <span className={`text-lg font-semibold bg-gradient-to-r ${service.gradient} bg-clip-text text-transparent`}>
+                  <span
+                    className={`text-lg font-semibold bg-gradient-to-r ${service.gradient} bg-clip-text text-transparent`}
+                  >
                     {service.price}
                   </span>
                 </div>
@@ -150,8 +158,8 @@ export default function HomePage() {
           </div>
 
           <div className="text-center mt-12">
-            <Link 
-              href="/book" 
+            <Link
+              href="/book"
               className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-semibold rounded-full hover:from-pink-600 hover:to-purple-700 transition-all duration-300 hover:scale-105"
             >
               احجزي الآن
@@ -174,23 +182,23 @@ export default function HomePage() {
               {
                 icon: Star,
                 title: 'خبرة واحترافية',
-                desc: 'فريق من أمهر خبراء التجميل'
+                desc: 'فريق من أمهر خبراء التجميل',
               },
               {
                 icon: Sparkles,
                 title: 'منتجات عالمية',
-                desc: 'نستخدم أجود المنتجات العالمية'
+                desc: 'نستخدم أجود المنتجات العالمية',
               },
               {
                 icon: Clock,
                 title: 'مواعيد مرنة',
-                desc: 'نظام حجز سهل ومواعيد مناسبة'
+                desc: 'نظام حجز سهل ومواعيد مناسبة',
               },
               {
                 icon: Award,
                 title: 'ضمان الجودة',
-                desc: 'رضاك هو هدفنا الأول'
-              }
+                desc: 'رضاك هو هدفنا الأول',
+              },
             ].map((feature, index) => (
               <div key={index} className="text-center group">
                 <div className="w-16 h-16 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
@@ -211,8 +219,8 @@ export default function HomePage() {
           <p className="text-xl mb-8 opacity-90">
             احجزي موعدك الآن واستمتعي بخدمات استثنائية في بيئة مريحة وأنيقة
           </p>
-          <Link 
-            href="/book" 
+          <Link
+            href="/book"
             className="inline-flex items-center px-8 py-4 bg-white text-purple-600 text-lg font-semibold rounded-full hover:bg-gray-50 transform hover:scale-105 transition-all duration-300 shadow-lg"
           >
             <Calendar className="w-6 h-6 ml-2" />
@@ -261,5 +269,5 @@ export default function HomePage() {
         </div>
       </footer>
     </div>
-  )
+  );
 }

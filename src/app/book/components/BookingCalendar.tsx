@@ -1,11 +1,11 @@
 // src/app/book/components/BookingCalendar.tsx
 // تقويم تفاعلي مع دعم Swipe للجوال
 
-import React, { useState, useEffect } from 'react'
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Clock } from 'lucide-react'
-import { CalendarProps, CalendarDay } from '../types/calendar.types'
-import { useCalendar, useCalendarKeyboard } from '../hooks/useCalendar'
-import { formatArabicDate, parseIstanbulDate } from '@/lib/timezone'
+import React, { useState, useEffect } from 'react';
+import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Clock } from 'lucide-react';
+import { CalendarProps, CalendarDay } from '../types/calendar.types';
+import { useCalendar, useCalendarKeyboard } from '../hooks/useCalendar';
+import { formatArabicDate, parseIstanbulDate } from '@/lib/timezone';
 
 export default function BookingCalendar({
   selectedDate,
@@ -13,39 +13,38 @@ export default function BookingCalendar({
   onDateSelect,
   onMonthChange,
   showAvailableSlots = false,
-  className = ''
+  className = '',
 }: CalendarProps) {
-
   const calendar = useCalendar({
     blockedDays,
     selectedDate,
     onDateSelect,
     onMonthChange,
     enableSwipe: true,
-    autoSelectFirstAvailable: false
-  })
+    autoSelectFirstAvailable: false,
+  });
 
-  const { handleKeyDown } = useCalendarKeyboard(calendar)
-  const [firstAvailableTime, setFirstAvailableTime] = useState<string | null>(null)
+  const { handleKeyDown } = useCalendarKeyboard(calendar);
+  const [firstAvailableTime, setFirstAvailableTime] = useState<string | null>(null);
 
   // Load first available time when date is selected
   useEffect(() => {
     if (selectedDate) {
       // Simulate API call to get first available time
       // In real implementation, this would come from useTimeSlots hook
-      setFirstAvailableTime('10:00 ص')
+      setFirstAvailableTime('10:00 ص');
     }
-  }, [selectedDate])
+  }, [selectedDate]);
 
   const handleDateClick = (day: CalendarDay) => {
     if (calendar.isDaySelectable(day)) {
-      calendar.selectDate(day.date)
+      calendar.selectDate(day.date);
     }
-  }
+  };
 
   const getWeekDayNames = () => {
-    return ['أحد', 'إثنين', 'ثلاثاء', 'أربعاء', 'خميس', 'جمعة', 'سبت']
-  }
+    return ['أحد', 'إثنين', 'ثلاثاء', 'أربعاء', 'خميس', 'جمعة', 'سبت'];
+  };
 
   return (
     <div className={`bg-white rounded-xl border border-gray-200 overflow-hidden ${className}`}>
@@ -60,16 +59,12 @@ export default function BookingCalendar({
           >
             <ChevronRight className="w-5 h-5 text-gray-600" />
           </button>
-          
+
           <div className="text-center">
-            <h3 className="text-lg font-bold text-gray-800">
-              {calendar.currentMonth?.monthName}
-            </h3>
-            <p className="text-sm text-gray-600">
-              اختر التاريخ المناسب
-            </p>
+            <h3 className="text-lg font-bold text-gray-800">{calendar.currentMonth?.monthName}</h3>
+            <p className="text-sm text-gray-600">اختر التاريخ المناسب</p>
           </div>
-          
+
           <button
             onClick={calendar.goToNextMonth}
             disabled={!calendar.canGoNext}
@@ -98,7 +93,7 @@ export default function BookingCalendar({
       </div>
 
       {/* Calendar Grid */}
-      <div 
+      <div
         className="p-4"
         {...calendar.swipeHandlers}
         onKeyDown={handleKeyDown}
@@ -116,10 +111,10 @@ export default function BookingCalendar({
         </div>
 
         {/* Calendar Days */}
-        <div 
+        <div
           className={`grid grid-cols-7 gap-1 transition-transform duration-300 ${
-            calendar.gestureState.isDragging 
-              ? `transform translate-x-[${calendar.gestureState.deltaX}px]` 
+            calendar.gestureState.isDragging
+              ? `transform translate-x-[${calendar.gestureState.deltaX}px]`
               : ''
           }`}
         >
@@ -150,21 +145,17 @@ export default function BookingCalendar({
             <div className="flex items-center space-x-2 rtl:space-x-reverse">
               <CalendarIcon className="w-5 h-5 text-purple-600" />
               <div>
-                <p className="text-sm font-medium text-purple-800">
-                  التاريخ المختار
-                </p>
+                <p className="text-sm font-medium text-purple-800">التاريخ المختار</p>
                 <p className="text-purple-700">
                   {formatArabicDate(parseIstanbulDate(selectedDate))}
                 </p>
               </div>
             </div>
-            
+
             {firstAvailableTime && (
               <div className="flex items-center space-x-2 rtl:space-x-reverse text-sm">
                 <Clock className="w-4 h-4 text-green-600" />
-                <span className="text-green-700">
-                  أول موعد: {firstAvailableTime}
-                </span>
+                <span className="text-green-700">أول موعد: {firstAvailableTime}</span>
               </div>
             )}
           </div>
@@ -184,7 +175,7 @@ export default function BookingCalendar({
         </div>
       )}
     </div>
-  )
+  );
 }
 
 // Calendar Day Button Component
@@ -193,31 +184,31 @@ function CalendarDayButton({
   onClick,
   isSelected,
   firstAvailableTime,
-  showAvailableSlots = false
+  showAvailableSlots = false,
 }: {
-  day: CalendarDay
-  onClick: () => void
-  isSelected: boolean
-  firstAvailableTime?: string | null
-  showAvailableSlots?: boolean
+  day: CalendarDay;
+  onClick: () => void;
+  isSelected: boolean;
+  firstAvailableTime?: string | null;
+  showAvailableSlots?: boolean;
 }) {
   const getButtonStyles = () => {
     if (day.isPast || day.isBlocked) {
-      return 'text-gray-300 cursor-not-allowed bg-gray-50'
+      return 'text-gray-300 cursor-not-allowed bg-gray-50';
     }
-    
-    if (isSelected) {
-      return 'bg-purple-500 text-white shadow-lg ring-2 ring-purple-200'
-    }
-    
-    if (day.isToday) {
-      return 'bg-blue-100 text-blue-600 hover:bg-blue-200 border-2 border-blue-300'
-    }
-    
-    return 'text-gray-700 hover:bg-purple-100 hover:text-purple-700 bg-white border border-gray-200'
-  }
 
-  const isSelectable = !day.isPast && !day.isBlocked
+    if (isSelected) {
+      return 'bg-purple-500 text-white shadow-lg ring-2 ring-purple-200';
+    }
+
+    if (day.isToday) {
+      return 'bg-blue-100 text-blue-600 hover:bg-blue-200 border-2 border-blue-300';
+    }
+
+    return 'text-gray-700 hover:bg-purple-100 hover:text-purple-700 bg-white border border-gray-200';
+  };
+
+  const isSelectable = !day.isPast && !day.isBlocked;
 
   return (
     <button
@@ -239,31 +230,29 @@ function CalendarDayButton({
       role="gridcell"
     >
       {/* Day Number */}
-      <span className="text-base font-bold">
-        {day.day}
-      </span>
-      
+      <span className="text-base font-bold">{day.day}</span>
+
       {/* Today Indicator */}
       {day.isToday && !isSelected && (
         <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2">
           <div className="w-1 h-1 bg-blue-600 rounded-full"></div>
         </div>
       )}
-      
+
       {/* Blocked Indicator */}
       {day.isBlocked && (
         <div className="absolute top-1 right-1">
           <div className="w-2 h-2 bg-red-500 rounded-full"></div>
         </div>
       )}
-      
+
       {/* Available Slots Count */}
-      {showAvailableSlots && day.availableSlotsCount !== undefined && day.availableSlotsCount > 0 && (
-        <span className="text-xs text-green-600 mt-1">
-          {day.availableSlotsCount}
-        </span>
-      )}
-      
+      {showAvailableSlots &&
+        day.availableSlotsCount !== undefined &&
+        day.availableSlotsCount > 0 && (
+          <span className="text-xs text-green-600 mt-1">{day.availableSlotsCount}</span>
+        )}
+
       {/* First Available Time */}
       {isSelected && firstAvailableTime && (
         <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-green-600 text-white text-xs px-2 py-1 rounded whitespace-nowrap z-10">
@@ -271,13 +260,13 @@ function CalendarDayButton({
           <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-green-600 rotate-45"></div>
         </div>
       )}
-      
+
       {/* Hover Effect for Available Days */}
       {isSelectable && !isSelected && (
         <div className="absolute inset-0 bg-purple-600 opacity-0 group-hover:opacity-10 rounded-lg transition-opacity duration-200"></div>
       )}
     </button>
-  )
+  );
 }
 
 // Compact Calendar for Mobile
@@ -285,16 +274,15 @@ export function CompactCalendar({
   selectedDate,
   blockedDays = [],
   onDateSelect,
-  className = ''
+  className = '',
 }: Omit<CalendarProps, 'onMonthChange' | 'showAvailableSlots'>) {
-  
   const calendar = useCalendar({
     blockedDays,
     selectedDate,
     onDateSelect,
     enableSwipe: true,
-    monthsCount: 2
-  })
+    monthsCount: 2,
+  });
 
   return (
     <div className={`bg-white rounded-lg border border-gray-200 ${className}`}>
@@ -307,11 +295,9 @@ export function CompactCalendar({
         >
           <ChevronRight className="w-4 h-4" />
         </button>
-        
-        <h4 className="text-sm font-medium text-gray-800">
-          {calendar.currentMonth?.monthName}
-        </h4>
-        
+
+        <h4 className="text-sm font-medium text-gray-800">{calendar.currentMonth?.monthName}</h4>
+
         <button
           onClick={calendar.goToNextMonth}
           disabled={!calendar.canGoNext}
@@ -324,13 +310,13 @@ export function CompactCalendar({
       {/* Compact Grid */}
       <div className="p-2" {...calendar.swipeHandlers}>
         <div className="grid grid-cols-7 gap-1 text-xs mb-1">
-          {['أحد', 'إث', 'ثلا', 'أرب', 'خمي', 'جمع', 'سبت'].map(day => (
+          {['أحد', 'إث', 'ثلا', 'أرب', 'خمي', 'جمع', 'سبت'].map((day) => (
             <div key={day} className="text-center text-gray-500 p-1">
               {day}
             </div>
           ))}
         </div>
-        
+
         <div className="grid grid-cols-7 gap-1">
           {calendar.currentMonth?.days.map((dayData, index) => (
             <div key={index} className="aspect-square">
@@ -340,13 +326,14 @@ export function CompactCalendar({
                   disabled={!dayData || dayData.isPast || dayData.isBlocked}
                   className={`
                     w-full h-full rounded text-xs font-medium transition-all duration-200
-                    ${calendar.isDateSelected(dayData.date)
-                      ? 'bg-purple-500 text-white'
-                      : dayData.isToday
-                        ? 'bg-blue-100 text-blue-600'
-                        : dayData.isPast || dayData.isBlocked
-                          ? 'text-gray-300 cursor-not-allowed'
-                          : 'text-gray-700 hover:bg-gray-100'
+                    ${
+                      calendar.isDateSelected(dayData.date)
+                        ? 'bg-purple-500 text-white'
+                        : dayData.isToday
+                          ? 'bg-blue-100 text-blue-600'
+                          : dayData.isPast || dayData.isBlocked
+                            ? 'text-gray-300 cursor-not-allowed'
+                            : 'text-gray-700 hover:bg-gray-100'
                     }
                   `}
                 >
@@ -359,7 +346,7 @@ export function CompactCalendar({
           ))}
         </div>
       </div>
-      
+
       {/* Selected Date Display */}
       {selectedDate && (
         <div className="p-2 bg-purple-50 border-t text-center">
@@ -369,7 +356,7 @@ export function CompactCalendar({
         </div>
       )}
     </div>
-  )
+  );
 }
 
 // Calendar Legend Component
@@ -393,5 +380,5 @@ export function CalendarLegend() {
         <span>غير متاح</span>
       </div>
     </div>
-  )
+  );
 }

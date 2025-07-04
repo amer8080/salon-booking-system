@@ -1,21 +1,31 @@
-// src/app/book/components/ServicesList.tsx
+﻿// src/app/book/components/ServicesList.tsx
 // قائمة الخدمات مع البحث والفلترة
 
-import React, { useState, useMemo } from 'react'
-import { Sparkles, Search, Filter, CheckCircle, Loader2, AlertCircle, Star, Clock, Tag } from 'lucide-react'
-import { Service } from '../types/booking-form.types'
-import { useServices, useServicesSearch, useServicesFilter } from '../hooks/useServices'
-import { formatDuration } from '../utils/booking-helpers'
+import React, { useState, useMemo } from 'react';
+import {
+  Sparkles,
+  Search,
+  Filter,
+  CheckCircle,
+  Loader2,
+  AlertCircle,
+  Star,
+  Clock,
+  Tag,
+} from 'lucide-react';
+import { Service } from '../types/booking-form.types';
+import { useServices, useServicesSearch, useServicesFilter } from '../hooks/useServices';
+import { formatDuration } from '../utils/booking-helpers';
 
 interface ServicesListProps {
-  selectedServices: string[]
-  onServiceToggle: (serviceId: string) => void
-  onSelectionChange?: (services: string[]) => void
-  maxSelection?: number
-  showSearch?: boolean
-  showFilters?: boolean
-  groupByCategory?: boolean
-  className?: string
+  selectedServices: string[];
+  onServiceToggle: (serviceId: string) => void;
+  onSelectionChange?: (services: string[]) => void;
+  maxSelection?: number;
+  showSearch?: boolean;
+  showFilters?: boolean;
+  groupByCategory?: boolean;
+  className?: string;
 }
 
 export default function ServicesList({
@@ -26,34 +36,25 @@ export default function ServicesList({
   showSearch = true,
   showFilters = false,
   groupByCategory = true,
-  className = ''
+  className = '',
 }: ServicesListProps) {
-
   const {
     state,
     refresh,
-    servicesGrouped,
-    selectedServicesData,
     totalDuration,
     selectionSummary,
     hasSelection,
-    canSelectMore,
-    isValidSelection
+    canSelectMore
   } = useServices({
     autoLoad: true,
-    onServicesLoaded: (services) => {
-    }
-  })
+    onServicesLoaded: (_services) => {},
+  });
 
-  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false)
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
 
-  const {
-    searchQuery,
-    searchResults,
-    search,
-    clearSearch,
-    hasQuery
-  } = useServicesSearch(state.services)
+  const { searchQuery, searchResults, search, clearSearch, hasQuery } = useServicesSearch(
+    state.services,
+  );
 
   const {
     filteredServices,
@@ -61,49 +62,52 @@ export default function ServicesList({
     selectedCategory,
     setSelectedCategory,
     clearFilters,
-    hasActiveFilters
-  } = useServicesFilter(searchResults)
+    hasActiveFilters,
+  } = useServicesFilter(searchResults);
 
   const handleServiceClick = (serviceId: string) => {
     if (selectedServices.includes(serviceId)) {
       // Remove service
-      const newSelection = selectedServices.filter(id => id !== serviceId)
-      onSelectionChange?.(newSelection)
+      const newSelection = selectedServices.filter((id) => id !== serviceId);
+      onSelectionChange?.(newSelection);
     } else if (canSelectMore) {
       // Add service
-      const newSelection = [...selectedServices, serviceId]
-      onSelectionChange?.(newSelection)
+      const newSelection = [...selectedServices, serviceId];
+      onSelectionChange?.(newSelection);
     }
-    
-    onServiceToggle(serviceId)
-  }
+
+    onServiceToggle(serviceId);
+  };
 
   const handleClearSelection = () => {
-    onSelectionChange?.([])
-    selectedServices.forEach(serviceId => onServiceToggle(serviceId))
-  }
+    onSelectionChange?.([]);
+    selectedServices.forEach((serviceId) => onServiceToggle(serviceId));
+  };
 
   const displayServices = useMemo(() => {
     if (hasActiveFilters || hasQuery) {
-      return filteredServices
+      return filteredServices;
     }
-    return state.services
-  }, [filteredServices, state.services, hasActiveFilters, hasQuery])
+    return state.services;
+  }, [filteredServices, state.services, hasActiveFilters, hasQuery]);
 
   const groupedServices = useMemo(() => {
     if (!groupByCategory) {
-      return { 'جميع الخدمات': displayServices }
+      return { 'جميع الخدمات': displayServices };
     }
-    
-    return displayServices.reduce((groups, service) => {
-      const category = service.category || 'أخرى'
-      if (!groups[category]) {
-        groups[category] = []
-      }
-      groups[category].push(service)
-      return groups
-    }, {} as Record<string, Service[]>)
-  }, [displayServices, groupByCategory])
+
+    return displayServices.reduce(
+      (groups, service) => {
+        const category = service.category || 'أخرى';
+        if (!groups[category]) {
+          groups[category] = [];
+        }
+        groups[category].push(service);
+        return groups;
+      },
+      {} as Record<string, Service[]>,
+    );
+  }, [displayServices, groupByCategory]);
 
   if (state.servicesLoading) {
     return (
@@ -113,7 +117,7 @@ export default function ServicesList({
           <p className="text-gray-600">جاري تحميل الخدمات...</p>
         </div>
       </div>
-    )
+    );
   }
 
   if (state.servicesError) {
@@ -121,9 +125,7 @@ export default function ServicesList({
       <div className={`bg-white rounded-xl border border-red-200 p-6 ${className}`}>
         <div className="text-center">
           <AlertCircle className="w-8 h-8 text-red-500 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-red-800 mb-2">
-            خطأ في تحميل الخدمات
-          </h3>
+          <h3 className="text-lg font-medium text-red-800 mb-2">خطأ في تحميل الخدمات</h3>
           <p className="text-red-600 mb-4">{state.servicesError}</p>
           <button
             onClick={refresh}
@@ -133,7 +135,7 @@ export default function ServicesList({
           </button>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -143,17 +145,15 @@ export default function ServicesList({
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-2 rtl:space-x-reverse">
             <Sparkles className="w-5 h-5 text-purple-600" />
-            <h3 className="text-lg font-bold text-gray-800">
-              اختاري خدماتك
-            </h3>
+            <h3 className="text-lg font-bold text-gray-800">اختاري خدماتك</h3>
           </div>
-          
+
           {showFilters && (
             <button
               onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
               className={`p-2 rounded-lg transition-colors duration-200 ${
-                showAdvancedFilters 
-                  ? 'bg-purple-100 text-purple-600' 
+                showAdvancedFilters
+                  ? 'bg-purple-100 text-purple-600'
                   : 'bg-white text-gray-600 hover:bg-gray-50'
               }`}
             >
@@ -161,7 +161,7 @@ export default function ServicesList({
             </button>
           )}
         </div>
-        
+
         <p className="text-gray-600 text-sm mb-4">
           يمكنك اختيار خدمة واحدة أو أكثر (حد أقصى {maxSelection} خدمات)
         </p>
@@ -199,13 +199,13 @@ export default function ServicesList({
               className="text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
             >
               <option value="">جميع الفئات</option>
-              {categories.map(category => (
+              {categories.map((category) => (
                 <option key={category} value={category}>
                   {category}
                 </option>
               ))}
             </select>
-            
+
             {hasActiveFilters && (
               <button
                 onClick={clearFilters}
@@ -225,9 +225,7 @@ export default function ServicesList({
             <div className="flex items-center space-x-2 rtl:space-x-reverse">
               <CheckCircle className="w-5 h-5 text-green-600" />
               <div>
-                <p className="text-sm font-medium text-green-800">
-                  {selectionSummary}
-                </p>
+                <p className="text-sm font-medium text-green-800">{selectionSummary}</p>
                 {totalDuration > 0 && (
                   <p className="text-xs text-green-700">
                     المدة الإجمالية: {formatDuration(totalDuration)}
@@ -235,7 +233,7 @@ export default function ServicesList({
                 )}
               </div>
             </div>
-            
+
             <button
               onClick={handleClearSelection}
               className="text-sm text-green-700 hover:text-green-900 font-medium"
@@ -251,14 +249,9 @@ export default function ServicesList({
         {Object.keys(groupedServices).length === 0 ? (
           <div className="text-center py-8">
             <Search className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-600 mb-2">
-              لا توجد خدمات
-            </h3>
+            <h3 className="text-lg font-medium text-gray-600 mb-2">لا توجد خدمات</h3>
             <p className="text-gray-500">
-              {hasQuery 
-                ? `لا توجد نتائج للبحث "${searchQuery}"`
-                : 'لم يتم العثور على خدمات متاحة'
-              }
+              {hasQuery ? `لا توجد نتائج للبحث "${searchQuery}"` : 'لم يتم العثور على خدمات متاحة'}
             </p>
             {hasQuery && (
               <button
@@ -277,12 +270,10 @@ export default function ServicesList({
                   <h4 className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
                     <Tag className="w-4 h-4 ml-2 text-purple-600" />
                     {categoryName}
-                    <span className="text-sm text-gray-500 mr-2">
-                      ({categoryServices.length})
-                    </span>
+                    <span className="text-sm text-gray-500 mr-2">({categoryServices.length})</span>
                   </h4>
                 )}
-                
+
                 <div className="grid gap-3">
                   {categoryServices.map((service) => (
                     <ServiceCard
@@ -306,15 +297,13 @@ export default function ServicesList({
           <div className="text-center text-sm text-gray-600">
             {selectedServices.length} من {maxSelection} خدمات مختارة
             {!canSelectMore && (
-              <span className="text-orange-600 font-medium mr-2">
-                (وصلت للحد الأقصى)
-              </span>
+              <span className="text-orange-600 font-medium mr-2">(وصلت للحد الأقصى)</span>
             )}
           </div>
         </div>
       )}
     </div>
-  )
+  );
 }
 
 // Service Card Component
@@ -322,23 +311,24 @@ function ServiceCard({
   service,
   isSelected,
   onClick,
-  disabled = false
+  disabled = false,
 }: {
-  service: Service
-  isSelected: boolean
-  onClick: () => void
-  disabled?: boolean
+  service: Service;
+  isSelected: boolean;
+  onClick: () => void;
+  disabled?: boolean;
 }) {
   return (
     <div
       onClick={disabled ? undefined : onClick}
       className={`
         relative border-2 rounded-xl p-4 cursor-pointer transition-all duration-300 group
-        ${isSelected
-          ? 'border-purple-500 bg-purple-50 shadow-md'
-          : disabled
-            ? 'border-gray-200 bg-gray-50 cursor-not-allowed opacity-60'
-            : 'border-gray-200 hover:border-purple-300 hover:bg-purple-50 hover:shadow-sm'
+        ${
+          isSelected
+            ? 'border-purple-500 bg-purple-50 shadow-md'
+            : disabled
+              ? 'border-gray-200 bg-gray-50 cursor-not-allowed opacity-60'
+              : 'border-gray-200 hover:border-purple-300 hover:bg-purple-50 hover:shadow-sm'
         }
       `}
     >
@@ -347,15 +337,14 @@ function ServiceCard({
         <div
           className={`
             w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-200
-            ${isSelected
-              ? 'border-purple-500 bg-purple-500'
-              : 'border-gray-300 group-hover:border-purple-400'
+            ${
+              isSelected
+                ? 'border-purple-500 bg-purple-500'
+                : 'border-gray-300 group-hover:border-purple-400'
             }
           `}
         >
-          {isSelected && (
-            <CheckCircle className="w-4 h-4 text-white" />
-          )}
+          {isSelected && <CheckCircle className="w-4 h-4 text-white" />}
         </div>
       </div>
 
@@ -365,13 +354,11 @@ function ServiceCard({
           <h5 className="text-lg font-bold text-gray-800 group-hover:text-purple-700 transition-colors duration-200">
             {service.nameAr}
           </h5>
-          
+
           {service.price > 0 && (
             <div className="flex items-center space-x-1 rtl:space-x-reverse">
               <Tag className="w-4 h-4 text-green-600" />
-              <span className="text-lg font-bold text-green-600">
-                {service.price} ₺
-              </span>
+              <span className="text-lg font-bold text-green-600">{service.price} ₺</span>
             </div>
           )}
         </div>
@@ -382,7 +369,7 @@ function ServiceCard({
             <Clock className="w-4 h-4" />
             <span>{formatDuration(service.duration)}</span>
           </div>
-          
+
           {service.category && (
             <div className="flex items-center space-x-1 rtl:space-x-reverse">
               <Tag className="w-4 h-4" />
@@ -393,9 +380,7 @@ function ServiceCard({
 
         {/* Service Description */}
         {service.description && (
-          <p className="text-sm text-gray-600 leading-relaxed">
-            {service.description}
-          </p>
+          <p className="text-sm text-gray-600 leading-relaxed">{service.description}</p>
         )}
 
         {/* Popular/Recommended Badge */}
@@ -414,17 +399,16 @@ function ServiceCard({
         <div className="absolute inset-0 bg-purple-600 opacity-0 group-hover:opacity-5 rounded-xl transition-opacity duration-200"></div>
       )}
     </div>
-  )
+  );
 }
 
 // Compact Services List for Mobile
 export function CompactServicesList({
   selectedServices,
   onServiceToggle,
-  className = ''
+  className = '',
 }: Pick<ServicesListProps, 'selectedServices' | 'onServiceToggle' | 'className'>) {
-  
-  const { state, servicesGrouped } = useServices({ autoLoad: true })
+  const { state } = useServices({ autoLoad: true });
 
   if (state.servicesLoading) {
     return (
@@ -434,7 +418,7 @@ export function CompactServicesList({
           <span className="text-sm text-gray-600">تحميل الخدمات...</span>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -444,7 +428,7 @@ export function CompactServicesList({
           اختر الخدمات ({selectedServices.length})
         </h4>
       </div>
-      
+
       <div className="p-3 max-h-60 overflow-y-auto">
         <div className="space-y-2">
           {state.services.slice(0, 8).map((service) => (
@@ -453,33 +437,29 @@ export function CompactServicesList({
               onClick={() => onServiceToggle(service.id)}
               className={`
                 flex items-center justify-between p-2 rounded-lg border cursor-pointer transition-colors
-                ${selectedServices.includes(service.id)
-                  ? 'border-purple-500 bg-purple-50'
-                  : 'border-gray-200 hover:bg-gray-50'
+                ${
+                  selectedServices.includes(service.id)
+                    ? 'border-purple-500 bg-purple-50'
+                    : 'border-gray-200 hover:bg-gray-50'
                 }
               `}
             >
               <div className="flex-1">
-                <p className="text-sm font-medium text-gray-800">
-                  {service.nameAr}
-                </p>
-                <p className="text-xs text-gray-500">
-                  {formatDuration(service.duration)}
-                </p>
+                <p className="text-sm font-medium text-gray-800">{service.nameAr}</p>
+                <p className="text-xs text-gray-500">{formatDuration(service.duration)}</p>
               </div>
-              
+
               <div className="flex items-center space-x-2 rtl:space-x-reverse">
                 {service.price > 0 && (
-                  <span className="text-sm font-medium text-green-600">
-                    {service.price} ₺
-                  </span>
+                  <span className="text-sm font-medium text-green-600">{service.price} ₺</span>
                 )}
                 <div
                   className={`
                     w-4 h-4 rounded border-2 flex items-center justify-center
-                    ${selectedServices.includes(service.id)
-                      ? 'border-purple-500 bg-purple-500'
-                      : 'border-gray-300'
+                    ${
+                      selectedServices.includes(service.id)
+                        ? 'border-purple-500 bg-purple-500'
+                        : 'border-gray-300'
                     }
                   `}
                 >
@@ -491,7 +471,7 @@ export function CompactServicesList({
             </div>
           ))}
         </div>
-        
+
         {state.services.length > 8 && (
           <button className="w-full mt-2 text-xs text-purple-600 hover:text-purple-800">
             عرض جميع الخدمات ({state.services.length})
@@ -499,5 +479,7 @@ export function CompactServicesList({
         )}
       </div>
     </div>
-  )
+  );
 }
+
+

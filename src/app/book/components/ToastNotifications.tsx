@@ -1,114 +1,114 @@
 // src/app/book/components/ToastNotifications.tsx
 // نظام Toast Messages احترافي مع دعم الجوال
 
-'use client'
+'use client';
 
-import React, { useState, useEffect, useCallback, createContext, useContext } from 'react'
-import { X, CheckCircle, XCircle, AlertTriangle, Info, WifiOff } from 'lucide-react'
+import React, { useState, useEffect, useCallback, createContext, useContext } from 'react';
+import { X, CheckCircle, XCircle, AlertTriangle, Info, WifiOff } from 'lucide-react';
 
 // Types
 interface Toast {
-  id: string
-  type: 'success' | 'error' | 'warning' | 'info' | 'network'
-  title: string
-  message?: string
-  duration?: number
+  id: string;
+  type: 'success' | 'error' | 'warning' | 'info' | 'network';
+  title: string;
+  message?: string;
+  duration?: number;
   action?: {
-    label: string
-    onClick: () => void
-  }
-  allowDismiss?: boolean
-  persistent?: boolean
+    label: string;
+    onClick: () => void;
+  };
+  allowDismiss?: boolean;
+  persistent?: boolean;
 }
 
 interface ToastContextValue {
-  toasts: Toast[]
-  addToast: (toast: Omit<Toast, 'id'>) => string
-  removeToast: (id: string) => void
-  clearAllToasts: () => void
+  toasts: Toast[];
+  addToast: (toast: Omit<Toast, 'id'>) => string;
+  removeToast: (id: string) => void;
+  clearAllToasts: () => void;
 }
 
 // Context
-const ToastContext = createContext<ToastContextValue | null>(null)
+const ToastContext = createContext<ToastContextValue | null>(null);
 
 // Hook لاستخدام Toast
 export function useToast() {
-  const context = useContext(ToastContext)
+  const context = useContext(ToastContext);
   if (!context) {
-    throw new Error('useToast must be used within ToastProvider')
+    throw new Error('useToast must be used within ToastProvider');
   }
-  return context
+  return context;
 }
 
 // Provider Component
 export function ToastProvider({ children }: { children: React.ReactNode }) {
-  const [toasts, setToasts] = useState<Toast[]>([])
+  const [toasts, setToasts] = useState<Toast[]>([]);
 
   const addToast = useCallback((toast: Omit<Toast, 'id'>): string => {
-    const id = `toast-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+    const id = `toast-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     const newToast: Toast = {
       id,
       duration: 5000,
       allowDismiss: true,
       persistent: false,
-      ...toast
-    }
+      ...toast,
+    };
 
-    setToasts(prev => [...prev, newToast])
+    setToasts((prev) => [...prev, newToast]);
 
     // Auto remove after duration (unless persistent)
     if (!newToast.persistent && newToast.duration && newToast.duration > 0) {
       setTimeout(() => {
-        removeToast(id)
-      }, newToast.duration)
+        removeToast(id);
+      }, newToast.duration);
     }
 
-    return id
-  }, [])
+    return id;
+  }, []);
 
   const removeToast = useCallback((id: string) => {
-    setToasts(prev => prev.filter(toast => toast.id !== id))
-  }, [])
+    setToasts((prev) => prev.filter((toast) => toast.id !== id));
+  }, []);
 
   const clearAllToasts = useCallback(() => {
-    setToasts([])
-  }, [])
+    setToasts([]);
+  }, []);
 
   return (
     <ToastContext.Provider value={{ toasts, addToast, removeToast, clearAllToasts }}>
       {children}
     </ToastContext.Provider>
-  )
+  );
 }
 
 // Toast Container Component
 interface ToastNotificationsProps {
-  position?: 'top' | 'bottom' | 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left'
-  maxToasts?: number
-  className?: string
+  position?: 'top' | 'bottom' | 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left';
+  maxToasts?: number;
+  className?: string;
 }
 
 export function ToastNotifications({
   position = 'top',
   maxToasts = 5,
-  className = ''
+  className = '',
 }: ToastNotificationsProps) {
-  const { toasts, removeToast } = useToast()
+  const { toasts, removeToast } = useToast();
 
   // Limit number of visible toasts
-  const visibleToasts = toasts.slice(-maxToasts)
+  const visibleToasts = toasts.slice(-maxToasts);
 
   // Position classes
   const positionClasses = {
-    'top': 'top-4 left-1/2 transform -translate-x-1/2',
-    'bottom': 'bottom-4 left-1/2 transform -translate-x-1/2',
+    top: 'top-4 left-1/2 transform -translate-x-1/2',
+    bottom: 'bottom-4 left-1/2 transform -translate-x-1/2',
     'top-right': 'top-4 right-4',
     'top-left': 'top-4 left-4',
     'bottom-right': 'bottom-4 right-4',
-    'bottom-left': 'bottom-4 left-4'
-  }
+    'bottom-left': 'bottom-4 left-4',
+  };
 
-  if (visibleToasts.length === 0) return null
+  if (visibleToasts.length === 0) return null;
 
   return (
     <div
@@ -127,48 +127,48 @@ export function ToastNotifications({
         ))}
       </div>
     </div>
-  )
+  );
 }
 
 // Individual Toast Component
 interface ToastItemProps {
-  toast: Toast
-  onClose: () => void
-  index: number
-  isLastInStack: boolean
+  toast: Toast;
+  onClose: () => void;
+  index: number;
+  isLastInStack: boolean;
 }
 
 function ToastItem({ toast, onClose, index, isLastInStack }: ToastItemProps) {
-  const [isVisible, setIsVisible] = useState(false)
-  const [isLeaving, setIsLeaving] = useState(false)
+  const [isVisible, setIsVisible] = useState(false);
+  const [isLeaving, setIsLeaving] = useState(false);
 
   // Animation entrance
   useEffect(() => {
-    const timer = setTimeout(() => setIsVisible(true), 50)
-    return () => clearTimeout(timer)
-  }, [])
+    const timer = setTimeout(() => setIsVisible(true), 50);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Handle close with animation
   const handleClose = useCallback(() => {
-    setIsLeaving(true)
+    setIsLeaving(true);
     setTimeout(() => {
-      onClose()
-    }, 300)
-  }, [onClose])
+      onClose();
+    }, 300);
+  }, [onClose]);
 
   // Auto-close on escape key
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape' && isLastInStack) {
-        handleClose()
+        handleClose();
       }
-    }
+    };
 
     if (typeof window !== 'undefined') {
-      window.addEventListener('keydown', handleKeyDown)
-      return () => window.removeEventListener('keydown', handleKeyDown)
+      window.addEventListener('keydown', handleKeyDown);
+      return () => window.removeEventListener('keydown', handleKeyDown);
     }
-  }, [handleClose, isLastInStack])
+  }, [handleClose, isLastInStack]);
 
   // Toast type configurations
   const toastConfig = {
@@ -176,44 +176,45 @@ function ToastItem({ toast, onClose, index, isLastInStack }: ToastItemProps) {
       icon: CheckCircle,
       bgColor: 'bg-green-500',
       textColor: 'text-white',
-      iconColor: 'text-white'
+      iconColor: 'text-white',
     },
     error: {
       icon: XCircle,
       bgColor: 'bg-red-500',
       textColor: 'text-white',
-      iconColor: 'text-white'
+      iconColor: 'text-white',
     },
     warning: {
       icon: AlertTriangle,
       bgColor: 'bg-yellow-500',
       textColor: 'text-white',
-      iconColor: 'text-white'
+      iconColor: 'text-white',
     },
     info: {
       icon: Info,
       bgColor: 'bg-blue-500',
       textColor: 'text-white',
-      iconColor: 'text-white'
+      iconColor: 'text-white',
     },
     network: {
       icon: WifiOff,
       bgColor: 'bg-gray-600',
       textColor: 'text-white',
-      iconColor: 'text-white'
-    }
-  }
+      iconColor: 'text-white',
+    },
+  };
 
-  const config = toastConfig[toast.type]
-  const Icon = config.icon
+  const config = toastConfig[toast.type];
+  const Icon = config.icon;
 
   return (
     <div
       className={`
         pointer-events-auto transform transition-all duration-300 ease-in-out
-        ${isVisible && !isLeaving 
-          ? 'translate-y-0 opacity-100 scale-100' 
-          : 'translate-y-2 opacity-0 scale-95'
+        ${
+          isVisible && !isLeaving
+            ? 'translate-y-0 opacity-100 scale-100'
+            : 'translate-y-2 opacity-0 scale-95'
         }
         ${index > 0 ? `translate-y-${index * 2}` : ''}
       `}
@@ -235,14 +236,8 @@ function ToastItem({ toast, onClose, index, isLastInStack }: ToastItemProps) {
 
           {/* Content */}
           <div className="flex-1 min-w-0">
-            <h4 className="text-sm font-semibold">
-              {toast.title}
-            </h4>
-            {toast.message && (
-              <p className="text-sm opacity-90 mt-1">
-                {toast.message}
-              </p>
-            )}
+            <h4 className="text-sm font-semibold">{toast.title}</h4>
+            {toast.message && <p className="text-sm opacity-90 mt-1">{toast.message}</p>}
 
             {/* Action Button */}
             {toast.action && (
@@ -268,28 +263,28 @@ function ToastItem({ toast, onClose, index, isLastInStack }: ToastItemProps) {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 // Utility hooks and functions
 export function useNetworkToast() {
-  const { addToast, removeToast } = useToast()
-  const [networkToastId, setNetworkToastId] = useState<string | null>(null)
-  const [isOnline, setIsOnline] = useState(true) // افتراضي true للـ SSR
+  const { addToast, removeToast } = useToast();
+  const [networkToastId, setNetworkToastId] = useState<string | null>(null);
+  const [isOnline, setIsOnline] = useState(true); // افتراضي true للـ SSR
 
   useEffect(() => {
-    if (typeof window === 'undefined') return
+    if (typeof window === 'undefined') return;
 
     // تحديث القيمة الحقيقية بعد mount
-    setIsOnline(navigator.onLine)
+    setIsOnline(navigator.onLine);
 
     const handleOnline = () => {
-      setIsOnline(true)
-      
+      setIsOnline(true);
+
       // Remove offline toast
       if (networkToastId) {
-        removeToast(networkToastId)
-        setNetworkToastId(null)
+        removeToast(networkToastId);
+        setNetworkToastId(null);
       }
 
       // Show connection restored toast
@@ -297,56 +292,56 @@ export function useNetworkToast() {
         type: 'success',
         title: 'تم استعادة الاتصال',
         message: 'يمكنك الآن المتابعة',
-        duration: 3000
-      })
-    }
+        duration: 3000,
+      });
+    };
 
     const handleOffline = () => {
-      setIsOnline(false)
-      
+      setIsOnline(false);
+
       // Show offline toast
       const toastId = addToast({
         type: 'network',
         title: 'لا يوجد اتصال بالإنترنت',
         message: 'تحقق من الاتصال للمتابعة',
         persistent: true,
-        allowDismiss: false
-      })
-      
-      setNetworkToastId(toastId)
-    }
+        allowDismiss: false,
+      });
 
-    window.addEventListener('online', handleOnline)
-    window.addEventListener('offline', handleOffline)
+      setNetworkToastId(toastId);
+    };
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
 
     return () => {
-      window.removeEventListener('online', handleOnline)
-      window.removeEventListener('offline', handleOffline)
-    }
-  }, [addToast, removeToast, networkToastId])
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, [addToast, removeToast, networkToastId]);
 
-  return { isOnline }
+  return { isOnline };
 }
 
 // Quick toast functions
 export function showBookingSuccess(customerName: string, date: string, time: string) {
-  const { addToast } = useToast()
-  
+  const { addToast } = useToast();
+
   addToast({
     type: 'success',
     title: 'تم تأكيد الحجز بنجاح! 🎉',
     message: `${customerName}, موعدك يوم ${date} الساعة ${time}`,
-    duration: 8000
-  })
+    duration: 8000,
+  });
 }
 
 export function showBookingError(
-  message: string, 
+  message: string,
   retryAction?: () => void,
-  whatsappAction?: () => void
+  whatsappAction?: () => void,
 ) {
-  const { addToast } = useToast()
-  
+  const { addToast } = useToast();
+
   if (retryAction) {
     addToast({
       type: 'error',
@@ -354,10 +349,10 @@ export function showBookingError(
       message,
       action: {
         label: 'إعادة المحاولة',
-        onClick: retryAction
+        onClick: retryAction,
       },
-      duration: 10000
-    })
+      duration: 10000,
+    });
   } else if (whatsappAction) {
     addToast({
       type: 'error',
@@ -365,38 +360,38 @@ export function showBookingError(
       message: `${message}. يمكنك التواصل معنا مباشرة`,
       action: {
         label: 'واتساب 💬',
-        onClick: whatsappAction
+        onClick: whatsappAction,
       },
-      duration: 15000
-    })
+      duration: 15000,
+    });
   } else {
     addToast({
       type: 'error',
       title: 'خطأ',
       message,
-      duration: 6000
-    })
+      duration: 6000,
+    });
   }
 }
 
 export function showValidationError(field: string, message: string) {
-  const { addToast } = useToast()
-  
+  const { addToast } = useToast();
+
   addToast({
     type: 'warning',
     title: `خطأ في ${field}`,
     message,
-    duration: 4000
-  })
+    duration: 4000,
+  });
 }
 
 export function showInfoToast(title: string, message?: string) {
-  const { addToast } = useToast()
-  
+  const { addToast } = useToast();
+
   addToast({
     type: 'info',
     title,
     message,
-    duration: 5000
-  })
+    duration: 5000,
+  });
 }
